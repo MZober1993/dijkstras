@@ -2,12 +2,16 @@ package util;
 
 import algorithm.Dijkstra;
 import com.google.common.base.Stopwatch;
+import datastructure.Edge;
 import datastructure.EdgeBuilder;
 import datastructure.Graph;
+import datastructure.standard.StandardGraph;
 import datastructure.Vertex;
 import datastructure.standard.EdgeImpl;
 import datastructure.standard.GraphImpl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -18,13 +22,13 @@ public class GraphHelper {
 
     public static final int FIRST = 1;
 
-    public static GraphImpl buildSampleSeqGraph(GraphImpl graph, Class<EdgeImpl> clazz) {
+    public static <G extends Graph,E extends Edge> G buildSampleGraph(G graph, Class<E> clazz) {
         EdgeBuilder builder = new EdgeBuilder<>(graph, clazz);
         linkGraphWithSampleDistances(graph, builder);
         return graph;
     }
 
-    private static void linkGraphWithSampleDistances(Graph graph, EdgeBuilder builder) {
+    private static <T extends Graph>  void linkGraphWithSampleDistances(T graph, EdgeBuilder builder) {
         graph.linkVertex(builder.current(0).to(1, 7.0).to(2, 8.0));
         graph.linkVertex(builder.current(1).to(0, 7.0).to(5, 2.0));
         graph.linkVertex(builder.current(2).to(0, 8.0).to(5, 6.0).to(6, 4.0));
@@ -36,18 +40,29 @@ public class GraphHelper {
         graph.linkVertex(builder.current(7).to(4, 1.0).to(5, 3.0));
     }
 
-    public static long calculateTimeWithLastRandom(Graph graph, Dijkstra algorithm) {
+    public static long calculateTimeWithLastRandom(StandardGraph graph, Dijkstra algorithm) {
         Vertex start = graph.getVertex(FIRST);
         Vertex end = graph.getLastRandomVertex();
 
         return calculateTime(graph, algorithm, start, end);
     }
 
-    private static long calculateTime(Graph graph, Dijkstra algorithm, Vertex start, Vertex end) {
+    private static long calculateTime(StandardGraph graph, Dijkstra algorithm, Vertex start, Vertex end) {
         Stopwatch stopwatch = Stopwatch.createStarted();
         algorithm.shortestPath(graph, start, end);
         stopwatch.stop();
 
         return stopwatch.elapsed(TimeUnit.NANOSECONDS);
+    }
+
+    public static List<Integer> reconstructPath(Vertex vertex) {
+        List<Integer> path = new ArrayList<>();
+        Vertex current = vertex;
+        while (current.getPrevious() != null) {
+            path.add(0, current.getId());
+            current = current.getPrevious();
+        }
+        path.add(0, current.getId());
+        return path;
     }
 }

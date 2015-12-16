@@ -2,7 +2,7 @@ package util;
 
 import algorithm.Dijkstra;
 import com.google.common.collect.ImmutableList;
-import datastructure.Graph;
+import datastructure.standard.StandardGraph;
 import datastructure.standard.GraphImpl;
 
 import java.util.List;
@@ -33,7 +33,7 @@ public enum Measures {
         }
     }
 
-    public static void prepareMeasure(Graph graph, Dijkstra algorithm) {
+    public static void prepareMeasure(StandardGraph graph, Dijkstra algorithm) {
         for (int i = 0; i < 10; i++) {
             algorithm.shortestPath(graph, graph.getVertex(GraphHelper.FIRST), graph.getLastRandomVertex());
         }

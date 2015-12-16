@@ -1,11 +1,14 @@
 package algorithm.fibo;
 
 import algorithm.Dijkstra;
-import datastructure.Edge;
 import datastructure.Graph;
+import datastructure.fibo.FiboEdge;
+import datastructure.fibo.FiboGraph;
+import datastructure.standard.StandardEdge;
+import datastructure.standard.StandardGraph;
 import datastructure.Vertex;
 import datastructure.fibo.FibonacciHeap;
-import datastructure.standard.GraphImpl;
+import util.GraphHelper;
 
 import java.util.Collections;
 import java.util.List;
@@ -30,24 +33,26 @@ public class DijkstraImplFibo implements Dijkstra {
         }
 
         while (!nodes.isEmpty()) {
-            Vertex smallest = nodes.dequeueMin().getValue();
+            final FibonacciHeap.Entry<Vertex> smallestEntry = nodes.dequeueMin();
+            final Vertex smallest=smallestEntry.getValue();
 
             if (smallest.equals(finish)) {
-                return GraphImpl.reconstructPath(smallest);
+                return GraphHelper.reconstructPath(smallest);
             }
 
             if (smallest.getG() == Double.MAX_VALUE) {
                 continue;
             }
-
-            for (Edge edge : graph.getEdgesFromNode(smallest.getId())) {
-                Double alt = smallest.getG() + edge.getDistance();
-                Vertex connectedVertex = edge.getConnectedVertex(smallest);
+            //TODO: fix dijkstra
+            for (FiboEdge edge : graph.<FiboEdge>getEdgesFromNode(smallest.getId())) {
+                final Double alt = smallest.getG() + edge.getDistance();
+                final FibonacciHeap.Entry<Vertex> connectedEntry = edge.getConnectedEntry(smallestEntry);
+                final Vertex connectedVertex = connectedEntry.getValue();
 
                 if (alt < connectedVertex.getG()) {
                     connectedVertex.setGAndUpdateF(alt);
                     connectedVertex.setPrevious(smallest);
-                    //TODO: nodes.decreaseKey(entry,connectedVertex.getG());
+                    nodes.decreaseKey(connectedEntry, connectedVertex.getG());
                 }
             }
         }

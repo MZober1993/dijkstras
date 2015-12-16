@@ -1,6 +1,7 @@
 package algorithm;
 
 import datastructure.Graph;
+import datastructure.standard.StandardGraph;
 import datastructure.Vertex;
 
 import java.util.List;

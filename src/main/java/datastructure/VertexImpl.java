@@ -1,6 +1,4 @@
-package datastructure.standard;
-
-import datastructure.Vertex;
+package datastructure;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

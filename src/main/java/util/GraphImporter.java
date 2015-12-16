@@ -2,7 +2,7 @@ package util;
 
 
 import com.google.common.collect.ImmutableList;
-import datastructure.Graph;
+import datastructure.standard.StandardGraph;
 import datastructure.standard.GraphImpl;
 
 import java.io.IOException;
@@ -49,7 +49,7 @@ public class GraphImporter {
         return (GraphImpl) importLinesOfFile(limit, new GraphImpl());
     }
 
-    private Graph importLinesOfFile(Long limit, Graph graph) {
+    private StandardGraph importLinesOfFile(Long limit, StandardGraph graph) {
         try {
             Stream<String> lines = Files.lines(pathOfGraphFile).filter(line -> line.contains("a "));
             List<List<String>> lineList = lines.map(line -> Arrays.asList(line.split(" "))).collect(Collectors.toList());
@@ -68,7 +68,7 @@ public class GraphImporter {
         return (GraphImpl) importNVertices(n, new GraphImpl());
     }
 
-    private Graph importNVertices(Long n, Graph graph) {
+    private StandardGraph importNVertices(Long n, StandardGraph graph) {
         if (!Files.exists(pathOfGraphFile)) {
             createDirAndPlainImportFile();
         }
@@ -89,8 +89,8 @@ public class GraphImporter {
         return graph;
     }
 
-    public List<Graph> calculateParallelGraphsWithNVertices(Long... n) {
-        ImmutableList.Builder<Graph> builder = ImmutableList.builder();
+    public List<StandardGraph> calculateParallelGraphsWithNVertices(Long... n) {
+        ImmutableList.Builder<StandardGraph> builder = ImmutableList.builder();
         for (Long number : n) {
             builder.add(importNVerticesAndGetSequentialGraph(number));
         }

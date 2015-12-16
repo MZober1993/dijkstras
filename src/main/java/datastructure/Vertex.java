@@ -8,45 +8,45 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public interface Vertex extends Comparable<Vertex> {
 
-    public Double getF();
+    Double getF();
 
-    public Integer getId();
+    Integer getId();
 
-    public void setId(Integer id);
+    void setId(Integer id);
 
-    public void setG(Double g);
+    void setG(Double g);
 
-    public Double getG();
+    Double getG();
 
-    public default void setGAndUpdateF(Double g) {
+    default void setGAndUpdateF(Double g) {
         setG(g);
         setF(getH() + getG());
     }
 
-    public Double getH();
+    Double getH();
 
-    public void setHAndUpdateF(Double h);
+    void setHAndUpdateF(Double h);
 
-    public void setF(Double f);
+    void setF(Double f);
 
-    public Vertex getPrevious();
+    Vertex getPrevious();
 
-    public void setPrevious(Vertex previous);
+    void setPrevious(Vertex previous);
 
-    public boolean isClose();
+    boolean isClose();
 
-    public void setClose(boolean close);
+    void setClose(boolean close);
 
-    public Double getX();
+    Double getX();
 
-    public void setX(Double x);
+    void setX(Double x);
 
-    public Double getY();
+    Double getY();
 
-    public void setY(Double y);
+    void setY(Double y);
 
     @Override
-    public default int compareTo(Vertex vertex) {
+    default int compareTo(Vertex vertex) {
         checkNotNull(vertex);
         return this.getF() < vertex.getF()
                 ? -1 : this.getF() == vertex.getF()

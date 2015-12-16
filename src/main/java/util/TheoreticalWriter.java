@@ -1,6 +1,6 @@
 package util;
 
-import datastructure.Graph;
+import datastructure.standard.StandardGraph;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -29,7 +29,7 @@ public class TheoreticalWriter extends FileWriter {
         try {
             writeHeader();
             scaleMeasureSample(100).forEach(element -> {
-                Graph graph = graphImporter.importNVerticesAndGetSequentialGraph(element);
+                StandardGraph graph = graphImporter.importNVerticesAndGetSequentialGraph(element);
                 int m = graph.getEdges().size();
                 int n = graph.getVertices().size();
                 writeTn(n, (m + n) * Math.log(n) * n, 2 * n + 2 * n * Math.log(n) + m + m * n * Math.log(n) * 2);

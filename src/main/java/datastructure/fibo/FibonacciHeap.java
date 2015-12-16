@@ -35,7 +35,7 @@ public final class FibonacciHeap<T> {
             return priority;
         }
 
-        private Entry(T elem, double priority) {
+        public Entry(T elem, double priority) {
             next = previous = this;
             this.elem = elem;
             this.priority = priority;

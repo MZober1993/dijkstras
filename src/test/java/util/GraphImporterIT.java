@@ -3,8 +3,8 @@ package util;
 import algorithm.Dijkstra;
 import algorithm.standard.DijkstraImpl;
 import com.google.common.truth.Truth;
-import datastructure.Edge;
-import datastructure.Graph;
+import datastructure.standard.StandardEdge;
+import datastructure.standard.StandardGraph;
 import datastructure.Vertex;
 import datastructure.standard.GraphImpl;
 import org.junit.Before;
@@ -42,8 +42,8 @@ public class GraphImporterIT {
     public void testImportGraph() {
         GraphImpl graph = graphImporter.importLinesOfFileAndGetSequentialGraph(HUGE_LIMIT_NUMBER);
         Vertex vertex = graph.getOne();
-        List<Edge> edgesFromNode = graph.getEdgesFromNode(vertex);
-        Edge edge = edgesFromNode.get(FIRST);
+        List<StandardEdge> edgesFromNode = graph.getEdgesFromNode(vertex);
+        StandardEdge edge = edgesFromNode.get(FIRST);
 
         checkGraphContainsVerticesAndEdges(graph, edgesFromNode);
         checkEdgeContainsDistanceAndTwoVertices(edge);
@@ -68,13 +68,13 @@ public class GraphImporterIT {
         checkShortestPath(start, end, shortestPath);
     }
 
-    private static void checkEdgeContainsDistanceAndTwoVertices(Edge edge) {
+    private static void checkEdgeContainsDistanceAndTwoVertices(StandardEdge edge) {
         assertNotNull(edge.getDistance());
         assertNotNull(edge.getFirstVertex());
         assertNotNull(edge.getSecondVertex());
     }
 
-    private void checkGraphContainsVerticesAndEdges(Graph graph, List<Edge> edgesFromNode) {
+    private void checkGraphContainsVerticesAndEdges(StandardGraph graph, List<StandardEdge> edgesFromNode) {
         Truth.assertThat(graph.getVertices().size() > MINIMUM_COUNT);
         Truth.assertThat(edgesFromNode.size() > EMPTY);
     }

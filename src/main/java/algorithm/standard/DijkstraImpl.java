@@ -1,10 +1,11 @@
 package algorithm.standard;
 
 import algorithm.Dijkstra;
-import datastructure.Edge;
 import datastructure.Graph;
+import datastructure.standard.StandardEdge;
+import datastructure.standard.StandardGraph;
 import datastructure.Vertex;
-import datastructure.standard.GraphImpl;
+import util.GraphHelper;
 
 import java.util.Collections;
 import java.util.List;
@@ -30,19 +31,19 @@ public class DijkstraImpl implements Dijkstra {
         }
 
         while (!nodes.isEmpty()) {
-            Vertex smallest = nodes.poll();
+            final Vertex smallest = nodes.poll();
 
             if (smallest.equals(finish)) {
-                return GraphImpl.reconstructPath(smallest);
+                return GraphHelper.reconstructPath(smallest);
             }
 
             if (smallest.getG() == Double.MAX_VALUE) {
                 continue;
             }
 
-            for (Edge edge : graph.getEdgesFromNode(smallest.getId())) {
-                Double alt = smallest.getG() + edge.getDistance();
-                Vertex connectedVertex = edge.getConnectedVertex(smallest);
+            for (StandardEdge edge : graph.<StandardEdge>getEdgesFromNode(smallest.getId())) {
+                final Double alt = smallest.getG() + edge.getDistance();
+                final Vertex connectedVertex = edge.getConnectedVertex(smallest);
 
                 if (alt < connectedVertex.getG()) {
                     connectedVertex.setGAndUpdateF(alt);

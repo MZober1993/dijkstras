@@ -1,6 +1,8 @@
 package datastructure;
 
 import com.google.common.collect.ImmutableList;
+import datastructure.standard.StandardEdge;
+import datastructure.standard.StandardGraph;
 
 import java.util.List;
 
@@ -10,9 +12,9 @@ import java.util.List;
  */
 public class EdgeBuilder<G extends Graph, E extends Edge> {
 
-    private ImmutableList.Builder<Edge> edgeBuilder;
+    private ImmutableList.Builder<E> edgeBuilder;
     private Integer currentId;
-    private Graph graph;
+    private G graph;
     private EdgeFactory<E> edgeFactory;
 
     public EdgeBuilder(G graph, Class<E> clazz) {
@@ -41,8 +43,8 @@ public class EdgeBuilder<G extends Graph, E extends Edge> {
         }
     }
 
-    public List<Edge> build() {
-        ImmutableList<Edge> build = edgeBuilder.build();
+    public List<E> build() {
+        ImmutableList<E> build = edgeBuilder.build();
         edgeBuilder = null;
         return build;
     }

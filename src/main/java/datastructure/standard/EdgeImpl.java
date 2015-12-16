@@ -1,6 +1,5 @@
 package datastructure.standard;
 
-import datastructure.Edge;
 import datastructure.Vertex;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -9,7 +8,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
  *         04.11.15 - 11:55
  */
-public class EdgeImpl implements Edge {
+public class EdgeImpl implements StandardEdge {
 
     private final Vertex nodeOne;
     private final Vertex nodeTwo;
