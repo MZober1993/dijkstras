@@ -12,7 +12,7 @@ import static util.MathHelper.TEN_THOUSAND;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
- *         On 2015 - 23.11.15 - 12:44
+ *         23.11.15 - 12:44
  */
 public enum Measures {
     MEMBER, MEASURE, BOXPLOT, THEORETICAL;

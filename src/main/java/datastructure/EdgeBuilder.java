@@ -6,7 +6,7 @@ import java.util.List;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
- *         On 2015 - 04.11.15 - 13:39
+ *         04.11.15 - 13:39
  */
 public class EdgeBuilder<G extends Graph, E extends Edge> {
 

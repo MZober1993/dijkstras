@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
- *         On 2015 - 16.11.15 - 21:39
+ *         16.11.15 - 21:39
  */
 public class GraphHelper {
 

@@ -7,7 +7,7 @@ import java.util.List;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
- *         On 2015 - 18.11.15 - 14:02
+ *         18.11.15 - 14:02
  */
 public interface Dijkstra {
     /**

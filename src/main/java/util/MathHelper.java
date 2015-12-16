@@ -5,7 +5,7 @@ import java.util.stream.Stream;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
- *         On 2015 - 24.11.15 - 14:16
+ *         24.11.15 - 14:16
  */
 public class MathHelper {
 

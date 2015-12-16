@@ -12,7 +12,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
- *         On 2015 - 01.11.15 - 18:40
+ *         01.11.15 - 18:40
  */
 public class GraphImpl implements Graph {
 

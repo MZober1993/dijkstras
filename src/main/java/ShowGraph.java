@@ -8,7 +8,7 @@ import static util.ImportFile.SAMPLE;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
- *         On 2015 - 16.11.15 - 13:48
+ *         16.11.15 - 13:48
  */
 public class ShowGraph {
 

@@ -13,7 +13,7 @@ import static util.Measures.scaleMeasureSample;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
- *         On 2015 - 26.11.15 - 20:35
+ *         26.11.15 - 20:35
  */
 public class TheoreticalWriter extends FileWriter {
 

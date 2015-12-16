@@ -5,7 +5,7 @@ import static util.MemberFileWriter.MEMBER_FILE_PATH;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
- *         On 2015 - 21.11.15 - 09:44
+ *         21.11.15 - 09:44
  */
 public class MaximumMemberOfN {
 

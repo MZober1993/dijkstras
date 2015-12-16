@@ -16,7 +16,7 @@ import static junit.framework.Assert.*;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
- *         On 2015 - 18.11.15 - 14:24
+ *         18.11.15 - 14:24
  *         On the Site <a href="http://www.dis.uniroma1.it/challenge9/download.shtml">Dimacs</a> you can download
  *         realistic graphs of the usa. The downloaded graph is represented in an import-file. All import-files are
  *         listed in the enum: ImportFiles.

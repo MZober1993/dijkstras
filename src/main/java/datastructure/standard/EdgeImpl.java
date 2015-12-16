@@ -7,7 +7,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
- *         On 2015 - 04.11.15 - 11:55
+ *         04.11.15 - 11:55
  */
 public class EdgeImpl implements Edge {
 

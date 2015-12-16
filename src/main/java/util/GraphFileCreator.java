@@ -8,7 +8,7 @@ import java.util.stream.IntStream;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
- *         On 2015 - 25.11.15 - 13:04
+ *         25.11.15 - 13:04
  */
 public class GraphFileCreator extends FileWriter {
 

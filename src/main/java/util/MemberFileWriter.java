@@ -15,7 +15,7 @@ import static util.Measures.MEMBER;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
- *         On 2015 - 21.11.15 - 13:54
+ *         21.11.15 - 13:54
  */
 public class MemberFileWriter extends FileWriter {
     public static final String MEMBER_FILE = GraphImporter.PATH_TO_RESOURCE + MEMBER.name().toLowerCase();

@@ -6,7 +6,7 @@ import java.util.Objects;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
- *         On 2015 - 18.11.15 - 13:15
+ *         18.11.15 - 13:15
  */
 public class EdgeFactory<E extends Edge> {
 

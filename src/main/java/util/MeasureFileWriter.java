@@ -16,7 +16,7 @@ import static util.Measures.MEASURE;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
- *         On 2015 - 21.11.15 - 13:47
+ *         21.11.15 - 13:47
  */
 public class MeasureFileWriter extends FileWriter {
 

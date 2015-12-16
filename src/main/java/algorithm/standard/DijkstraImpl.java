@@ -12,7 +12,7 @@ import java.util.PriorityQueue;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
- *         On 2015 - 01.11.15 - 18:40
+ *         01.11.15 - 18:40
  */
 public class DijkstraImpl implements Dijkstra {
 

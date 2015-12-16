@@ -13,7 +13,7 @@ import java.util.List;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
- *         On 2015 - 01.11.15 - 18:41
+ *         01.11.15 - 18:41
  */
 public class DijkstraTest {
 

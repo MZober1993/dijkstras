@@ -14,7 +14,7 @@ import static util.ImportFile.NY;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
- *         On 2015 - 19.11.15 - 17:31
+ *         19.11.15 - 17:31
  */
 public class MemberFinderIT {
 

@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
- *         On 2015 - 16.11.15 - 13:47
+ *         16.11.15 - 13:47
  */
 public class GraphImporter {
 

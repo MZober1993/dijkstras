@@ -4,7 +4,7 @@ import static util.TheoreticalWriter.DEFAULT_PATH;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
- *         On 2015 - 26.11.15 - 20:25
+ *         26.11.15 - 20:25
  */
 public class TheoreticalTn {
 

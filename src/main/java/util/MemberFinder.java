@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
- *         On 2015 - 19.11.15 - 17:08
+ *         19.11.15 - 17:08
  */
 public class MemberFinder {
 

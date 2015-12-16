@@ -12,7 +12,7 @@ import java.util.List;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
- *         On 2015 - 01.11.15 - 18:40
+ *         01.11.15 - 18:40
  */
 public class DijkstraImplFibo implements Dijkstra {
 
@@ -47,6 +47,7 @@ public class DijkstraImplFibo implements Dijkstra {
                 if (alt < connectedVertex.getG()) {
                     connectedVertex.setGAndUpdateF(alt);
                     connectedVertex.setPrevious(smallest);
+                    //TODO: nodes.decreaseKey(entry,connectedVertex.getG());
                 }
             }
         }

@@ -17,7 +17,7 @@ import static util.Measures.BOXPLOT;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
- *         On 2015 - 24.11.15 - 19:25
+ *         24.11.15 - 19:25
  */
 public class BoxPlotFileWriter extends FileWriter {
 
