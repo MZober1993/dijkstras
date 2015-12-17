@@ -3,73 +3,24 @@ package datastructure.fibo; /**
  * On 14.12.15 - 18:00
  */
 
+import util.LoggingHelper;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.logging.Logger;
+
+import static util.LoggingHelper.logWarningIfNull;
 
 public final class FibonacciHeap<T> {
-
-    public static final class Entry<T> {
-        private int deg = 0;       // Number of children
-        private boolean isMarked = false; // Whether this node is marked
-
-        private Entry<T> next;   // Next and previous elements in the list
-        private Entry<T> previous;
-
-        private Entry<T> parent; // Parent in the tree, if any.
-
-        private Entry<T> child;  // Child node, if any.
-
-        private T elem;     // Element being stored here
-        private double priority; // Its priority
-
-        public T getValue() {
-            return elem;
-        }
-
-        public void setValue(T value) {
-            elem = value;
-        }
-
-        public double getPriority() {
-            return priority;
-        }
-
-        public Entry(T elem, double priority) {
-            next = this;
-            previous = this;
-            this.elem = elem;
-            this.priority = priority;
-        }
-
-        @Override
-        public String toString() {
-            return "Entry{" +
-                    "priority=" + priority +
-                    ", elem=" + elem +
-                    ", isMarked=" + isMarked +
-                    ", deg=" + deg +
-                    '}';
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            Entry<?> entry = (Entry<?>) o;
-
-            if (deg != entry.deg) return false;
-            if (isMarked != entry.isMarked) return false;
-            return !(elem != null ? !elem.equals(entry.elem) : entry.elem != null);
-        }
-    }
 
     /* Pointer to the minimum element in the heap. */
     private Entry<T> minimum = null;
 
     /* Cached size of the heap, so we don't have to recompute this explicitly. */
     private int size = 0;
+
+    private static final Logger LOGGER = LoggingHelper.buildLoggerWithStandardOutputConfig(FibonacciHeap.class);
 
     /**
      * Inserts the specified element into the Fibonacci heap with the specified
@@ -311,7 +262,7 @@ public final class FibonacciHeap<T> {
     public void decreaseKey(Entry<T> entry, double newPriority) {
         checkPriority(newPriority);
         if (newPriority > entry.priority)
-            throw new IllegalArgumentException("New priority: "+newPriority+",exceeds old:"+entry.priority);
+            throw new IllegalArgumentException("New priority: " + newPriority + ",exceeds old:" + entry.priority);
 
         /* Forward this to a helper function. */
         decreaseKeyUnchecked(entry, newPriority);
@@ -401,8 +352,8 @@ public final class FibonacciHeap<T> {
          * that decreases the key to -infinity, it's guaranteed to cut the node
          * from its parent.
          */
-        System.out.println("before cut - minimum = " + minimum);
-        System.out.println("before cut - entry = " + entry);
+        logWarningIfNull("minimum", minimum, LOGGER);
+        logWarningIfNull("entry", entry, LOGGER);
         if (entry.parent != null && entry.priority <= entry.parent.priority) {
             cutNode(entry);
         }
@@ -411,8 +362,8 @@ public final class FibonacciHeap<T> {
          * ended up decreasing the key in a way that ties the current minimum
          * priority, this will change the min accordingly.
          */
-        System.out.println("after cut - minimum = " + minimum);
-        System.out.println("after cut - entry = " + entry);
+        logWarningIfNull("minimum", minimum, LOGGER);
+        logWarningIfNull("entry", entry, LOGGER);
         if (entry.priority <= minimum.priority)
             minimum = entry;
     }
@@ -478,14 +429,70 @@ public final class FibonacciHeap<T> {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("FibonacciHeap{" + "minimum=").append(minimum).append(", size=").append(size).append("[\n");
-        Entry<T> start=minimum;
-        Entry<T> tmp=minimum.next;
-        while(tmp!=start){
+        Entry<T> start = minimum;
+        Entry<T> tmp = minimum.next;
+        while (tmp != start) {
             builder.append(", ").append(tmp.toString()).append("\n");
-            tmp=tmp.next;
+            tmp = tmp.next;
         }
         builder.append(", ").append(start.toString()).append("\n");
         builder.append("]\n}");
         return builder.toString();
+    }
+
+    public static final class Entry<T> {
+        private int deg = 0;       // Number of children
+        private boolean isMarked = false; // Whether this node is marked
+
+        private Entry<T> next;   // Next and previous elements in the list
+        private Entry<T> previous;
+
+        private Entry<T> parent; // Parent in the tree, if any.
+
+        private Entry<T> child;  // Child node, if any.
+
+        private T elem;     // Element being stored here
+        private double priority; // Its priority
+
+        public T getValue() {
+            return elem;
+        }
+
+        public void setValue(T value) {
+            elem = value;
+        }
+
+        public double getPriority() {
+            return priority;
+        }
+
+        public Entry(T elem, double priority) {
+            next = this;
+            previous = this;
+            this.elem = elem;
+            this.priority = priority;
+        }
+
+        @Override
+        public String toString() {
+            return "Entry{" +
+                    "priority=" + priority +
+                    ", elem=" + elem +
+                    ", isMarked=" + isMarked +
+                    ", deg=" + deg +
+                    '}';
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Entry<?> entry = (Entry<?>) o;
+
+            if (deg != entry.deg) return false;
+            if (isMarked != entry.isMarked) return false;
+            return !(elem != null ? !elem.equals(entry.elem) : entry.elem != null);
+        }
     }
 }

@@ -3,4 +3,5 @@
 *.iml
 /target
 /src/main/resources/ImportFiles
+/src/main/resources/Logging
 /src/test/resources/ImportFiles
