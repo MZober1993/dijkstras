@@ -19,8 +19,8 @@ public class EdgeImplFibo implements FiboEdge {
         checkNotNull(nodeTwo);
         checkNotNull(distance);
 
-        entryOne= new FibonacciHeap.Entry<>(nodeOne, 0);
-        entryTwo= new FibonacciHeap.Entry<>(nodeTwo, 0);
+        entryOne= new FibonacciHeap.Entry<>(nodeOne, Integer.MAX_VALUE);
+        entryTwo= new FibonacciHeap.Entry<>(nodeTwo, Integer.MAX_VALUE);
         this.distance = distance;
     }
 
@@ -36,7 +36,7 @@ public class EdgeImplFibo implements FiboEdge {
 
     @Override
     public boolean contains(Vertex vertex) {
-        return entryOne.equals(vertex) || entryTwo.equals(vertex);
+        return entryOne.getValue().equals(vertex) || entryTwo.getValue().equals(vertex);
     }
 
     @Override
@@ -47,7 +47,6 @@ public class EdgeImplFibo implements FiboEdge {
 
     @Override
     public String toString() {
-        return entryOne.getValue().getId() + "-[" + distance + "]->" + entryOne.getValue().getId();
+        return entryOne.getValue().getId() + "-[" + distance + "]->" + entryTwo.getValue().getId();
     }
-
 }

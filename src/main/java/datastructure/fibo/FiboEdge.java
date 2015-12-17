@@ -10,10 +10,10 @@ import datastructure.Vertex;
  */
 public interface FiboEdge extends Edge{
 
-    default FibonacciHeap.Entry<Vertex> getConnectedEntry(FibonacciHeap.Entry<Vertex> vertex) {
-        if (vertex.equals(getFirstEntry())) {
+    default FibonacciHeap.Entry<Vertex> getConnectedEntry(FibonacciHeap.Entry<Vertex> entry) {
+        if (entry.equals(getFirstEntry())) {
             return getSecondEntry();
-        } else if (vertex.equals(getSecondEntry())) {
+        } else if (entry.equals(getSecondEntry())) {
             return getFirstEntry();
         } else {
             return null;

@@ -1,6 +1,7 @@
 package datastructure.fibo;
 
 import com.google.common.collect.ImmutableList;
+import datastructure.Edge;
 import datastructure.EdgeBuilder;
 import datastructure.Vertex;
 import datastructure.VertexImpl;

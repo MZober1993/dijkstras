@@ -1,6 +1,6 @@
 package datastructure.fibo; /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
- *         On 14.12.15 - 18:00
+ * On 14.12.15 - 18:00
  */
 
 import java.util.ArrayList;
@@ -36,9 +36,32 @@ public final class FibonacciHeap<T> {
         }
 
         public Entry(T elem, double priority) {
-            next = previous = this;
+            next = this;
+            previous = this;
             this.elem = elem;
             this.priority = priority;
+        }
+
+        @Override
+        public String toString() {
+            return "Entry{" +
+                    "priority=" + priority +
+                    ", elem=" + elem +
+                    ", isMarked=" + isMarked +
+                    ", deg=" + deg +
+                    '}';
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Entry<?> entry = (Entry<?>) o;
+
+            if (deg != entry.deg) return false;
+            if (isMarked != entry.isMarked) return false;
+            return !(elem != null ? !elem.equals(entry.elem) : entry.elem != null);
         }
     }
 
@@ -53,7 +76,7 @@ public final class FibonacciHeap<T> {
      * priority.  Its priority must be a valid double, so you cannot set the
      * priority to NaN.
      *
-     * @param value The value to insert.
+     * @param value    The value to insert.
      * @param priority Its priority, which must be valid.
      * @return An Entry representing that element in the tree.
      */
@@ -63,10 +86,13 @@ public final class FibonacciHeap<T> {
         /* Create the entry object, which is a circularly-linked list of length
          * one.
          */
-        Entry<T> result = new Entry<T>(value, priority);
-
+        Entry<T> result = new Entry<>(value, priority);
+        if (size == 0) {
+            minimum = result;
+        } else {
         /* Merge this singleton list with the tree list. */
-        minimum = mergeLists(minimum, result);
+            minimum = mergeLists(minimum, result);
+        }
 
         ++size;
 
@@ -105,7 +131,7 @@ public final class FibonacciHeap<T> {
      * @param one The first Fibonacci heap to merge.
      * @param two The second Fibonacci heap to merge.
      * @return A new FibonacciHeap containing all of the elements of both
-     *         heaps.
+     * heaps.
      */
     public static <T> FibonacciHeap<T> merge(FibonacciHeap<T> one, FibonacciHeap<T> two) {
         FibonacciHeap<T> result = new FibonacciHeap<T>();
@@ -150,8 +176,7 @@ public final class FibonacciHeap<T> {
          */
         if (minimum.next == minimum) { // Case one
             minimum = null;
-        }
-        else { // Case two
+        } else { // Case two
             minimum.previous.next = minimum.next;
             minimum.next.previous = minimum.previous;
             minimum = minimum.next; // Arbitrary element of the root list.
@@ -207,7 +232,7 @@ public final class FibonacciHeap<T> {
             toVisit.add(curr);
 
         /* Traverse this list and perform the appropriate unioning steps. */
-        for (Entry<T> curr: toVisit) {
+        for (Entry<T> curr : toVisit) {
             /* Keep merging until a match arises. */
             while (true) {
                 /* Ensure that the list is long enough to hold an element of this
@@ -231,8 +256,8 @@ public final class FibonacciHeap<T> {
                 /* Determine which of the two trees has the smaller root, storing
                  * the two tree accordingly.
                  */
-                Entry<T> min = (other.priority < curr.priority)? other : curr;
-                Entry<T> max = (other.priority < curr.priority)? curr  : other;
+                Entry<T> min = (other.priority < curr.priority) ? other : curr;
+                Entry<T> max = (other.priority < curr.priority) ? curr : other;
 
                 /* Break max out of the root list, then merge it into min's child
                  * list.
@@ -274,19 +299,19 @@ public final class FibonacciHeap<T> {
      * IllegalArgumentException.  The new priority must be a finite double,
      * so you cannot set the priority to be NaN, or +/- infinity.  Doing
      * so also throws an IllegalArgumentException.
-     *
+     * <p>
      * It is assumed that the entry belongs in this heap.  For efficiency
      * reasons, this is not checked at runtime.
      *
-     * @param entry The element whose priority should be decreased.
+     * @param entry       The element whose priority should be decreased.
      * @param newPriority The new priority to associate with this entry.
      * @throws IllegalArgumentException If the new priority exceeds the old
-     *         priority, or if the argument is not a finite double.
+     *                                  priority, or if the argument is not a finite double.
      */
     public void decreaseKey(Entry<T> entry, double newPriority) {
         checkPriority(newPriority);
         if (newPriority > entry.priority)
-            throw new IllegalArgumentException("New priority exceeds old.");
+            throw new IllegalArgumentException("New priority: "+newPriority+",exceeds old:"+entry.priority);
 
         /* Forward this to a helper function. */
         decreaseKeyUnchecked(entry, newPriority);
@@ -294,7 +319,7 @@ public final class FibonacciHeap<T> {
 
     /**
      * Deletes this Entry from the Fibonacci heap that contains it.
-     *
+     * <p>
      * It is assumed that the entry belongs in this heap.  For efficiency
      * reasons, this is not checked at runtime.
      *
@@ -328,7 +353,7 @@ public final class FibonacciHeap<T> {
      * list in O(1) time.  Because the lists may be empty, the return value
      * is the only pointer that's guaranteed to be to an element of the
      * resulting list.
-     *
+     * <p>
      * This function assumes that one and two are the minimum elements of the
      * lists they are in, and returns a pointer to whichever is smaller.  If
      * this condition does not hold, the return value is some arbitrary pointer
@@ -344,14 +369,11 @@ public final class FibonacciHeap<T> {
          */
         if (one == null && two == null) { // Both null, resulting list is null.
             return null;
-        }
-        else if (one != null && two == null) { // Two is null, result is one.
+        } else if (one != null && two == null) { // Two is null, result is one.
             return one;
-        }
-        else if (one == null && two != null) { // One is null, result is two.
+        } else if (one == null) { // One is null, result is two.
             return two;
-        }
-        else {
+        } else {
             Entry<T> oneNext = one.next; // Cache this since we're about to overwrite it.
             one.next = two.next;
             one.next.previous = one;
@@ -367,7 +389,7 @@ public final class FibonacciHeap<T> {
      * Decreases the key of a node in the tree without doing any checking to ensure
      * that the new priority is valid.
      *
-     * @param entry The node whose key should be decreased.
+     * @param entry    The node whose key should be decreased.
      * @param priority The node's new priority.
      */
     private void decreaseKeyUnchecked(Entry<T> entry, double priority) {
@@ -379,13 +401,18 @@ public final class FibonacciHeap<T> {
          * that decreases the key to -infinity, it's guaranteed to cut the node
          * from its parent.
          */
-        if (entry.parent != null && entry.priority <= entry.parent.priority)
+        System.out.println("before cut - minimum = " + minimum);
+        System.out.println("before cut - entry = " + entry);
+        if (entry.parent != null && entry.priority <= entry.parent.priority) {
             cutNode(entry);
+        }
 
         /* If our new value is the new min, mark it as such.  Note that if we
          * ended up decreasing the key in a way that ties the current minimum
          * priority, this will change the min accordingly.
          */
+        System.out.println("after cut - minimum = " + minimum);
+        System.out.println("after cut - entry = " + entry);
         if (entry.priority <= minimum.priority)
             minimum = entry;
     }
@@ -445,5 +472,20 @@ public final class FibonacciHeap<T> {
 
         /* Clear the relocated node's parent; it's now a root. */
         entry.parent = null;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("FibonacciHeap{" + "minimum=").append(minimum).append(", size=").append(size).append("[\n");
+        Entry<T> start=minimum;
+        Entry<T> tmp=minimum.next;
+        while(tmp!=start){
+            builder.append(", ").append(tmp.toString()).append("\n");
+            tmp=tmp.next;
+        }
+        builder.append(", ").append(start.toString()).append("\n");
+        builder.append("]\n}");
+        return builder.toString();
     }
 }
