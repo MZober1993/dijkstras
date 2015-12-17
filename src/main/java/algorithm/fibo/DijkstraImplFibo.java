@@ -6,6 +6,7 @@ import datastructure.Vertex;
 import datastructure.fibo.FiboEdge;
 import datastructure.fibo.FibonacciHeap;
 import util.GraphHelper;
+import util.LoggingHelper;
 
 import java.util.Collections;
 import java.util.List;
@@ -35,7 +36,7 @@ public class DijkstraImplFibo implements Dijkstra {
         }
 
         LOGGER.info(nodes.toString());
-
+        LoggingHelper.logNewLine(LOGGER);
         while (!nodes.isEmpty()) {
             final FibonacciHeap.Entry<Vertex> smallestEntry = nodes.dequeueMin();
             final Vertex smallest = smallestEntry.getValue();
@@ -50,7 +51,9 @@ public class DijkstraImplFibo implements Dijkstra {
                 continue;
             }
             //TODO: fix dijkstra
+            LoggingHelper.logNewLine(LOGGER);
             for (FiboEdge edge : graph.<FiboEdge>getEdgesFromNode(smallest.getId())) {
+                LoggingHelper.logMinusLine(LOGGER);
                 LOGGER.info("edge = " + edge);
                 final Double alt = smallest.getG() + edge.getDistance();
                 LOGGER.info("alt = " + alt);
@@ -65,6 +68,7 @@ public class DijkstraImplFibo implements Dijkstra {
                     nodes.decreaseKey(connectedEntry, connectedVertex.getG());
                     LOGGER.info("new connectedEntry = " + connectedEntry);
                 }
+                LoggingHelper.logNewLine(LOGGER);
             }
         }
         return Collections.emptyList();

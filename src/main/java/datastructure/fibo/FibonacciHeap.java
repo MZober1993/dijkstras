@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.logging.Logger;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static util.LoggingHelper.logWarningIfNull;
 
 public final class FibonacciHeap<T> {
@@ -85,7 +86,7 @@ public final class FibonacciHeap<T> {
      * heaps.
      */
     public static <T> FibonacciHeap<T> merge(FibonacciHeap<T> one, FibonacciHeap<T> two) {
-        FibonacciHeap<T> result = new FibonacciHeap<T>();
+        FibonacciHeap<T> result = new FibonacciHeap<>();
 
         /* computes the min of the two lists, so we can store the result in
          * the minimum field of the new heap.
@@ -125,30 +126,28 @@ public final class FibonacciHeap<T> {
          * min element around the min element to remove it, then arbitrarily
          * reassign the min.
          */
+        skipEntry(minimum);
         if (minimum.next == minimum) { // Case one
             minimum = null;
         } else { // Case two
-            minimum.previous.next = minimum.next;
-            minimum.next.previous = minimum.previous;
             minimum = minimum.next; // Arbitrary element of the root list.
         }
+        /*if (consolidate(minElem)) {
+            LOGGER.info("Completely Inspection");
+        } else {
+            LOGGER.info("No Completely Inspection");
+        }*/
+        myconsolidate(minElem);
 
-        /* Next, clear the parent fields of all of the min element's children,
-         * since they're about to become roots.  Because the elements are
-         * stored in a circular list, the traversal is a bit complex.
-         */
-        if (minElem.child != null) {
-            /* Keep track of the first visited node. */
-            Entry<?> curr = minElem.child;
-            do {
-                curr.parent = null;
+        return minElem;
+    }
 
-                /* Walk to the next node, then stop if this is the node we
-                 * started at.
-                 */
-                curr = curr.next;
-            } while (curr != minElem.child);
-        }
+    /**
+     * @param minElem - temporary minimum element
+     * @return completely inspection of all entries?
+     */
+    private boolean consolidate(Entry<T> minElem) {
+        cutConnection(minElem);
 
         /* Next, splice the children of the root node into the topmost list,
          * then set minimum to point somewhere in that list.
@@ -156,14 +155,14 @@ public final class FibonacciHeap<T> {
         minimum = mergeLists(minimum, minElem.child);
 
         /* If there are no entries left, we're done. */
-        if (minimum == null) return minElem;
+        if (minimum == null) return false;
 
         /* Next, we need to coalsce all of the roots so that there is only one
          * tree of each degree.  To track trees of each size, we allocate an
          * ArrayList where the entry at position i is either null or the
          * unique tree of degree i.
          */
-        List<Entry<T>> treeTable = new ArrayList<Entry<T>>();
+        List<Entry<T>> treeTable = new ArrayList<>();
 
         /* We need to traverse the entire list, but since we're going to be
          * messing around with it we have to be careful not to break our
@@ -172,7 +171,7 @@ public final class FibonacciHeap<T> {
          * spent a bit of overhead adding all of the nodes to a list, and
          * then will visit each element of this list in order.
          */
-        List<Entry<T>> toVisit = new ArrayList<Entry<T>>();
+        List<Entry<T>> toVisit = new ArrayList<>();
 
         /* To add everything, we'll iterate across the elements until we
          * find the first element twice.  We check this by looping while the
@@ -213,8 +212,7 @@ public final class FibonacciHeap<T> {
                 /* Break max out of the root list, then merge it into min's child
                  * list.
                  */
-                max.next.previous = max.previous;
-                max.previous.next = max.next;
+                skipEntry(max);
 
                 /* Make it a singleton so that we can merge it. */
                 max.next = max.previous = max;
@@ -241,7 +239,78 @@ public final class FibonacciHeap<T> {
              */
             if (curr.priority <= minimum.priority) minimum = curr;
         }
-        return minElem;
+        return true;
+    }
+
+    private void skipEntry(Entry<T> entry) {
+        entry.next.previous = entry.previous;
+        entry.previous.next = entry.next;
+    }
+
+    private void myconsolidate(Entry<T> minElem) {
+        cutConnection(minElem);
+
+        Entry<T>[] a = new Entry[size];
+        while (minimum != null) {
+            Entry<T> x = minimum;
+            int d = minimum.deg;
+            if (x.next == x) {
+                minimum = null;
+            } else {
+                skipEntry(minimum);
+                minimum = x.next;
+                connectEntryToItSelf(x);
+            }
+            while (a[d] != null) {
+                Entry<T> y = a[d];
+                if (x.priority > y.priority) {
+                    swap(x, y);
+                }
+                mergeLists(y, x);
+                a[d] = null;
+                d++;
+            }
+            a[d] = x;
+        }
+
+        buildHeap(a);
+    }
+
+    private void buildHeap(Entry<T>[] a) {
+        minimum = null;
+        for (int i = 0; i < size; i++) {
+            if (a[i] != null) {
+                if (minimum == null) {
+                    minimum = a[i];
+                } else {
+                    cyclicListConcat(a[i]);
+                }
+                if (a[i].priority < minimum.priority) {
+                    minimum = a[i];
+                }
+            }
+        }
+    }
+
+    private void swap(Entry<T> x, Entry<T> y) {
+        Entry<T> tmp = x;
+        x = y;
+        y = tmp;
+    }
+
+    private void connectEntryToItSelf(Entry<T> entry) {
+        entry.next = entry;
+        entry.previous = entry;
+    }
+
+    private void cutConnection(Entry<T> minElem) {
+        if (minElem.child != null) {
+            Entry<?> curr = minElem.child;
+            do {
+                curr.parent = null;
+                curr = curr.next;
+            } while (curr != minElem.child);
+        }
     }
 
     /**
@@ -336,6 +405,18 @@ public final class FibonacciHeap<T> {
         }
     }
 
+    private void cyclicListConcat(Entry<T> y) {Entry<T> x = minimum;
+        checkNotNull(y);
+        if (x == null) {
+            x = y;
+        } else {
+            x.next = y;
+            y.previous = x;
+            x.next.previous = y.previous;
+            y.previous.next = x.next;
+        }
+    }
+
     /**
      * Decreases the key of a node in the tree without doing any checking to ensure
      * that the new priority is valid.
@@ -383,8 +464,7 @@ public final class FibonacciHeap<T> {
 
         /* Rewire the node's siblings around it, if it has any siblings. */
         if (entry.next != entry) { // Has siblings
-            entry.next.previous = entry.previous;
-            entry.previous.next = entry.next;
+            skipEntry(entry);
         }
 
         /* If the node is the one identified by its parent as its child,
@@ -412,6 +492,8 @@ public final class FibonacciHeap<T> {
          */
         entry.previous = entry.next = entry;
         minimum = mergeLists(minimum, entry);
+        logWarningIfNull("entry", entry, LOGGER);
+        logWarningIfNull("minimum", minimum, LOGGER);
 
         /* Mark the parent and recursively cut it if it's already been
          * marked.
@@ -491,8 +573,7 @@ public final class FibonacciHeap<T> {
             Entry<?> entry = (Entry<?>) o;
 
             if (deg != entry.deg) return false;
-            if (isMarked != entry.isMarked) return false;
-            return !(elem != null ? !elem.equals(entry.elem) : entry.elem != null);
+            return isMarked == entry.isMarked && !(elem != null ? !elem.equals(entry.elem) : entry.elem != null);
         }
     }
 }
