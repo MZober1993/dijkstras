@@ -10,8 +10,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class EdgeImplFibo implements FiboEdge {
 
-    private final FibonacciHeap.Entry<Vertex> entryOne;
-    private final FibonacciHeap.Entry<Vertex> entryTwo;
+    private final FibonacciHeapBig.Entry<Vertex> entryOne;
+    private final FibonacciHeapBig.Entry<Vertex> entryTwo;
     private Double distance;
 
     public EdgeImplFibo(Vertex nodeOne, Vertex nodeTwo, Double distance) {
@@ -19,18 +19,18 @@ public class EdgeImplFibo implements FiboEdge {
         checkNotNull(nodeTwo);
         checkNotNull(distance);
 
-        entryOne= new FibonacciHeap.Entry<>(nodeOne, Integer.MAX_VALUE);
-        entryTwo= new FibonacciHeap.Entry<>(nodeTwo, Integer.MAX_VALUE);
+        entryOne= new FibonacciHeapBig.Entry<>(nodeOne, Integer.MAX_VALUE);
+        entryTwo= new FibonacciHeapBig.Entry<>(nodeTwo, Integer.MAX_VALUE);
         this.distance = distance;
     }
 
     @Override
-    public FibonacciHeap.Entry<Vertex> getFirstEntry() {
+    public FibonacciHeapBig.Entry<Vertex> getFirstEntry() {
         return entryOne;
     }
 
     @Override
-    public FibonacciHeap.Entry<Vertex> getSecondEntry() {
+    public FibonacciHeapBig.Entry<Vertex> getSecondEntry() {
         return entryTwo;
     }
 

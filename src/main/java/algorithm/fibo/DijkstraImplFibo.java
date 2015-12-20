@@ -4,7 +4,7 @@ import algorithm.Dijkstra;
 import datastructure.Graph;
 import datastructure.Vertex;
 import datastructure.fibo.FiboEdge;
-import datastructure.fibo.FibonacciHeap;
+import datastructure.fibo.FibonacciHeapBig;
 import util.GraphHelper;
 import util.LoggingHelper;
 
@@ -24,7 +24,7 @@ public class DijkstraImplFibo implements Dijkstra {
 
     @Override
     public List<Integer> shortestPath(Graph graph, Vertex start, Vertex finish) {
-        FibonacciHeap<Vertex> nodes = new FibonacciHeap<>();
+        FibonacciHeapBig<Vertex> nodes = new FibonacciHeapBig<>();
         LOGGER.info("graph = [" + graph + "]\n, start = [" + start + "]\n, finish = [" + finish + "]\n");
         for (Vertex vertex : graph.getVertices().values()) {
             if (vertex.equals(start)) {
@@ -38,7 +38,7 @@ public class DijkstraImplFibo implements Dijkstra {
         LOGGER.info(nodes.toString());
         LoggingHelper.logNewLine(LOGGER);
         while (!nodes.isEmpty()) {
-            final FibonacciHeap.Entry<Vertex> smallestEntry = nodes.dequeueMin();
+            final FibonacciHeapBig.Entry<Vertex> smallestEntry = nodes.dequeueMin();
             final Vertex smallest = smallestEntry.getValue();
             LOGGER.info("smallestEntry = " + smallestEntry);
             LOGGER.info("smallest = " + smallest);
@@ -57,7 +57,7 @@ public class DijkstraImplFibo implements Dijkstra {
                 LOGGER.info("edge = " + edge);
                 final Double alt = smallest.getG() + edge.getDistance();
                 LOGGER.info("alt = " + alt);
-                final FibonacciHeap.Entry<Vertex> connectedEntry = edge.getConnectedEntry(smallestEntry);
+                final FibonacciHeapBig.Entry<Vertex> connectedEntry = edge.getConnectedEntry(smallestEntry);
                 LOGGER.info("old connectedEntry = " + connectedEntry);
                 final Vertex connectedVertex = connectedEntry.getValue();
                 LOGGER.info("connectedVertex = " + connectedVertex);
