@@ -99,6 +99,45 @@ public final class FibonacciHeap<T> {
         return heap1;
     }
 
+    public Entry<T> extractMin() {
+        Entry<T> entry = minimum;
+        if (entry != null) {
+            if (entry.child != null) {
+                Entry<T> curr = entry.child;
+                cutChildsAndAddToList(entry, curr);
+            }
+            cutConnection(entry);
+            if (entry == entry.getNext()) {
+                minimum = null;
+            } else {
+                minimum = entry.getNext();
+                consolidate();
+            }
+            size--;
+            return entry;
+        }
+        return null;
+    }
+
+    private void consolidate() {
+
+    }
+
+    private void cutChildsAndAddToList(Entry<T> entry, Entry<T> curr) {
+        do {
+            curr.parent = null;
+            curr = curr.next;
+            if (curr != entry.child) {
+                cyclicListConcat(entry, curr);
+            }
+        } while (curr != entry.child);
+    }
+
+    private void cutConnection(Entry<T> entry) {
+        entry.next.previous = entry.previous;
+        entry.previous.next = entry.next;
+    }
+
     /**
      * Concat the root-list of y next to x's root-list:
      * -x<=>x.next- & -y.previous<=>y- ==>
@@ -109,7 +148,7 @@ public final class FibonacciHeap<T> {
      * @return minimum
      */
     private Entry<T> cyclicListConcat(Entry<T> x, Entry<T> y) {
-        if (checkEntriesWithCorrectlyOverride(x,y)){
+        if (checkEntriesWithCorrectlyOverride(x, y)) {
             Entry<T> tmpNext = x.getNext();
 
             x.setNext(y.next);
@@ -119,12 +158,12 @@ public final class FibonacciHeap<T> {
             y.getNext().setPrevious(y);
 
             return x.getPriority() < y.getPriority() ? x : y;
-        } else{
+        } else {
             return x;
         }
     }
 
-    private boolean checkEntriesWithCorrectlyOverride(Entry<T> x,Entry<T> y ){
+    private boolean checkEntriesWithCorrectlyOverride(Entry<T> x, Entry<T> y) {
         if (x == null && y == null) {
             throw new IllegalArgumentException("both Entries are null," +
                     " in checkEntriesAndOverride");
@@ -139,19 +178,15 @@ public final class FibonacciHeap<T> {
     }
 
 
-    public Entry<T> deleteMin(FibonacciHeap<T> heap) {
-        Entry<T> entry = heap.minimum;
-        if (entry != null) {
-            if (entry.child != null) {
-                Entry<T> curr = entry.child;
-                do {
-                    curr.parent = null;
-                    curr = curr.next;
-                    cyclicListConcat(curr, entry);
-                } while (curr != entry.child);
-            }
+    private boolean checkEntries(Entry<T> x, Entry<T> y) {
+        if (x == null && y == null) {
+            return false;
+        } else if (y == null) {
+            return false;
+        } else if (x == null) {
+            return false;
         }
-        return null;
+        return true;
     }
 
     public Entry<T> getMinimum() {
@@ -160,5 +195,15 @@ public final class FibonacciHeap<T> {
 
     public Integer getSize() {
         return size;
+    }
+
+    @Override
+    public String toString() {
+
+        return "FibonacciHeap{" +
+                "minimum=" + minimum +
+                ", size=" + size +
+                ", elems="+//TODO:implement this
+                '}';
     }
 }

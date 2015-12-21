@@ -57,6 +57,13 @@ public class FibonacciHeapTest {
                 .containsExactly(2.0,3.0,1.0,2.0);
     }
 
+    @Test
+    public void testExtractMinimum(){
+        init();
+        Entry<Vertex> min1 = heap.extractMin();
+        Truth.assertThat(min1.getValue()).isEqualTo(MIN);
+    }
+
     private void init() {
         heap.insert(MIN, 1.0);
         heap.insert(new VertexImpl(2), 2.0);
