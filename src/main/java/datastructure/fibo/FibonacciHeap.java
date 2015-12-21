@@ -8,40 +8,24 @@ public final class FibonacciHeap<T> {
 
     public final static class Entry<T> {
 
-        private int deg = 0;       // Number of children
-        private boolean isMarked = false; // Whether this node is marked
-
-        private Entry<T> next;   // Next and previous elements in the list
+        private int deg = 0;
+        private boolean isMarked;
+        private Entry<T> next;
         private Entry<T> previous;
-
-        private Entry<T> parent; // Parent in the tree, if any.
-
-        private Entry<T> child;  // Child node, if any.
-
-        private T value;     // Element being stored here
-        private double priority; // Its priority
+        private Entry<T> parent;
+        private Entry<T> child;
+        private T value;
+        private double priority;
 
         public Entry(T value, double priority) {
+            deg = 0;
+            parent = null;
+            child = null;
             next = this;
             previous = this;
             this.value = value;
             this.priority = priority;
-        }
-
-        public int getDeg() {
-            return deg;
-        }
-
-        public void setDeg(int deg) {
-            this.deg = deg;
-        }
-
-        public boolean isMarked() {
-            return isMarked;
-        }
-
-        public void setMarked(boolean marked) {
-            isMarked = marked;
+            isMarked = false;
         }
 
         public Entry<T> getNext() {
@@ -60,62 +44,113 @@ public final class FibonacciHeap<T> {
             this.previous = previous;
         }
 
-        public Entry<T> getParent() {
-            return parent;
-        }
-
-        public void setParent(Entry<T> parent) {
-            this.parent = parent;
-        }
-
-        public Entry<T> getChild() {
-            return child;
-        }
-
-        public void setChild(Entry<T> child) {
-            this.child = child;
-        }
-
         public T getValue() {
             return value;
         }
 
-        public void setValue(T value) {
-            this.value = value;
+        public int getDeg() {
+            return deg;
+        }
+
+        public boolean isMarked() {
+            return isMarked;
         }
 
         public double getPriority() {
             return priority;
         }
 
-        public void setPriority(double priority) {
-            this.priority = priority;
+        @Override
+        public String toString() {
+            return "Entry{" +
+                    "priority=" + priority +
+                    ", value=" + value +
+                    ", isMarked=" + isMarked +
+                    ", deg=" + deg +
+                    '}';
         }
     }
 
-    Entry<T> minimum;
-    Integer n;
+    private Entry<T> minimum = null;
+    private Integer size = 0;
 
     public void insert(T value, Double priority) {
         Entry<T> entry = new Entry<>(value, priority);
-        if (minimum == null) {
+        cyclicListConcat(minimum, entry);
+        if (minimum == null || entry.priority < minimum.priority) {
             minimum = entry;
-        } else {
-            insertEntryLeftToMinimum(entry);
-            if (entry.getPriority() < minimum.getPriority()) {
-                minimum = entry;
-            }
         }
-        n++;
+        size++;
     }
 
-    private void insertEntryLeftToMinimum(Entry<T> entry) {
-        Entry<T> tmpNext=minimum.getNext();
 
-        entry.setNext(tmpNext);
-        tmpNext.setPrevious(entry);
+    public FibonacciHeap<T> merge(FibonacciHeap<T> heap1, FibonacciHeap<T> heap2) {
+        if (heap2.minimum != null) {
+            if (heap1.minimum == null) {
+                heap1.minimum = heap2.minimum;
+            } else {
+                cyclicListConcat(heap1.minimum, heap2.minimum);
+                if (heap2.minimum.priority < heap1.minimum.priority) {
+                    heap1.minimum = heap2.minimum;
+                }
+                heap1.size = heap1.size + heap2.size;
+            }
+        }
+        return heap1;
+    }
 
-        minimum.setNext(entry);
-        entry.setPrevious(minimum);
+    /**
+     * Concat the root-list of y next to x's root-list:
+     * -x<=>x.next- & -y.previous<=>y- ==>
+     * -x<=>y- & -y.previous<=>x.next-
+     *
+     * @param x left-heap
+     * @param y right-heap
+     */
+    private void cyclicListConcat(Entry<T> x, Entry<T> y) {
+        if (x == null) {
+            x = y;
+        } else {
+            Entry<T> tmpNext = x.getNext();
+            Entry<T> tmpPrevious = y.getPrevious();
+
+            x.setNext(y);
+            y.setPrevious(x);
+/*
+
+            tmpNext.setPrevious(tmpPrevious);
+            tmpPrevious.setNext(tmpPrevious);
+            //TODO:fix pointer-arithmetic
+*/
+
+            y.setNext(tmpNext);
+            tmpNext.setPrevious(y);
+
+            x.setPrevious(tmpPrevious);
+            tmpPrevious.setNext(x);
+        }
+    }
+
+    public Entry<T> deleteMin(FibonacciHeap<T> heap) {
+        Entry<T> entry = heap.minimum;
+        if (entry != null) {
+            if (entry.child != null) {
+                Entry<T> curr = entry.child;
+                do {
+                    curr.parent = null;
+                    curr = curr.next;
+                    cyclicListConcat(curr, entry);
+                } while (curr != entry.child);
+            }
+        }
+        return null;
+    }
+
+    public Entry<T> getMinimum() {
+        return minimum;
+    }
+
+    public Integer getSize() {
+        return size;
     }
 }
