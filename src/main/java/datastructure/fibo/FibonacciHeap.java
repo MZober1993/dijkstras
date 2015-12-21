@@ -106,30 +106,38 @@ public final class FibonacciHeap<T> {
      *
      * @param x left-heap
      * @param y right-heap
+     * @return minimum
      */
-    private void cyclicListConcat(Entry<T> x, Entry<T> y) {
-        if (x == null) {
-            x = y;
-        } else {
+    private Entry<T> cyclicListConcat(Entry<T> x, Entry<T> y) {
+        if (checkEntriesWithCorrectlyOverride(x,y)){
             Entry<T> tmpNext = x.getNext();
-            Entry<T> tmpPrevious = y.getPrevious();
 
-            x.setNext(y);
-            y.setPrevious(x);
-/*
-
-            tmpNext.setPrevious(tmpPrevious);
-            tmpPrevious.setNext(tmpPrevious);
-            //TODO:fix pointer-arithmetic
-*/
+            x.setNext(y.next);
+            x.getNext().setPrevious(x);
 
             y.setNext(tmpNext);
-            tmpNext.setPrevious(y);
+            y.getNext().setPrevious(y);
 
-            x.setPrevious(tmpPrevious);
-            tmpPrevious.setNext(x);
+            return x.getPriority() < y.getPriority() ? x : y;
+        } else{
+            return x;
         }
     }
+
+    private boolean checkEntriesWithCorrectlyOverride(Entry<T> x,Entry<T> y ){
+        if (x == null && y == null) {
+            throw new IllegalArgumentException("both Entries are null," +
+                    " in checkEntriesAndOverride");
+        } else if (y == null) {
+            y = x;
+            return false;
+        } else if (x == null) {
+            x = y;
+            return false;
+        }
+        return true;
+    }
+
 
     public Entry<T> deleteMin(FibonacciHeap<T> heap) {
         Entry<T> entry = heap.minimum;

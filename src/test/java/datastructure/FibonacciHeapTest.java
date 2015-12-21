@@ -5,6 +5,11 @@ import datastructure.fibo.FibonacciHeap;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static datastructure.fibo.FibonacciHeap.*;
+
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
  *         On 21.12.15 - 11:27
@@ -29,21 +34,27 @@ public class FibonacciHeapTest {
     @Test
     public void testNextPointer() {
         init();
+        Stream.Builder<FibonacciHeap.Entry<Vertex>> builder = Stream.builder();
         FibonacciHeap.Entry<Vertex> tmp = heap.getMinimum();
         for (int i = 0; i < 4; i++) {
             tmp = tmp.getNext();
-            System.out.println(tmp);
+            builder.add(tmp);
         }
+        Truth.assertThat(builder.build().map(Entry::getPriority).collect(Collectors.toList()))
+                .containsExactly(3.0,2.0,1.0,3.0);
     }
 
     @Test
     public void testPreviousPointer() {
         init();
+        Stream.Builder<FibonacciHeap.Entry<Vertex>> builder = Stream.builder();
         FibonacciHeap.Entry<Vertex> tmp = heap.getMinimum();
         for (int i = 0; i < 4; i++) {
             tmp = tmp.getPrevious();
-            System.out.println(tmp);
+            builder.add(tmp);
         }
+        Truth.assertThat(builder.build().map(Entry::getPriority).collect(Collectors.toList()))
+                .containsExactly(2.0,3.0,1.0,2.0);
     }
 
     private void init() {
