@@ -52,12 +52,36 @@ public final class FibonacciHeap<T> {
             return deg;
         }
 
+        public void setDeg(int deg) {
+            this.deg = deg;
+        }
+
         public boolean isMarked() {
             return isMarked;
         }
 
+        public void setMarked(boolean marked) {
+            isMarked = marked;
+        }
+
         public double getPriority() {
             return priority;
+        }
+
+        public Entry<T> getParent() {
+            return parent;
+        }
+
+        public void setParent(Entry<T> parent) {
+            this.parent = parent;
+        }
+
+        public Entry<T> getChild() {
+            return child;
+        }
+
+        public void setChild(Entry<T> child) {
+            this.child = child;
         }
 
         @Override
@@ -120,7 +144,62 @@ public final class FibonacciHeap<T> {
     }
 
     private void consolidate() {
+        int sizeOfArray = (int) Math.ceil(Math.log(size)) + 1;
+        Entry<T>[] degreeVertices = new Entry[sizeOfArray];
+        Entry<T> current = minimum;
 
+        reorganizeRootList(degreeVertices, current);
+        buildNewRootList(degreeVertices);
+    }
+
+    private void reorganizeRootList(Entry<T>[] degreeVertices, Entry<T> current) {
+        Entry<T> tmpDegreeVertex;
+        do {
+            if (current.getNext() != null) {
+                Integer d = current.getDeg();
+                tmpDegreeVertex = degreeVertices[d];
+                while (degreeVertices[d] != null) {
+                    if (current.priority > tmpDegreeVertex.priority) {
+                        swap(current, degreeVertices, d);
+                    }
+                    tmpDegreeVertex.setMarked(false);
+                    current.setChild(tmpDegreeVertex);
+                    tmpDegreeVertex.setParent(current);
+                    current.setDeg(current.getDeg() + 1);
+                    System.out.println(d);
+                    degreeVertices[d] = null;
+                    d++;
+                }
+
+                current = current.getNext();
+                cutConnection(current.getPrevious());
+                degreeVertices[d] = current.getPrevious();
+            }
+        } while (current != minimum);
+        minimum = null;
+    }
+
+    private void buildNewRootList(Entry<T>[] degreeVertices) {
+        Entry<T> tmpDegreeVertex;
+        for (int i = 0; i < Math.log(size); i++) {
+            tmpDegreeVertex = degreeVertices[i];
+            if (tmpDegreeVertex != null) {
+                if (minimum == null) {
+                    minimum = tmpDegreeVertex;
+                } else {
+                    cyclicListConcat(minimum, tmpDegreeVertex);
+                }
+                if (tmpDegreeVertex.priority < minimum.priority) {
+                    minimum = tmpDegreeVertex;
+                }
+            }
+        }
+    }
+
+    private void swap(Entry<T> current, Entry<T>[] degreeVertices, Integer d) {
+        Entry<T> tmp = current;
+        current = degreeVertices[d];
+        degreeVertices[d] = tmp;
     }
 
     private void cutChildsAndAddToList(Entry<T> entry, Entry<T> curr) {
@@ -157,7 +236,7 @@ public final class FibonacciHeap<T> {
             y.setNext(tmpNext);
             y.getNext().setPrevious(y);
 
-            return x.getPriority() < y.getPriority() ? x : y;
+            return x.priority < y.priority ? x : y;
         } else {
             return x;
         }
@@ -199,11 +278,28 @@ public final class FibonacciHeap<T> {
 
     @Override
     public String toString() {
+        StringBuilder builder = new StringBuilder();
+        heapLinesToString(builder, minimum, 0);
 
         return "FibonacciHeap{" +
                 "minimum=" + minimum +
                 ", size=" + size +
-                ", elems="+//TODO:implement this
+                "\n, elems=" + builder.toString() +
                 '}';
+    }
+
+    private void heapLinesToString(StringBuilder builder, Entry<T> entry, Integer line) {
+        Entry<T> current = entry;
+        do {
+            if (current.getNext() != null) {
+                current = current.getNext();
+                builder.append(" ").append(current.priority);
+                if (current.child != null) {
+                    builder.append(" >");
+                    heapLinesToString(builder, current.child, line);
+                    builder.append(" -");
+                }
+            }
+        } while (current != entry);
     }
 }
