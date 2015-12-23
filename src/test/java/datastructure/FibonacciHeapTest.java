@@ -63,11 +63,14 @@ public class FibonacciHeapTest {
         Entry<Vertex> child1 = new Entry<>(new VertexImpl(4), 4.0);
         Entry<Vertex> child2 = new Entry<>(new VertexImpl(5), 5.0);
         Entry<Vertex> nextToChild1 = new Entry<>(new VertexImpl(6), 6.0);
-        heap.getMinimum().getNext().setChild(child1);
-        heap.getMinimum().getNext().getNext().setChild(child2);
+        Entry<Vertex> next = heap.getMinimum().getNext();
+        next.setChild(child1);
+        next.setDeg(next.getDeg()+1);
+        next.getNext().setChild(child2);
+        next.getNext().setDeg(next.getNext().getDeg()+1);
+        System.out.println(heap);
         Entry<Vertex> min1 = heap.extractMin();
         Truth.assertThat(min1.getValue()).isEqualTo(MIN);
-        System.out.println(heap);
     }
 
     private void init() {

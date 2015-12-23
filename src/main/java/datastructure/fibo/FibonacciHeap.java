@@ -1,5 +1,7 @@
 package datastructure.fibo;
 
+import java.util.stream.Stream;
+
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
  *         On 20.12.15 - 17:03
@@ -137,46 +139,45 @@ public final class FibonacciHeap<T> {
                 minimum = entry.getNext();
                 consolidate();
             }
-            size--;
+            this.size--;
             return entry;
         }
         return null;
     }
 
     private void consolidate() {
-        int sizeOfArray = (int) Math.ceil(Math.log(size)) + 1;
+        int sizeOfArray = (int) Math.ceil(Math.log(size)) + 2;
         Entry<T>[] degreeVertices = new Entry[sizeOfArray];
+        for (int i = 0; i < sizeOfArray; i++) {
+            degreeVertices[i] = null;
+        }
         Entry<T> current = minimum;
 
-        reorganizeRootList(degreeVertices, current);
-        buildNewRootList(degreeVertices);
-    }
-
-    private void reorganizeRootList(Entry<T>[] degreeVertices, Entry<T> current) {
-        Entry<T> tmpDegreeVertex;
         do {
             if (current.getNext() != null) {
                 Integer d = current.getDeg();
-                tmpDegreeVertex = degreeVertices[d];
                 while (degreeVertices[d] != null) {
-                    if (current.priority > tmpDegreeVertex.priority) {
+                    if (current.priority > degreeVertices[d].priority) {
                         swap(current, degreeVertices, d);
                     }
-                    tmpDegreeVertex.setMarked(false);
-                    current.setChild(tmpDegreeVertex);
-                    tmpDegreeVertex.setParent(current);
+                    degreeVertices[d].setMarked(false);
+                    current.setChild(degreeVertices[d]);
+                    degreeVertices[d].setParent(current);
                     current.setDeg(current.getDeg() + 1);
                     System.out.println(d);
                     degreeVertices[d] = null;
-                    d++;
+                    if (d < sizeOfArray) {
+                        d++;
+                    }
                 }
 
+                degreeVertices[d] = current;
                 current = current.getNext();
                 cutConnection(current.getPrevious());
-                degreeVertices[d] = current.getPrevious();
             }
-        } while (current != minimum);
+        } while (current.getNext() != current);
         minimum = null;
+        buildNewRootList(degreeVertices);
     }
 
     private void buildNewRootList(Entry<T>[] degreeVertices) {
