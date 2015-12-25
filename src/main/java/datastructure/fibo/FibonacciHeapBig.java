@@ -187,12 +187,11 @@ public final class FibonacciHeapBig<T> {
         } else { // Case two
             minimum = minimum.next; // Arbitrary element of the root list.
         }
-        /*if (consolidate(minElem)) {
+        if (consolidate(minElem)) {
             LOGGER.info("Completely Inspection");
         } else {
             LOGGER.info("No Completely Inspection");
-        }*/
-        myconsolidate(minElem);
+        }
 
         return minElem;
     }
@@ -302,50 +301,6 @@ public final class FibonacciHeapBig<T> {
         entry.previous.next = entry.next;
     }
 
-    private void myconsolidate(Entry<T> minElem) {
-        cutConnection(minElem);
-
-        Entry<T>[] a = new Entry[size];
-        while (minimum != null) {
-            Entry<T> x = minimum;
-            int d = minimum.deg;
-            if (x.next == x) {
-                minimum = null;
-            } else {
-                skipEntry(minimum);
-                minimum = x.next;
-                connectEntryToItSelf(x);
-            }
-            while (a[d] != null) {
-                Entry<T> y = a[d];
-                if (x.priority > y.priority) {
-                    swap(x, y);
-                }
-                mergeLists(y, x);
-                a[d] = null;
-                d++;
-            }
-            a[d] = x;
-        }
-
-        buildHeap(a);
-    }
-
-    private void buildHeap(Entry<T>[] a) {
-        minimum = null;
-        for (int i = 0; i < size; i++) {
-            if (a[i] != null) {
-                if (minimum == null) {
-                    minimum = a[i];
-                } else {
-                    cyclicListConcat(a[i]);
-                }
-                if (a[i].priority < minimum.priority) {
-                    minimum = a[i];
-                }
-            }
-        }
-    }
 
     private void swap(Entry<T> x, Entry<T> y) {
         Entry<T> tmp = x;

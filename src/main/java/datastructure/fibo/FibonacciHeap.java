@@ -8,107 +8,20 @@ import java.util.stream.Stream;
  */
 public final class FibonacciHeap<T> {
 
-    public final static class Entry<T> {
-
-        private int deg = 0;
-        private boolean isMarked;
-        private Entry<T> next;
-        private Entry<T> previous;
-        private Entry<T> parent;
-        private Entry<T> child;
-        private T value;
-        private double priority;
-
-        public Entry(T value, double priority) {
-            deg = 0;
-            parent = null;
-            child = null;
-            next = this;
-            previous = this;
-            this.value = value;
-            this.priority = priority;
-            isMarked = false;
-        }
-
-        public Entry<T> getNext() {
-            return next;
-        }
-
-        public void setNext(Entry<T> next) {
-            this.next = next;
-        }
-
-        public Entry<T> getPrevious() {
-            return previous;
-        }
-
-        public void setPrevious(Entry<T> previous) {
-            this.previous = previous;
-        }
-
-        public T getValue() {
-            return value;
-        }
-
-        public int getDeg() {
-            return deg;
-        }
-
-        public void setDeg(int deg) {
-            this.deg = deg;
-        }
-
-        public boolean isMarked() {
-            return isMarked;
-        }
-
-        public void setMarked(boolean marked) {
-            isMarked = marked;
-        }
-
-        public double getPriority() {
-            return priority;
-        }
-
-        public Entry<T> getParent() {
-            return parent;
-        }
-
-        public void setParent(Entry<T> parent) {
-            this.parent = parent;
-        }
-
-        public Entry<T> getChild() {
-            return child;
-        }
-
-        public void setChild(Entry<T> child) {
-            this.child = child;
-        }
-
-        @Override
-        public String toString() {
-            return "Entry{" +
-                    "priority=" + priority +
-                    ", value=" + value +
-                    ", isMarked=" + isMarked +
-                    ", deg=" + deg +
-                    '}';
-        }
-    }
-
     private Entry<T> minimum = null;
     private Integer size = 0;
 
     public void insert(T value, Double priority) {
-        Entry<T> entry = new Entry<>(value, priority);
+        insert(new Entry<>(value, priority));
+    }
+
+    public void insert(Entry<T> entry) {
         cyclicListConcat(minimum, entry);
-        if (minimum == null || entry.priority < minimum.priority) {
+        if (minimum == null || entry.getPriority() < minimum.getPriority()) {
             minimum = entry;
         }
         size++;
     }
-
 
     public FibonacciHeap<T> merge(FibonacciHeap<T> heap1, FibonacciHeap<T> heap2) {
         if (heap2.minimum != null) {
@@ -116,7 +29,7 @@ public final class FibonacciHeap<T> {
                 heap1.minimum = heap2.minimum;
             } else {
                 cyclicListConcat(heap1.minimum, heap2.minimum);
-                if (heap2.minimum.priority < heap1.minimum.priority) {
+                if (heap2.minimum.getPriority() < heap1.minimum.getPriority()) {
                     heap1.minimum = heap2.minimum;
                 }
                 heap1.size = heap1.size + heap2.size;
@@ -128,8 +41,8 @@ public final class FibonacciHeap<T> {
     public Entry<T> extractMin() {
         Entry<T> entry = minimum;
         if (entry != null) {
-            if (entry.child != null) {
-                Entry<T> curr = entry.child;
+            if (entry.getChild() != null) {
+                Entry<T> curr = entry.getChild();
                 cutChildsAndAddToList(entry, curr);
             }
             cutConnection(entry);
@@ -146,76 +59,83 @@ public final class FibonacciHeap<T> {
     }
 
     private void consolidate() {
-        int sizeOfArray = (int) Math.ceil(Math.log(size)) + 2;
+        int sizeOfArray = (int) Math.ceil(Math.log(size)) + 1;
+        Entry<T>[] degreeVertices = initDegreeVertices(sizeOfArray);
+
+        boolean isNotVisit = true;
+        for (Entry<T> cur = minimum; cur != cur.getNext() || isNotVisit; cur = cur.getNext()) {
+            if (cur == cur.getNext()) {
+                isNotVisit = false;
+            }
+            Integer d = cur.getDeg();
+            while (degreeVertices[d] != null) {
+                if (cur.getPriority() > degreeVertices[d].getPriority()) {
+                    swap(cur, degreeVertices[d]);
+                }
+                degreeVertices[d].setMarked(false);
+                if(degreeVertices[d].getNext()==cur||degreeVertices[d].getPrevious()==cur){
+                    degreeVertices[d].setNext(degreeVertices[d]);
+                    degreeVertices[d].setPrevious(degreeVertices[d]);
+                    cyclicListConcat(degreeVertices[d],cur.getChild());
+                }
+                //TODO: link degreeVertices[d] with child of current to a rootlist under the root
+                cur.setChild(degreeVertices[d]);
+                degreeVertices[d].setParent(cur);
+                cur.setDeg(cur.getDeg() + 1);
+                degreeVertices[d] = null;
+                d++;
+            }
+
+            degreeVertices[d] = cur;
+            cutConnection(cur);
+        }
+        minimum = null;
+
+        calcMinimum(sizeOfArray, degreeVertices);
+    }
+
+    public void swap(Entry<T> entryOne, Entry<T> entryTwo) {
+        Entry<T> tmp = entryOne;
+        entryOne = entryTwo;
+        entryTwo = tmp;
+    }
+
+    private Entry<T>[] initDegreeVertices(int sizeOfArray) {
         Entry<T>[] degreeVertices = new Entry[sizeOfArray];
         for (int i = 0; i < sizeOfArray; i++) {
             degreeVertices[i] = null;
         }
-        Entry<T> current = minimum;
-
-        do {
-            if (current.getNext() != null) {
-                Integer d = current.getDeg();
-                while (degreeVertices[d] != null) {
-                    if (current.priority > degreeVertices[d].priority) {
-                        swap(current, degreeVertices, d);
-                    }
-                    degreeVertices[d].setMarked(false);
-                    current.setChild(degreeVertices[d]);
-                    degreeVertices[d].setParent(current);
-                    current.setDeg(current.getDeg() + 1);
-                    System.out.println(d);
-                    degreeVertices[d] = null;
-                    if (d < sizeOfArray) {
-                        d++;
-                    }
-                }
-
-                degreeVertices[d] = current;
-                current = current.getNext();
-                cutConnection(current.getPrevious());
-            }
-        } while (current.getNext() != current);
-        minimum = null;
-        buildNewRootList(degreeVertices);
+        return degreeVertices;
     }
 
-    private void buildNewRootList(Entry<T>[] degreeVertices) {
-        Entry<T> tmpDegreeVertex;
-        for (int i = 0; i < Math.log(size); i++) {
-            tmpDegreeVertex = degreeVertices[i];
-            if (tmpDegreeVertex != null) {
+    private void calcMinimum(int sizeOfArray, Entry<T>[] degreeVertices) {
+        for (int i = 0; i < sizeOfArray; i++) {
+            if (degreeVertices[i] != null) {
                 if (minimum == null) {
-                    minimum = tmpDegreeVertex;
+                    minimum = degreeVertices[i];
                 } else {
-                    cyclicListConcat(minimum, tmpDegreeVertex);
+                    cyclicListConcat(minimum, degreeVertices[i]);
                 }
-                if (tmpDegreeVertex.priority < minimum.priority) {
-                    minimum = tmpDegreeVertex;
+                if (degreeVertices[i].getPriority() < minimum.getPriority()) {
+                    minimum = degreeVertices[i];
                 }
             }
         }
     }
 
-    private void swap(Entry<T> current, Entry<T>[] degreeVertices, Integer d) {
-        Entry<T> tmp = current;
-        current = degreeVertices[d];
-        degreeVertices[d] = tmp;
-    }
-
     private void cutChildsAndAddToList(Entry<T> entry, Entry<T> curr) {
         do {
-            curr.parent = null;
-            curr = curr.next;
-            if (curr != entry.child) {
+            curr.setParent(null);
+            curr = curr.getNext();
+            if (curr != entry.getChild()) {
                 cyclicListConcat(entry, curr);
             }
-        } while (curr != entry.child);
+        } while (curr != entry.getChild());
     }
 
-    private void cutConnection(Entry<T> entry) {
-        entry.next.previous = entry.previous;
-        entry.previous.next = entry.next;
+    public void cutConnection(Entry<T> entry) {
+        entry.getNext().setPrevious(entry.getPrevious());
+        entry.getPrevious().setNext(entry.getNext());
     }
 
     /**
@@ -231,13 +151,13 @@ public final class FibonacciHeap<T> {
         if (checkEntriesWithCorrectlyOverride(x, y)) {
             Entry<T> tmpNext = x.getNext();
 
-            x.setNext(y.next);
+            x.setNext(y.getNext());
             x.getNext().setPrevious(x);
 
             y.setNext(tmpNext);
             y.getNext().setPrevious(y);
 
-            return x.priority < y.priority ? x : y;
+            return x.getPriority() < y.getPriority() ? x : y;
         } else {
             return x;
         }
@@ -280,27 +200,24 @@ public final class FibonacciHeap<T> {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        heapLinesToString(builder, minimum, 0);
-
         return "FibonacciHeap{" +
                 "minimum=" + minimum +
                 ", size=" + size +
-                "\n, elems=" + builder.toString() +
+                "\n, elems=" + rootListToString(builder) +
                 '}';
     }
 
-    private void heapLinesToString(StringBuilder builder, Entry<T> entry, Integer line) {
-        Entry<T> current = entry;
-        do {
-            if (current.getNext() != null) {
-                current = current.getNext();
-                builder.append(" ").append(current.priority);
-                if (current.child != null) {
-                    builder.append(" >");
-                    heapLinesToString(builder, current.child, line);
-                    builder.append(" -");
-                }
-            }
-        } while (current != entry);
+    private String rootListToString(StringBuilder builder) {
+        addMemberToStream(Stream.builder(),minimum).build().map(x->x.toString())
+                .forEach(x->builder.append(x));
+        return builder.toString();
+    }
+
+    private Stream.Builder<Entry<T>> addMemberToStream(Stream.Builder<Entry<T>> builder, Entry<T> entry) {
+        builder.add(entry);
+        for (Entry<T> current = entry.getNext(); current != entry; current.getNext()) {
+            builder.add(current);
+        }
+        return builder;
     }
 }
