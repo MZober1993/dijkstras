@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import datastructure.fibo.Entry;
+import util.LoggingHelper;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
@@ -20,8 +21,12 @@ public class FibonacciHeapTest {
     public static final Entry<Vertex> MIN = new Entry<>(new VertexImpl(1), 1.0);
     public static final Entry<Vertex> NEW_MINIMUM = new Entry<>(new VertexImpl(2), 2.0);
     public static final Entry<Vertex> NEIGHBOR_ENTRY_THREE = new Entry<>(new VertexImpl(3), 3.0);
+    public static final Entry<Vertex> NEIGHBOR_ENTRY_SIX = new Entry<>(new VertexImpl(6), 6.0);
+    public static final Entry<Vertex> NEIGHBOR_ENTRY_SEVEN = new Entry<>(new VertexImpl(7), 7.0);
     public static final Entry<Vertex> CHILD_1 = new Entry<>(new VertexImpl(4), 4.0);
     public static final Entry<Vertex> CHILD_2 = new Entry<>(new VertexImpl(5), 5.0);
+    public static final Entry<Vertex> CHILD_3 = new Entry<>(new VertexImpl(8), 8.0);
+    public static final Entry<Vertex> CHILD_4 = new Entry<>(new VertexImpl(9), 9.0);
     private FibonacciHeap<Vertex> heap;
 
     @Before
@@ -76,7 +81,7 @@ public class FibonacciHeapTest {
     }
 
     @Test
-    public void testExtractMinimumWithMedium() {
+    public void testExtractMinimumWithDegTwo() {
         mediumSample();
 
         Entry<Vertex> actualMin = heap.extractMin();
@@ -86,8 +91,30 @@ public class FibonacciHeapTest {
     }
 
     @Test
-    public void testStructureAfterExtractMinimumWithMedium() {
+    public void testStructureAfterExtractMinimumWithDegTwo() {
         mediumSample();
+        heap.extractMin();
+
+        Truth.assertThat(NEW_MINIMUM.getChild()).isEqualTo(NEIGHBOR_ENTRY_THREE);
+        Truth.assertThat(NEIGHBOR_ENTRY_THREE.getChild()).isEqualTo(CHILD_1);
+        Truth.assertThat(NEIGHBOR_ENTRY_THREE.getNext()).isEqualTo(CHILD_2);
+        Truth.assertThat(NEIGHBOR_ENTRY_THREE.getPrevious()).isEqualTo(CHILD_2);
+        Truth.assertThat(CHILD_1.getParent()).isEqualTo(NEIGHBOR_ENTRY_THREE);
+        Truth.assertThat(CHILD_2.getParent()).isEqualTo(NEW_MINIMUM);
+    }
+
+    @Test
+    public void testExtractMinimumWithDegThree() {
+        degThreeSample();
+        Entry<Vertex> actualMin = heap.extractMin();
+
+        Truth.assertThat(actualMin).isEqualTo(MIN);
+        Truth.assertThat(heap.getMinimum()).isEqualTo(NEW_MINIMUM);
+    }
+
+    @Test
+    public void testStructureAfterExtractMinimumWithDegThree() {
+        degThreeSample();
         heap.extractMin();
 
         Truth.assertThat(NEW_MINIMUM.getChild()).isEqualTo(NEIGHBOR_ENTRY_THREE);
@@ -130,12 +157,32 @@ public class FibonacciHeapTest {
         heap.insert(NEIGHBOR_ENTRY_THREE);
         Entry<Vertex> next = heap.getMinimum().getNext();
 
-        next.setChild(CHILD_1);
-        next.setDeg(next.getDeg() + 1);
-        CHILD_1.setParent(next);
+        connectParent(next,CHILD_1);
 
-        next.getNext().setChild(CHILD_2);
-        next.getNext().setDeg(next.getNext().getDeg() + 1);
-        CHILD_2.setParent(next.getNext());
+        connectParent(next.getNext(),CHILD_2);
+    }
+
+    private void degThreeSample() {
+        heap.insert(MIN);
+        heap.insert(NEW_MINIMUM);
+        heap.insert(NEIGHBOR_ENTRY_THREE);
+        heap.insert(NEIGHBOR_ENTRY_SIX);
+        heap.insert(NEIGHBOR_ENTRY_SEVEN);
+        Entry<Vertex> next = heap.getMinimum().getNext();
+
+        connectParent(next,CHILD_1);
+
+        connectParent(next.getNext(),CHILD_2);
+
+        connectParent(NEIGHBOR_ENTRY_SIX,CHILD_3);
+
+        connectParent(NEIGHBOR_ENTRY_SEVEN,CHILD_4);
+
+    }
+
+    private void connectParent(Entry<Vertex> parent,Entry<Vertex> child) {
+        parent.setChild(child);
+        parent.setDeg(parent.getDeg() + 1);
+        child.setParent(parent);
     }
 }

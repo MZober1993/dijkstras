@@ -59,7 +59,7 @@ public final class FibonacciHeap<T> {
     }
 
     private void consolidate() {
-        int sizeOfArray = (int) Math.ceil(Math.log(size)) + 1;
+        int sizeOfArray = (int) Math.ceil(Math.log(size)) + size / 2;
         Entry<T>[] degreeVertices = initDegreeVertices(sizeOfArray);
 
         boolean isNotVisit = true;
@@ -73,12 +73,11 @@ public final class FibonacciHeap<T> {
                     swap(cur, degreeVertices[d]);
                 }
                 degreeVertices[d].setMarked(false);
-                if(degreeVertices[d].getNext()==cur||degreeVertices[d].getPrevious()==cur){
+                if (degreeVertices[d].getNext() == cur || degreeVertices[d].getPrevious() == cur) {
                     degreeVertices[d].setNext(degreeVertices[d]);
                     degreeVertices[d].setPrevious(degreeVertices[d]);
-                    cyclicListConcat(degreeVertices[d],cur.getChild());
+                    cyclicListConcat(degreeVertices[d], cur.getChild());
                 }
-                //TODO: link degreeVertices[d] with child of current to a rootlist under the root
                 cur.setChild(degreeVertices[d]);
                 degreeVertices[d].setParent(cur);
                 cur.setDeg(cur.getDeg() + 1);
@@ -208,8 +207,8 @@ public final class FibonacciHeap<T> {
     }
 
     private String rootListToString(StringBuilder builder) {
-        addMemberToStream(Stream.builder(),minimum).build().map(x->x.toString())
-                .forEach(x->builder.append(x));
+        addMemberToStream(Stream.builder(), minimum).build().map(x -> x.toString())
+                .forEach(x -> builder.append(x));
         return builder.toString();
     }
 
