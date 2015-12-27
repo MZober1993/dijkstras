@@ -51,4 +51,11 @@ public class MathHelper {
     public static int calculateRandomNodeId(Integer low, Integer high) {
         return (int) (Math.random() * (high - low)) + low;
     }
+
+    public static int log2(int x) {
+        if (x==0){
+            return 0;
+        }
+        return (int) Math.ceil(Math.log(x) * 1.000000000001 / Math.log(2));
+    }
 }

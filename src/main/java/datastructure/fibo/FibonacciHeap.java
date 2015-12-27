@@ -1,5 +1,7 @@
 package datastructure.fibo;
 
+import util.MathHelper;
+
 import java.util.stream.Stream;
 
 /**
@@ -38,7 +40,7 @@ public final class FibonacciHeap<T> {
         return heap1;
     }
 
-    public Entry<T> extractMin() {
+    /*public Entry<T> extractMin() {
         Entry<T> entry = minimum;
         if (entry != null) {
             if (entry.getChild() != null) {
@@ -56,70 +58,119 @@ public final class FibonacciHeap<T> {
             return entry;
         }
         return null;
+    }*/
+
+    public Entry<T> extractMin() {
+        Entry<T> entry = minimum;
+        if (entry != null) {
+            //add all childs of minimum to the parent list
+            for (int i = 0; i < entry.getDeg(); i++) {
+                Entry<T> child = entry.getChild();
+                if (child == child.getNext()) {
+                    entry.setChild(null);
+                } else {
+                    entry.setChild(child.getNext());
+                    child.getNext().setPrevious(child.getPrevious());
+                    child.getPrevious().setNext(child.getNext());
+                }
+                child.setParent(null);
+                child.setNext(entry);
+                child.setPrevious(entry.getPrevious());
+                entry.getPrevious().setNext(child);
+                entry.setPrevious(child);
+            }
+
+            //remove the min
+            if (entry == entry.getNext()) {
+                minimum = null;
+            } else {
+                entry.getNext().setPrevious(entry.getPrevious());
+                entry.getPrevious().setNext(entry.getNext());
+                minimum = entry.getNext();
+            }
+            size--;
+            if (size > 0) {
+                consolidate();
+            }
+            return entry;
+        }
+        return null;
     }
 
     private void consolidate() {
-        int sizeOfArray = (int) Math.ceil(Math.log(size)) + size / 2;
-        Entry<T>[] degreeVertices = initDegreeVertices(sizeOfArray);
-
-        boolean isNotVisit = true;
-        for (Entry<T> cur = minimum; cur != cur.getNext() || isNotVisit; cur = cur.getNext()) {
-            if (cur == cur.getNext()) {
-                isNotVisit = false;
-            }
-            Integer d = cur.getDeg();
-            while (degreeVertices[d] != null) {
-                if (cur.getPriority() > degreeVertices[d].getPriority()) {
-                    swap(cur, degreeVertices[d]);
-                }
-                degreeVertices[d].setMarked(false);
-                if (degreeVertices[d].getNext() == cur || degreeVertices[d].getPrevious() == cur) {
-                    degreeVertices[d].setNext(degreeVertices[d]);
-                    degreeVertices[d].setPrevious(degreeVertices[d]);
-                    cyclicListConcat(degreeVertices[d], cur.getChild());
-                }
-                cur.setChild(degreeVertices[d]);
-                degreeVertices[d].setParent(cur);
-                cur.setDeg(cur.getDeg() + 1);
-                degreeVertices[d] = null;
-                d++;
-            }
-
-            degreeVertices[d] = cur;
-            cutConnection(cur);
+        System.out.println(size);
+        int degreeSize = 2 * MathHelper.log2(size + 1) + 1;
+        Entry<T>[] degree = new Entry[degreeSize];
+        for (int i = 0; i < degreeSize; i++) {
+            degree[i] = null;
         }
-        minimum = null;
 
-        calcMinimum(sizeOfArray, degreeVertices);
+        Entry<T> element = minimum;
+        Entry<T> next;
+        do {
+            if (element == element.getNext()) {
+                next = null;
+            } else {
+                next = element.getNext();
+            }
+            element.getNext().setPrevious(element.getPrevious());
+            element.getPrevious().setNext(element.getNext());
+            element.setNext(element);
+            element.setPrevious(element);
+
+            int currentDegree = element.getDeg();
+            while (degree[currentDegree] != null) {
+                if (element.getPriority() > degree[currentDegree].getPriority()) {
+                    swap(element, degree[currentDegree]);
+                }
+                //todo:make this easier
+                //degree[currentDegree] becomes child of element
+                if (element.getChild() == null) {
+                    element.setChild(degree[currentDegree]);
+                    degree[currentDegree].setParent(element);
+                } else {
+                    degree[currentDegree].setParent(element);
+                    degree[currentDegree].setNext(element.getChild());
+                    degree[currentDegree].setPrevious(element.getChild().getPrevious());
+                    degree[currentDegree].getNext().setPrevious(degree[currentDegree]);
+                    degree[currentDegree].getPrevious().setNext(degree[currentDegree]);
+                }
+
+                element.setDeg(element.getDeg() + 1);
+                degree[currentDegree].setMarked(false);
+                degree[currentDegree] = null;
+                currentDegree++;
+            }
+            degree[currentDegree] = element;
+            element = next;
+        } while (element != null);
+
+        //update minimum
+        minimum = null;
+        for (int i = 0; i < degreeSize; i++) {
+            if (degree[i] != null) {
+                if (minimum == null) {
+                    //heap empty
+                    minimum = degree[i];
+                    degree[i].setNext(degree[i]);
+                    degree[i].setPrevious(degree[i]);
+                } else {
+                    degree[i].setNext(minimum);
+                    degree[i].setPrevious(minimum.getPrevious());
+                    minimum.getPrevious().setNext(degree[i]);
+                    minimum.setPrevious(degree[i]);
+                    if (degree[i].getPriority() < minimum.getPriority()) {
+                        minimum = degree[i];
+                    }
+                }
+            }
+        }
     }
 
     public void swap(Entry<T> entryOne, Entry<T> entryTwo) {
         Entry<T> tmp = entryOne;
         entryOne = entryTwo;
         entryTwo = tmp;
-    }
-
-    private Entry<T>[] initDegreeVertices(int sizeOfArray) {
-        Entry<T>[] degreeVertices = new Entry[sizeOfArray];
-        for (int i = 0; i < sizeOfArray; i++) {
-            degreeVertices[i] = null;
-        }
-        return degreeVertices;
-    }
-
-    private void calcMinimum(int sizeOfArray, Entry<T>[] degreeVertices) {
-        for (int i = 0; i < sizeOfArray; i++) {
-            if (degreeVertices[i] != null) {
-                if (minimum == null) {
-                    minimum = degreeVertices[i];
-                } else {
-                    cyclicListConcat(minimum, degreeVertices[i]);
-                }
-                if (degreeVertices[i].getPriority() < minimum.getPriority()) {
-                    minimum = degreeVertices[i];
-                }
-            }
-        }
     }
 
     private void cutChildsAndAddToList(Entry<T> entry, Entry<T> curr) {
