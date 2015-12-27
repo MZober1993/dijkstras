@@ -98,8 +98,7 @@ public final class FibonacciHeap<T> {
     }
 
     private void consolidate() {
-        System.out.println(size);
-        int degreeSize = 2 * MathHelper.log2(size + 1) + 1;
+        int degreeSize = 2 * MathHelper.log2(size) + 1;
         Entry<T>[] degree = new Entry[degreeSize];
         for (int i = 0; i < degreeSize; i++) {
             degree[i] = null;

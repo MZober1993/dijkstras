@@ -1,15 +1,15 @@
 package datastructure;
 
 import com.google.common.truth.Truth;
+import datastructure.fibo.Entry;
 import datastructure.fibo.FibonacciHeap;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import datastructure.fibo.Entry;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
@@ -17,28 +17,29 @@ import datastructure.fibo.Entry;
  */
 public class FibonacciHeapTest {
 
-    private Entry<Vertex> min;
-    private Entry<Vertex> newMinimum;
-    private Entry<Vertex> neighborEntryThree;
-    private Entry<Vertex> neighborEntrySix;
-    private Entry<Vertex> neighborEntrySeven;
-    private Entry<Vertex> child1;
-    private Entry<Vertex> child2;
-    private Entry<Vertex> child3;
-    private Entry<Vertex> child4;
+    private Entry<Vertex> one;
+    private Entry<Vertex> two;
+    private Entry<Vertex> three;
+    private Entry<Vertex> six;
+    private Entry<Vertex> seven;
+    private Entry<Vertex> four;
+    private Entry<Vertex> five;
+    private Entry<Vertex> eight;
+    private Entry<Vertex> nine;
     private FibonacciHeap<Vertex> heap;
+    private Consumer<? super Entry<Vertex>> insert = x -> heap.insert(x);
 
     @Before
     public void setUp() {
-        min = new Entry<>(new VertexImpl(1), 1.0);
-        newMinimum = new Entry<>(new VertexImpl(2), 2.0);
-        neighborEntryThree = new Entry<>(new VertexImpl(3), 3.0);
-        neighborEntrySix = new Entry<>(new VertexImpl(6), 6.0);
-        neighborEntrySeven = new Entry<>(new VertexImpl(7), 7.0);
-        child1 = new Entry<>(new VertexImpl(4), 4.0);
-        child2 = new Entry<>(new VertexImpl(5), 5.0);
-        child3 = new Entry<>(new VertexImpl(8), 8.0);
-        child4 = new Entry<>(new VertexImpl(9), 9.0);
+        one = new Entry<>(new VertexImpl(1), 1.0);
+        two = new Entry<>(new VertexImpl(2), 2.0);
+        three = new Entry<>(new VertexImpl(3), 3.0);
+        six = new Entry<>(new VertexImpl(6), 6.0);
+        seven = new Entry<>(new VertexImpl(7), 7.0);
+        four = new Entry<>(new VertexImpl(4), 4.0);
+        five = new Entry<>(new VertexImpl(5), 5.0);
+        eight = new Entry<>(new VertexImpl(8), 8.0);
+        nine = new Entry<>(new VertexImpl(9), 9.0);
         heap = new FibonacciHeap<>();
     }
 
@@ -80,35 +81,40 @@ public class FibonacciHeapTest {
         miniSample();
         Set<Entry<Vertex>> nextMemberSet = buildNextMemberSet(4);
         Set<Entry<Vertex>> previousMemberSet = buildPreviousMemberSet(4);
-        Entry<Vertex> tmpNext = min.getNext();
+        Entry<Vertex> tmpNext = one.getNext();
         heap.cutConnection(tmpNext);
 
         Truth.assertThat(buildNextMemberSet(4)).isNotEqualTo(nextMemberSet);
         Truth.assertThat(buildPreviousMemberSet(4)).isNotEqualTo(previousMemberSet);
-        Truth.assertThat(min.getNext()).isNotEqualTo(tmpNext);
+        Truth.assertThat(one.getNext()).isNotEqualTo(tmpNext);
     }
 
     @Test
     public void testExtractMinimumWithDegTwo() {
-        mediumSample();
+        degTwoSample();
 
         Entry<Vertex> actualMin = heap.extractMin();
 
-        Truth.assertThat(actualMin).isEqualTo(min);
-        Truth.assertThat(heap.getMinimum()).isEqualTo(newMinimum);
+        Truth.assertThat(actualMin).isEqualTo(one);
+        Truth.assertThat(heap.getMinimum()).isEqualTo(two);
     }
 
     @Test
     public void testStructureAfterExtractMinimumWithDegTwo() {
-        mediumSample();
+        degTwoSample();
         heap.extractMin();
 
-        Truth.assertThat(newMinimum.getChild()).isEqualTo(child2);
-        Truth.assertThat(neighborEntryThree.getChild()).isEqualTo(child1);
-        Truth.assertThat(neighborEntryThree.getNext()).isEqualTo(child2);
-        Truth.assertThat(neighborEntryThree.getPrevious()).isEqualTo(child2);
-        Truth.assertThat(child1.getParent()).isEqualTo(neighborEntryThree);
-        Truth.assertThat(child2.getParent()).isEqualTo(newMinimum);
+        Truth.assertThat(heap.getMinimum()).isEqualTo(two);
+        checkSizeOfEntriesWithDeg(degTwoAsStreamWithOutMin(),2,1L);
+        checkSizeOfEntriesWithDeg(degTwoAsStreamWithOutMin(),1,1L);
+        parentAssert(Stream.of(four, three), two);
+        childAssert(two, three);
+        parentAssert(Stream.of(five), four);
+        childAssert(four, five);
+    }
+
+    private void checkSizeOfEntriesWithDeg(Stream<Entry<Vertex>> stream,Integer deg, Long countOfEntries) {
+        Truth.assertThat(stream.filter(x -> x.getDeg() == deg).count()).isEqualTo(countOfEntries);
     }
 
     @Test
@@ -116,32 +122,36 @@ public class FibonacciHeapTest {
         degThreeSample();
         Entry<Vertex> actualMin = heap.extractMin();
 
-        Truth.assertThat(actualMin).isEqualTo(min);
-        Truth.assertThat(heap.getMinimum()).isEqualTo(newMinimum);
+        Truth.assertThat(actualMin).isEqualTo(one);
+        Truth.assertThat(heap.getMinimum()).isEqualTo(two);
     }
 
     @Test
     public void testStructureAfterExtractMinimumWithDegThree() {
         degThreeSample();
         heap.extractMin();
-        //Todo: clear this sample structure
 
         printAll(degThreeAsStreamWithOutMin());
-        System.out.println(heap.getSize());
-        Entry<Vertex> newNewMin = heap.extractMin();
-        //System.out.println(newNewMin);
-        //System.out.println(heap.getSize());
-        printAll(degThreeAsStreamWithOutMin().filter(x->x.getPriority()!=2.0));
-        Entry<Vertex> newNewNewMin = heap.extractMin();
-        printAll(degThreeAsStreamWithOutMin().filter(x->x!=newMinimum&&x!=neighborEntryThree));
-        heap.extractMin();
+        Truth.assertThat(heap.getMinimum()).isEqualTo(two);
+        checkSizeOfEntriesWithDeg(degThreeAsStreamWithOutMin(),3,1L);
+        checkSizeOfEntriesWithDeg(degThreeAsStreamWithOutMin(),2,1L);
+        checkSizeOfEntriesWithDeg(degThreeAsStreamWithOutMin(),1,2L);
+        parentAssert(Stream.of(four, three, six), two);
+        childAssert(two, three);
+        parentAssert(Stream.of(five), four);
+        childAssert(four, five);
+        parentAssert(Stream.of(seven, eight), six);
+        childAssert(six, seven);
+        parentAssert(Stream.of(nine), eight);
+        childAssert(eight, nine);
+    }
 
-        /*Truth.assertThat(newMinimum.getChild()).isEqualTo(neighborEntryThree);
-        Truth.assertThat(neighborEntryThree.getChild()).isEqualTo(child1);
-        Truth.assertThat(neighborEntryThree.getNext()).isEqualTo(child2);
-        Truth.assertThat(neighborEntryThree.getPrevious()).isEqualTo(child2);
-        Truth.assertThat(child1.getParent()).isEqualTo(neighborEntryThree);
-        Truth.assertThat(child2.getParent()).isEqualTo(newMinimum);*/
+    private void parentAssert(Stream<Entry<Vertex>> childs, Entry<Vertex> parent) {
+        childs.forEach(x -> Truth.assertThat(x.getParent()).isEqualTo(parent));
+    }
+
+    private void childAssert(Entry<Vertex> parent, Entry<Vertex> child) {
+        Truth.assertThat(parent.getChild()).isEqualTo(child);
     }
 
     private Set<Entry<Vertex>> buildNextMemberSet(Integer lengthsOfNext) {
@@ -165,55 +175,27 @@ public class FibonacciHeapTest {
     }
 
     private void miniSample() {
-        heap.insert(min);
-        heap.insert(new VertexImpl(2), 2.0);
-        heap.insert(new VertexImpl(3), 3.0);
+        Stream.of(one, two, three).forEach(insert);
     }
 
-    private void mediumSample() {
-        heap.insert(min);
-        heap.insert(newMinimum);
-        heap.insert(neighborEntryThree);
-        Entry<Vertex> next = heap.getMinimum().getNext();
+    private void degTwoSample() {
+        Stream.of(one, two, three, four, five).forEach(insert);
+    }
 
-        connectParent(next, child1);
-
-        connectParent(next.getNext(), child2);
+    private Stream<Entry<Vertex>> degTwoAsStreamWithOutMin() {
+        return Stream.of(two, three, four, five);
     }
 
     private void degThreeSample() {
-        heap.insert(min);
-        heap.insert(newMinimum);
-        heap.insert(neighborEntryThree);
-        heap.insert(neighborEntrySix);
-        heap.insert(neighborEntrySeven);
-        Entry<Vertex> next = heap.getMinimum().getNext();
-
-        connectParent(next, child1);
-
-        connectParent(next.getNext(), child2);
-
-        connectParent(neighborEntrySix, child3);
-
-        connectParent(neighborEntrySeven, child4);
+        Stream.of(one, two, three, four, five, six, seven, eight, nine).forEach(insert);
     }
 
-    private Stream<Entry<Vertex>> degThreeAsStreamWithOutMin(){
-        return Stream.of(newMinimum, child1, neighborEntryThree, child2
-                , neighborEntrySix, child3, neighborEntrySeven, child4);
+    private Stream<Entry<Vertex>> degThreeAsStreamWithOutMin() {
+        return Stream.of(two, four, three, five
+                , six, eight, seven, nine);
     }
 
-    private Stream<Entry<Vertex>> degTwoAsStreamWithOutMin(){
-        return Stream.of(newMinimum, child1, neighborEntryThree, child2);
-    }
-
-    private void printAll(Stream<Entry<Vertex>> stream){
+    private void printAll(Stream<Entry<Vertex>> stream) {
         stream.forEach(System.out::println);
-    }
-
-    private void connectParent(Entry<Vertex> parent,Entry<Vertex> child) {
-        parent.setChild(child);
-        parent.setDeg(parent.getDeg() + 1);
-        child.setParent(parent);
     }
 }
