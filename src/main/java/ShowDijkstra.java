@@ -2,7 +2,7 @@ import algorithm.Dijkstra;
 import algorithm.standard.DijkstraImpl;
 import datastructure.Vertex;
 import datastructure.standard.GraphImpl;
-import util.GraphHelper;
+import datastructure.GraphHelper;
 import util.GraphImporter;
 import util.ImportFile;
 import util.Measures;

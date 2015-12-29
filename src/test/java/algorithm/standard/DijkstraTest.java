@@ -6,7 +6,7 @@ import datastructure.standard.EdgeImpl;
 import datastructure.standard.GraphImpl;
 import org.junit.Before;
 import org.junit.Test;
-import util.GraphHelper;
+import datastructure.GraphHelper;
 
 import java.util.List;
 

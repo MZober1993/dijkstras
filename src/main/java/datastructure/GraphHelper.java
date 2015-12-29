@@ -1,4 +1,4 @@
-package util;
+package datastructure;
 
 import algorithm.Dijkstra;
 import com.google.common.base.Stopwatch;
@@ -40,14 +40,14 @@ public class GraphHelper {
         graph.linkVertex(builder.current(7).to(4, 1.0).to(5, 3.0));
     }
 
-    public static long calculateTimeWithLastRandom(StandardGraph graph, Dijkstra algorithm) {
+    public static <G extends Graph> long calculateTimeWithLastRandom(G graph, Dijkstra algorithm) {
         Vertex start = graph.getVertex(FIRST);
         Vertex end = graph.getLastRandomVertex();
 
         return calculateTime(graph, algorithm, start, end);
     }
 
-    private static long calculateTime(StandardGraph graph, Dijkstra algorithm, Vertex start, Vertex end) {
+    private static <G extends Graph> long calculateTime(G graph, Dijkstra algorithm, Vertex start, Vertex end) {
         Stopwatch stopwatch = Stopwatch.createStarted();
         algorithm.shortestPath(graph, start, end);
         stopwatch.stop();

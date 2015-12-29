@@ -1,6 +1,7 @@
 package util;
 
 import algorithm.standard.DijkstraImpl;
+import datastructure.GraphHelper;
 import datastructure.standard.GraphImpl;
 
 import java.io.IOException;

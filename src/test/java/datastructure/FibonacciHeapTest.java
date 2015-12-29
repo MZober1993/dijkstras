@@ -2,6 +2,7 @@ package datastructure;
 
 import com.google.common.truth.Truth;
 import datastructure.fibo.Entry;
+import datastructure.fibo.FiboHelper;
 import datastructure.fibo.FibonacciHeap;
 import org.junit.Before;
 import org.junit.Test;
@@ -82,7 +83,7 @@ public class FibonacciHeapTest {
         Set<Entry<Vertex>> nextMemberSet = buildNextMemberSet(4);
         Set<Entry<Vertex>> previousMemberSet = buildPreviousMemberSet(4);
         Entry<Vertex> tmpNext = one.getNext();
-        heap.cutConnection(tmpNext);
+        FiboHelper.cutConnection(tmpNext);
 
         Truth.assertThat(buildNextMemberSet(4)).isNotEqualTo(nextMemberSet);
         Truth.assertThat(buildPreviousMemberSet(4)).isNotEqualTo(previousMemberSet);

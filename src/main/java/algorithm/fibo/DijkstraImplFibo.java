@@ -5,7 +5,7 @@ import datastructure.Graph;
 import datastructure.Vertex;
 import datastructure.fibo.FiboEdge;
 import datastructure.fibo.FibonacciHeapBig;
-import util.GraphHelper;
+import datastructure.GraphHelper;
 import util.LoggingHelper;
 
 import java.util.Collections;
