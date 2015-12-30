@@ -60,7 +60,7 @@ public class FibonacciHeapTest {
             tmp = tmp.getNext();
             builder.add(tmp);
         }
-        Truth.assertThat(builder.build().map(Entry::getPriority).collect(Collectors.toList()))
+        Truth.assertThat(builder.build().map(Entry::getKey).collect(Collectors.toList()))
                 .containsExactly(3.0, 2.0, 1.0, 3.0);
     }
 
@@ -73,7 +73,7 @@ public class FibonacciHeapTest {
             tmp = tmp.getPrevious();
             builder.add(tmp);
         }
-        Truth.assertThat(builder.build().map(Entry::getPriority).collect(Collectors.toList()))
+        Truth.assertThat(builder.build().map(Entry::getKey).collect(Collectors.toList()))
                 .containsExactly(2.0, 3.0, 1.0, 2.0);
     }
 
@@ -106,15 +106,15 @@ public class FibonacciHeapTest {
         heap.extractMin();
 
         Truth.assertThat(heap.getMinimum()).isEqualTo(two);
-        checkSizeOfEntriesWithDeg(degTwoAsStreamWithOutMin(),2,1L);
-        checkSizeOfEntriesWithDeg(degTwoAsStreamWithOutMin(),1,1L);
+        checkSizeOfEntriesWithDeg(degTwoAsStreamWithOutMin(), 2, 1L);
+        checkSizeOfEntriesWithDeg(degTwoAsStreamWithOutMin(), 1, 1L);
         parentAssert(Stream.of(four, three), two);
         childAssert(two, three);
         parentAssert(Stream.of(five), four);
         childAssert(four, five);
     }
 
-    private void checkSizeOfEntriesWithDeg(Stream<Entry<Vertex>> stream,Integer deg, Long countOfEntries) {
+    private void checkSizeOfEntriesWithDeg(Stream<Entry<Vertex>> stream, Integer deg, Long countOfEntries) {
         Truth.assertThat(stream.filter(x -> x.getDeg() == deg).count()).isEqualTo(countOfEntries);
     }
 
@@ -132,11 +132,10 @@ public class FibonacciHeapTest {
         degThreeSample();
         heap.extractMin();
 
-        printAll(degThreeAsStreamWithOutMin());
         Truth.assertThat(heap.getMinimum()).isEqualTo(two);
-        checkSizeOfEntriesWithDeg(degThreeAsStreamWithOutMin(),3,1L);
-        checkSizeOfEntriesWithDeg(degThreeAsStreamWithOutMin(),2,1L);
-        checkSizeOfEntriesWithDeg(degThreeAsStreamWithOutMin(),1,2L);
+        checkSizeOfEntriesWithDeg(degThreeAsStreamWithOutMin(), 3, 1L);
+        checkSizeOfEntriesWithDeg(degThreeAsStreamWithOutMin(), 2, 1L);
+        checkSizeOfEntriesWithDeg(degThreeAsStreamWithOutMin(), 1, 2L);
         parentAssert(Stream.of(four, three, six), two);
         childAssert(two, three);
         parentAssert(Stream.of(five), four);
@@ -147,12 +146,81 @@ public class FibonacciHeapTest {
         childAssert(eight, nine);
     }
 
+    @Test
+    public void testDecreaseKeyWithDegThree() {
+        prepareDegThreeHeapWithExtractMin();
+        double minimumKey = 1.0;
+        heap.decreaseKey(nine, minimumKey);
+
+        Truth.assertThat(heap.getMinimum()).isEqualTo(nine);
+    }
+
+    @Test
+    public void testStructureAfterDecreaseKeyWithDegThreeAndEntryNine() {
+        prepareDegThreeHeapWithExtractMin();
+        double minimumKey = 1.0;
+        heap.decreaseKey(nine, minimumKey);
+
+        Truth.assertThat(heap.getMinimum()).isEqualTo(nine);
+        Truth.assertThat(nine.getKey()).isEqualTo(minimumKey);
+        checkSizeOfEntriesWithDeg(degThreeAsStreamWithOutMin(), 3, 1L);
+        checkSizeOfEntriesWithDeg(degThreeAsStreamWithOutMin(), 2, 1L);
+        checkSizeOfEntriesWithDeg(degThreeAsStreamWithOutMin(), 1, 1L);
+        Truth.assertThat(eight.getDeg()).isEqualTo(0);
+        checkParentChildPointerOfDegThreeWithoutNineAndEight();
+        notAParentAssert(Stream.of(nine), eight);
+        notAChildAssert(eight, nine);
+    }
+
+    @Test
+    public void testStructureAfterDecreaseKeyWithDegThreeAndEntrySix() {
+        prepareDegThreeHeapWithExtractMin();
+        double minimumKey = 1.0;
+        heap.decreaseKey(six, minimumKey);
+
+        Truth.assertThat(heap.getMinimum()).isEqualTo(six);
+        Truth.assertThat(six.getKey()).isEqualTo(minimumKey);
+        checkSizeOfEntriesWithDeg(degThreeAsStreamWithOutMin(), 3, 0L);
+        checkSizeOfEntriesWithDeg(degThreeAsStreamWithOutMin(), 2, 2L);
+        checkSizeOfEntriesWithDeg(degThreeAsStreamWithOutMin(), 1, 2L);
+        parentAssert(Stream.of(four, three), two);
+        childAssert(two, three);
+        parentAssert(Stream.of(eight, seven), six);
+        childAssert(six, seven);
+        parentAssert(Stream.of(five), four);
+        childAssert(four, five);
+        parentAssert(Stream.of(nine), eight);
+        childAssert(eight, nine);
+    }
+
+    private void checkParentChildPointerOfDegThreeWithoutNineAndEight() {
+        parentAssert(Stream.of(four, three, six), two);
+        childAssert(two, three);
+        parentAssert(Stream.of(five), four);
+        childAssert(four, five);
+        parentAssert(Stream.of(seven, eight), six);
+        childAssert(six, seven);
+    }
+
+    private void prepareDegThreeHeapWithExtractMin() {
+        degThreeSample();
+        heap.extractMin();
+    }
+
     private void parentAssert(Stream<Entry<Vertex>> childs, Entry<Vertex> parent) {
         childs.forEach(x -> Truth.assertThat(x.getParent()).isEqualTo(parent));
     }
 
     private void childAssert(Entry<Vertex> parent, Entry<Vertex> child) {
         Truth.assertThat(parent.getChild()).isEqualTo(child);
+    }
+
+    private void notAParentAssert(Stream<Entry<Vertex>> childs, Entry<Vertex> parent) {
+        childs.forEach(x -> Truth.assertThat(x.getParent()).isNotEqualTo(parent));
+    }
+
+    private void notAChildAssert(Entry<Vertex> parent, Entry<Vertex> child) {
+        Truth.assertThat(parent.getChild()).isNotEqualTo(child);
     }
 
     private Set<Entry<Vertex>> buildNextMemberSet(Integer lengthsOfNext) {

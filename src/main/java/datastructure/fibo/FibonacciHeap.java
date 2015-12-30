@@ -18,11 +18,15 @@ public final class FibonacciHeap<T> {
     }
 
     public void insert(Entry<T> entry) {
-        cyclicListConcat(minimum, entry);
-        if (minimum == null || entry.getPriority() < minimum.getPriority()) {
-            minimum = entry;
-        }
+        mainListConcat(entry);
         size++;
+    }
+
+    public void mainListConcat(Entry<T> element) {
+        cyclicListConcat(minimum, element);
+        if (minimum == null || element.getKey() < minimum.getKey()) {
+            minimum = element;
+        }
     }
 
     public FibonacciHeap<T> merge(FibonacciHeap<T> heap1, FibonacciHeap<T> heap2) {
@@ -31,7 +35,7 @@ public final class FibonacciHeap<T> {
                 heap1.minimum = heap2.minimum;
             } else {
                 cyclicListConcat(heap1.minimum, heap2.minimum);
-                if (heap2.minimum.getPriority() < heap1.minimum.getPriority()) {
+                if (heap2.minimum.getKey() < heap1.minimum.getKey()) {
                     heap1.minimum = heap2.minimum;
                 }
                 heap1.size = heap1.size + heap2.size;
@@ -101,7 +105,7 @@ public final class FibonacciHeap<T> {
 
             int currentDegree = element.getDeg();
             while (degree[currentDegree] != null) {
-                if (element.getPriority() > degree[currentDegree].getPriority()) {
+                if (element.getKey() > degree[currentDegree].getKey()) {
                     swap(element, degree[currentDegree]);
                 }
                 becomesChildOfEntry(degree[currentDegree], element);
@@ -128,10 +132,50 @@ public final class FibonacciHeap<T> {
                     degree[i].setPrevious(minimum.getPrevious());
                     minimum.getPrevious().setNext(degree[i]);
                     minimum.setPrevious(degree[i]);
-                    if (degree[i].getPriority() < minimum.getPriority()) {
+                    if (degree[i].getKey() < minimum.getKey()) {
                         minimum = degree[i];
                     }
                 }
+            }
+        }
+    }
+
+    public void decreaseKey(Entry<T> element, Double key) {
+        if (element != null && element.getKey() > key) {
+            element.setKey(key);
+            if (element.getParent() == null) {
+                if (element.getKey() < minimum.getKey()) {
+                    minimum = element;
+                }
+            } else if (key < element.getParent().getKey()) {
+                cutHeap(element);
+            }
+        }
+    }
+
+    private void cutHeap(Entry<T> element) {
+        Entry<T> parent = element.getParent();
+        if (parent != null) {
+            parent.setDeg(parent.getDeg() - 1);
+        }
+        if (element.getNext() == element) {
+            parent.setChild(null);
+        } else {
+            cutConnection(element);
+            if (parent.getChild() == element) {
+                parent.setChild(element.getNext());
+            }
+        }
+
+        mainListConcat(element);
+        element.setParent(null);
+
+        if (parent.getParent() != null) {
+            if (parent.isMarked()) {
+                cutHeap(parent);
+                parent.setMarked(false);
+            } else {
+                parent.setMarked(true);
             }
         }
     }

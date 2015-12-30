@@ -1,7 +1,5 @@
 package datastructure.fibo;
 
-import datastructure.fibo.Entry;
-
 import java.util.stream.Stream;
 
 /**
@@ -29,7 +27,7 @@ public final class FiboHelper {
             y.setNext(tmpNext);
             linkNextNeighborToEntry(y);
 
-            return x.getPriority() < y.getPriority() ? x : y;
+            return x.getKey() < y.getKey() ? x : y;
         } else {
             return x;
         }

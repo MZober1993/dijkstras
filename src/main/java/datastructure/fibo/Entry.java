@@ -13,16 +13,16 @@ public final class Entry<T> {
     private Entry<T> parent;
     private Entry<T> child;
     private T value;
-    private double priority;
+    private double key;
 
-    public Entry(T value, double priority) {
+    public Entry(T value, double key) {
         deg = 0;
         parent = null;
         child = null;
         next = this;
         previous = this;
         this.value = value;
-        this.priority = priority;
+        this.key = key;
         isMarked = false;
     }
 
@@ -62,8 +62,12 @@ public final class Entry<T> {
         isMarked = marked;
     }
 
-    public double getPriority() {
-        return priority;
+    public double getKey() {
+        return key;
+    }
+
+    public void setKey(double key) {
+        this.key = key;
     }
 
     public Entry<T> getParent() {
@@ -92,11 +96,11 @@ public final class Entry<T> {
                 ", parent=" + nullOrPriority(parent) +
                 ", child=" + nullOrPriority(child) +
                 ", value=" + value +
-                ", priority=" + priority +
+                ", key=" + key +
                 '}';
     }
 
     private String nullOrPriority(Entry<T> entry){
-        return String.valueOf(entry==null?"null":entry.getPriority());
+        return String.valueOf(entry==null?"null":entry.getKey());
     }
 }
