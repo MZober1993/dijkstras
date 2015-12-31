@@ -3,10 +3,9 @@ package util;
 import algorithm.Dijkstra;
 import algorithm.standard.DijkstraImpl;
 import com.google.common.truth.Truth;
+import datastructure.Vertex;
 import datastructure.standard.StandardEdge;
 import datastructure.standard.StandardGraph;
-import datastructure.Vertex;
-import datastructure.standard.GraphImpl;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -28,19 +27,19 @@ public class GraphImporterIT {
     public static final long EMPTY = 0;
     public static final long HUGE_LIMIT_NUMBER = 2000000000;
     public static final long SMALL_LIMIT_NUMBER = 20;
-    GraphImporter graphImporter;
+    GraphImporter<StandardGraph> graphImporter;
     Dijkstra dijkstra;
 
     @Before
     public void setUp() {
-        graphImporter = new GraphImporter(ImportFile.NY);
+        graphImporter = new GraphImporter<>(ImportFile.NY);
         dijkstra = new DijkstraImpl();
 
     }
 
     @Test
     public void testImportGraph() {
-        GraphImpl graph = graphImporter.importLinesOfFileAndGetSequentialGraph(HUGE_LIMIT_NUMBER);
+        StandardGraph graph = graphImporter.importLinesOfFileAndGetSequentialGraph(HUGE_LIMIT_NUMBER);
         Vertex vertex = graph.getOne();
         List<StandardEdge> edgesFromNode = graph.getEdgesFromNode(vertex);
         StandardEdge edge = edgesFromNode.get(FIRST);
@@ -51,7 +50,7 @@ public class GraphImporterIT {
 
     @Test
     public void testImportSmallGraphAndUseDijkstra() {
-        GraphImpl graph = graphImporter.importLinesOfFileAndGetSequentialGraph(SMALL_LIMIT_NUMBER);
+        StandardGraph graph = graphImporter.importLinesOfFileAndGetSequentialGraph(SMALL_LIMIT_NUMBER);
         Vertex start = graph.getVertexWithIndex(0);
         Vertex end = graph.getVertex(13);
         List<Integer> shortestPath = dijkstra.shortestPath(graph, start, end);
@@ -61,7 +60,7 @@ public class GraphImporterIT {
 
     @Test
     public void testImportHugeGraphAndUseDijkstra() {
-        GraphImpl graph = graphImporter.importLinesOfFileAndGetSequentialGraph(HUGE_LIMIT_NUMBER);
+        StandardGraph graph = graphImporter.importLinesOfFileAndGetSequentialGraph(HUGE_LIMIT_NUMBER);
         Vertex start = graph.getVertexWithIndex(0);
         Vertex end = graph.getVertexWithIndex(graph.getVertices().values().size() - 1);
         List<Integer> shortestPath = dijkstra.shortestPath(graph, start, end);

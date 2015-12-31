@@ -25,7 +25,7 @@ public class TheoreticalWriter extends FileWriter {
     }
 
     public void writeRoutine() {
-        GraphImporter graphImporter = new GraphImporter(ImportFile.CREATED);
+        GraphImporter<StandardGraph> graphImporter = new GraphImporter<>(ImportFile.CREATED);
         try {
             writeHeader();
             scaleMeasureSample(100).forEach(element -> {

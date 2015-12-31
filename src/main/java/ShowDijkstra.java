@@ -1,8 +1,8 @@
 import algorithm.Dijkstra;
 import algorithm.standard.DijkstraImpl;
-import datastructure.Vertex;
-import datastructure.standard.GraphImpl;
 import datastructure.GraphHelper;
+import datastructure.Vertex;
+import datastructure.standard.StandardGraph;
 import util.GraphImporter;
 import util.ImportFile;
 import util.Measures;
@@ -19,7 +19,7 @@ public class ShowDijkstra {
 
     public static void main(String[] args) {
         Dijkstra dijkstra = new DijkstraImpl();
-        GraphImpl graph = new GraphImporter(ImportFile.CREATED).importNVerticesAndGetSequentialGraph(10000L);
+        StandardGraph graph = new GraphImporter<StandardGraph>(ImportFile.CREATED).importNVerticesAndGetSequentialGraph(10000L);
         Measures.prepareMeasure(graph, dijkstra);
 
         Vertex start = graph.getVertex(FIRST);

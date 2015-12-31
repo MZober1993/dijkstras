@@ -34,7 +34,6 @@ public class DijkstraImplFibo implements Dijkstra {
         while (!nodes.isEmpty()) {
             final Entry<Vertex> smallestEntry = nodes.extractMin();
             final Vertex smallest = smallestEntry.getValue();
-            smallest.setClosed(true);
 
             if (smallest.equals(finish)) {
                 return GraphHelper.reconstructPath(smallest);
@@ -49,7 +48,7 @@ public class DijkstraImplFibo implements Dijkstra {
                 final Entry<Vertex> connectedEntry = edge.getConnectedEntry(smallestEntry);
                 final Vertex connectedVertex = connectedEntry.getValue();
 
-                if (!connectedVertex.isClosed() && alt < connectedVertex.getG()) {
+                if (alt < connectedVertex.getG()) {
                     connectedVertex.setG(alt);
                     connectedVertex.setPrevious(smallest);
                     nodes.insertIfNotExist(connectedEntry);

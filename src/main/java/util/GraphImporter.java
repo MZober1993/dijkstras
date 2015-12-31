@@ -2,7 +2,7 @@ package util;
 
 
 import com.google.common.collect.ImmutableList;
-import datastructure.standard.StandardGraph;
+import datastructure.Graph;
 import datastructure.standard.GraphImpl;
 
 import java.io.IOException;
@@ -18,7 +18,7 @@ import java.util.stream.Stream;
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
  *         16.11.15 - 13:47
  */
-public class GraphImporter {
+public class GraphImporter<T extends Graph> {
 
     public static final int FIRST_VERTEX = 1;
     public static final int SECOND_VERTEX = 2;
@@ -45,11 +45,13 @@ public class GraphImporter {
         fileCreator.createSampleGraphFile();
     }
 
-    public GraphImpl importLinesOfFileAndGetSequentialGraph(Long limit) {
-        return (GraphImpl) importLinesOfFile(limit, new GraphImpl());
+    public T importLinesOfFileAndGetSequentialGraph(Long limit) {
+
+        //ToDo:create a factory to get the wanted graphimpl instead of GraphImpl
+        return importLinesOfFile(limit, (T) new GraphImpl());
     }
 
-    private StandardGraph importLinesOfFile(Long limit, StandardGraph graph) {
+    private T importLinesOfFile(Long limit, T graph) {
         try {
             Stream<String> lines = Files.lines(pathOfGraphFile).filter(line -> line.contains("a "));
             List<List<String>> lineList = lines.map(line -> Arrays.asList(line.split(" "))).collect(Collectors.toList());
@@ -64,11 +66,11 @@ public class GraphImporter {
         return graph;
     }
 
-    public GraphImpl importNVerticesAndGetSequentialGraph(Long n) {
-        return (GraphImpl) importNVertices(n, new GraphImpl());
+    public T importNVerticesAndGetSequentialGraph(Long n) {
+        return importNVertices(n, (T) new GraphImpl());
     }
 
-    private StandardGraph importNVertices(Long n, StandardGraph graph) {
+    private T importNVertices(Long n, T graph) {
         if (!Files.exists(pathOfGraphFile)) {
             createDirAndPlainImportFile();
         }
@@ -89,8 +91,8 @@ public class GraphImporter {
         return graph;
     }
 
-    public List<StandardGraph> calculateParallelGraphsWithNVertices(Long... n) {
-        ImmutableList.Builder<StandardGraph> builder = ImmutableList.builder();
+    public List<T> calculateParallelGraphsWithNVertices(Long... n) {
+        ImmutableList.Builder<T> builder = ImmutableList.builder();
         for (Long number : n) {
             builder.add(importNVerticesAndGetSequentialGraph(number));
         }

@@ -36,7 +36,6 @@ public class DijkstraImplFiboTest {
         List<Integer> actual = dijkstra.shortestPath(graph, start, end);
 
         Truth.assertThat(actual).containsAllOf(0, 1, 5, 7).inOrder();
-        //TODO: resolve Test
     }
 
     @Test

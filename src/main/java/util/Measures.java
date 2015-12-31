@@ -2,9 +2,9 @@ package util;
 
 import algorithm.Dijkstra;
 import com.google.common.collect.ImmutableList;
+import datastructure.Graph;
 import datastructure.GraphHelper;
 import datastructure.standard.StandardGraph;
-import datastructure.standard.GraphImpl;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,9 +26,9 @@ public enum Measures {
                 .collect(Collectors.toList());
     }
 
-    public static void prepareMeasure(GraphImporter graphImporter, Dijkstra algorithm) {
-        for (int i = 0; i < 10; i++) {
-            GraphImpl graphSeq = graphImporter.importNVerticesAndGetSequentialGraph(TEN_THOUSAND);
+    public static <T extends Graph> void prepareMeasure(GraphImporter<T> graphImporter, Dijkstra algorithm) {
+        for (int i = 0; i < 5; i++) {
+            T graphSeq = graphImporter.importNVerticesAndGetSequentialGraph(TEN_THOUSAND);
             System.out.println(algorithm.shortestPath(graphSeq, graphSeq.getVertex(GraphHelper.FIRST),
                     graphSeq.getLastRandomVertex()));
         }

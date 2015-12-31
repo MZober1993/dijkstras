@@ -3,7 +3,7 @@ package util;
 import algorithm.Dijkstra;
 import algorithm.standard.DijkstraImpl;
 import datastructure.Vertex;
-import datastructure.standard.GraphImpl;
+import datastructure.standard.StandardGraph;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -45,8 +45,8 @@ public class MemberFinderIT {
     }
 
     private void findMemberOfPlaceWithNOccurrence(ImportFile file, Long n) {
-        GraphImporter graphImporter = new GraphImporter(file);
-        GraphImpl graph = graphImporter.importNVerticesAndGetSequentialGraph(n);
+        GraphImporter<StandardGraph> graphImporter = new GraphImporter<>(file);
+        StandardGraph graph = graphImporter.importNVerticesAndGetSequentialGraph(n);
         DijkstraImpl algorithm = new DijkstraImpl();
 
         List<Integer> member = memberFinder.findMemberForHighestShortestPathFromTheBeginningOfTheGraph(algorithm, graph);

@@ -1,3 +1,4 @@
+import datastructure.standard.StandardGraph;
 import util.MemberFileWriter;
 
 import static util.ImportFile.NY;
@@ -10,7 +11,7 @@ import static util.MemberFileWriter.MEMBER_FILE_PATH;
 public class MaximumMemberOfN {
 
     public static void main(String[] args) {
-        MemberFileWriter memberFileWriter = new MemberFileWriter(MEMBER_FILE_PATH);
+        MemberFileWriter<StandardGraph> memberFileWriter = new MemberFileWriter(MEMBER_FILE_PATH);
         memberFileWriter.writeMaximumMemberOfNOccurrenceInShortestPath(NY, 100L, 1000L, 10000L);
     }
 }

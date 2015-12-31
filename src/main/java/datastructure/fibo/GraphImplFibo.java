@@ -69,6 +69,7 @@ public class GraphImplFibo implements FiboGraph {
 
     @Override
     public List<FiboEdge> getEdgesFromNode(Integer identifier) {
+        //todo: doing this completely with entryVertices
         checkNotNull(identifier);
         ImmutableList.Builder<FiboEdge> edgesFromNodeBuilder = new ImmutableList.Builder<>();
         for (List<FiboEdge> edges : outgoingEdges.values()) {

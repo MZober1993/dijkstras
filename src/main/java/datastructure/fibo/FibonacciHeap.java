@@ -1,10 +1,7 @@
 package datastructure.fibo;
 
 import datastructure.PrintHelper;
-import util.LoggingHelper;
 import util.MathHelper;
-
-import java.util.logging.Logger;
 
 import static datastructure.fibo.FiboHelper.*;
 
@@ -14,7 +11,6 @@ import static datastructure.fibo.FiboHelper.*;
  */
 public final class FibonacciHeap<T> {
 
-    public static final Logger LOGGER = LoggingHelper.buildLoggerWithStandardOutputConfig(FibonacciHeap.class);
     private Entry<T> minimum = null;
     private Integer size = 0;
 
@@ -183,9 +179,6 @@ public final class FibonacciHeap<T> {
     }
 
     private void cutHeap(Entry<T> element) {
-        if (element == minimum) {
-            LOGGER.warning("element==minimum in cutHeap");
-        }
         Entry<T> parent = element.getParent();
         if (parent != null) {
             parent.setDeg(parent.getDeg() - 1);
@@ -200,7 +193,6 @@ public final class FibonacciHeap<T> {
         }
 
         listConcat(element);
-        LOGGER.info(this.toString());
         element.setParent(null);
 
         if (parent.getParent() != null) {

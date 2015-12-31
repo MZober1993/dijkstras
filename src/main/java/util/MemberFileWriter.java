@@ -1,7 +1,7 @@
 package util;
 
 import algorithm.standard.DijkstraImpl;
-import datastructure.standard.StandardGraph;
+import datastructure.Graph;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -17,7 +17,7 @@ import static util.Measures.MEMBER;
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
  *         21.11.15 - 13:54
  */
-public class MemberFileWriter extends FileWriter {
+public class MemberFileWriter<T extends Graph> extends FileWriter {
     public static final String MEMBER_FILE = GraphImporter.PATH_TO_RESOURCE + MEMBER.name().toLowerCase();
     public static final Path MEMBER_FILE_PATH = Paths.get(MEMBER_FILE);
 
@@ -32,12 +32,14 @@ public class MemberFileWriter extends FileWriter {
 
         try {
             writeHeader();
-            for (StandardGraph graph : graphImporter.calculateParallelGraphsWithNVertices(n)) {
+            /*
+            TODO: repair this
+            for (T graph : graphImporter.calculateParallelGraphsWithNVertices(n)) {
                 writeMember(memberFinder.findMemberForHighestShortestPathFromTheBeginningOfTheGraph(algorithm, graph)
                         , graph.getVertices().size());
                 writeNewLine();
             }
-
+*/
         } catch (IOException e) {
             e.printStackTrace();
         }
