@@ -1,6 +1,10 @@
 package datastructure.fibo;
 
+import datastructure.PrintHelper;
+import util.LoggingHelper;
 import util.MathHelper;
+
+import java.util.logging.Logger;
 
 import static datastructure.fibo.FiboHelper.*;
 
@@ -10,22 +14,41 @@ import static datastructure.fibo.FiboHelper.*;
  */
 public final class FibonacciHeap<T> {
 
+    public static final Logger LOGGER = LoggingHelper.buildLoggerWithStandardOutputConfig(FibonacciHeap.class);
     private Entry<T> minimum = null;
     private Integer size = 0;
 
-    public void insert(T value, Double priority) {
-        insert(new Entry<>(value, priority));
+    public Entry<T> insert(T value, Double priority) {
+        return insert(new Entry<>(value, priority));
     }
 
-    public void insert(Entry<T> entry) {
+    public Entry<T> insert(Entry<T> entry) {
         mainListConcat(entry);
         size++;
+        return entry;
     }
 
     public void mainListConcat(Entry<T> element) {
         cyclicListConcat(minimum, element);
         if (minimum == null || element.getKey() < minimum.getKey()) {
             minimum = element;
+        }
+    }
+
+    public void listConcat(Entry<T> element) {
+        if (minimum == null) {
+            minimum = element;
+        } else {
+            Entry<T> endHeap = minimum.getPrevious();
+            minimum.setPrevious(element);
+            element.setPrevious(endHeap);
+            endHeap.setNext(element);
+            element.setNext(minimum);
+
+            // set new minimum
+            if (minimum.getKey() > element.getKey()) {
+                minimum = element;
+            }
         }
     }
 
@@ -153,7 +176,16 @@ public final class FibonacciHeap<T> {
         }
     }
 
+    public void insertIfNotExist(Entry<T> element) {
+        if (minimum != element && FiboHelper.selfLinked(element)) {
+            insert(element);
+        }
+    }
+
     private void cutHeap(Entry<T> element) {
+        if (element == minimum) {
+            LOGGER.warning("element==minimum in cutHeap");
+        }
         Entry<T> parent = element.getParent();
         if (parent != null) {
             parent.setDeg(parent.getDeg() - 1);
@@ -167,7 +199,8 @@ public final class FibonacciHeap<T> {
             }
         }
 
-        mainListConcat(element);
+        listConcat(element);
+        LOGGER.info(this.toString());
         element.setParent(null);
 
         if (parent.getParent() != null) {
@@ -178,6 +211,10 @@ public final class FibonacciHeap<T> {
                 parent.setMarked(true);
             }
         }
+    }
+
+    public boolean isEmpty() {
+        return getSize() == 0;
     }
 
     public Entry<T> getMinimum() {
@@ -192,9 +229,8 @@ public final class FibonacciHeap<T> {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         return "FibonacciHeap{" +
-                "minimum=" + minimum +
-                ", size=" + size +
-                "\n, elems=" + rootListToString(builder, minimum) +
-                '}';
+                "\nminimum=\n" + minimum +
+                "\n, size=" + size +
+                "\n, elem=\n" + PrintHelper.printFibonacciHeap(this, minimum) + '}';
     }
 }

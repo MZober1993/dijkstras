@@ -8,9 +8,9 @@ import datastructure.Vertex;
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
  *         On 16.12.15 - 18:55
  */
-public interface FiboEdge extends Edge{
+public interface FiboEdge extends Edge {
 
-    default FibonacciHeapBig.Entry<Vertex> getConnectedEntry(FibonacciHeapBig.Entry<Vertex> entry) {
+    default Entry<Vertex> getConnectedEntry(Entry<Vertex> entry) {
         if (entry.equals(getFirstEntry())) {
             return getSecondEntry();
         } else if (entry.equals(getSecondEntry())) {
@@ -20,7 +20,7 @@ public interface FiboEdge extends Edge{
         }
     }
 
-    FibonacciHeapBig.Entry<Vertex> getFirstEntry();
+    Entry<Vertex> getFirstEntry();
 
-    FibonacciHeapBig.Entry<Vertex> getSecondEntry();
+    Entry<Vertex> getSecondEntry();
 }

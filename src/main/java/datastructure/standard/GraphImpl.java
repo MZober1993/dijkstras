@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import datastructure.EdgeBuilder;
 import datastructure.Vertex;
 import datastructure.VertexImpl;
+import datastructure.fibo.Entry;
 
 import java.util.*;
 
@@ -72,11 +73,7 @@ public class GraphImpl implements StandardGraph {
         checkNotNull(identifier);
         ImmutableList.Builder<StandardEdge> edgesFromNodeBuilder = new ImmutableList.Builder<>();
         for (List<StandardEdge> edges : outgoingEdges.values()) {
-            for (StandardEdge currentEdge : edges) {
-                if (currentEdge.contains(vertices.get(identifier))) {
-                    edgesFromNodeBuilder.add(currentEdge);
-                }
-            }
+            edges.stream().filter(currentEdge -> currentEdge.contains(vertices.get(identifier))).forEach(edgesFromNodeBuilder::add);
         }
         return edgesFromNodeBuilder.build();
     }
@@ -94,6 +91,11 @@ public class GraphImpl implements StandardGraph {
     @Override
     public Map<Integer, Vertex> getVertices() {
         return vertices;
+    }
+
+    @Override
+    public Map<Integer, Entry<Vertex>> getEntryVertices() {
+        throw new IllegalArgumentException("Standardgraph has no EntryVertices-Map");
     }
 
     @Override

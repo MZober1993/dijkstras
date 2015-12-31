@@ -1,5 +1,6 @@
 package datastructure;
 
+import datastructure.fibo.Entry;
 import util.MathHelper;
 
 import java.util.List;
@@ -25,6 +26,16 @@ public interface Graph {
         }
     }
 
+    default Entry<Vertex> getEntryOrCreateOne(int id) {
+        if (getEntryVertices().containsKey(id)) {
+            return getEntryVertices().get(id);
+        } else {
+            Entry<Vertex> value = new Entry<>(new VertexImpl(id), Double.MAX_VALUE);
+            getEntryVertices().put(id, value);
+            return value;
+        }
+    }
+
     void linkVertex(EdgeBuilder builder);
 
     default Vertex getVertex(int id) {
@@ -36,6 +47,8 @@ public interface Graph {
     }
 
     Map<Integer, Vertex> getVertices();
+
+    Map<Integer, Entry<Vertex>> getEntryVertices();
 
     default Vertex getVertexWithIndex(int index) {
         Vertex vertex = (Vertex) getVertices().values().toArray()[index];

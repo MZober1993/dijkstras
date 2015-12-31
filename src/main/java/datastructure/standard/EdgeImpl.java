@@ -1,6 +1,7 @@
 package datastructure.standard;
 
 import datastructure.Vertex;
+import datastructure.fibo.Entry;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -26,6 +27,11 @@ public class EdgeImpl implements StandardEdge {
     @Override
     public boolean contains(Vertex vertex) {
         return nodeOne.equals(vertex) || nodeTwo.equals(vertex);
+    }
+
+    @Override
+    public boolean contains(Entry<Vertex> entry) {
+        return false;
     }
 
     @Override

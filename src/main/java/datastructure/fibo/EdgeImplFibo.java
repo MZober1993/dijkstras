@@ -10,33 +10,38 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class EdgeImplFibo implements FiboEdge {
 
-    private final FibonacciHeapBig.Entry<Vertex> entryOne;
-    private final FibonacciHeapBig.Entry<Vertex> entryTwo;
+    private final Entry<Vertex> entryOne;
+    private final Entry<Vertex> entryTwo;
     private Double distance;
 
-    public EdgeImplFibo(Vertex nodeOne, Vertex nodeTwo, Double distance) {
+    public EdgeImplFibo(Entry<Vertex> nodeOne, Entry<Vertex> nodeTwo, Double distance) {
         checkNotNull(nodeOne);
         checkNotNull(nodeTwo);
         checkNotNull(distance);
 
-        entryOne= new FibonacciHeapBig.Entry<>(nodeOne, Integer.MAX_VALUE);
-        entryTwo= new FibonacciHeapBig.Entry<>(nodeTwo, Integer.MAX_VALUE);
+        entryOne = nodeOne;
+        entryTwo = nodeTwo;
         this.distance = distance;
     }
 
     @Override
-    public FibonacciHeapBig.Entry<Vertex> getFirstEntry() {
+    public Entry<Vertex> getFirstEntry() {
         return entryOne;
     }
 
     @Override
-    public FibonacciHeapBig.Entry<Vertex> getSecondEntry() {
+    public Entry<Vertex> getSecondEntry() {
         return entryTwo;
     }
 
     @Override
     public boolean contains(Vertex vertex) {
         return entryOne.getValue().equals(vertex) || entryTwo.getValue().equals(vertex);
+    }
+
+    @Override
+    public boolean contains(Entry<Vertex> entry) {
+        return entryOne.equals(entry) || entryTwo.equals(entry);
     }
 
     @Override

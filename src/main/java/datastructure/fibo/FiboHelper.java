@@ -33,6 +33,10 @@ public final class FiboHelper {
         }
     }
 
+    public static <T> boolean selfLinked(Entry<T> x) {
+        return x.getPrevious() == x && x.getNext() == x;
+    }
+
     public static <T> void swap(Entry<T> entryOne, Entry<T> entryTwo) {
         Entry<T> tmp = entryOne;
         entryOne = entryTwo;

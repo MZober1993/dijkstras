@@ -1,5 +1,7 @@
 package datastructure.fibo;
 
+import datastructure.PrintHelper;
+
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
  *         On 25.12.15 - 17:55
@@ -13,9 +15,9 @@ public final class Entry<T> {
     private Entry<T> parent;
     private Entry<T> child;
     private T value;
-    private double key;
+    private Double key;
 
-    public Entry(T value, double key) {
+    public Entry(T value, Double key) {
         deg = 0;
         parent = null;
         child = null;
@@ -43,7 +45,11 @@ public final class Entry<T> {
     }
 
     public T getValue() {
-        return value;
+        if (value != null) {
+            return value;
+        } else {
+            throw new NullPointerException("Value of Entry:" + this + " , is null.");
+        }
     }
 
     public int getDeg() {
@@ -62,11 +68,11 @@ public final class Entry<T> {
         isMarked = marked;
     }
 
-    public double getKey() {
+    public Double getKey() {
         return key;
     }
 
-    public void setKey(double key) {
+    public void setKey(Double key) {
         this.key = key;
     }
 
@@ -87,20 +93,17 @@ public final class Entry<T> {
     }
 
     @Override
-    public String toString() {
-        return "Entry{" +
-                "deg=" + deg +
-                ", isMarked=" + isMarked +
-                ", next=" + nullOrPriority(next) +
-                ", previous=" + nullOrPriority(previous) +
-                ", parent=" + nullOrPriority(parent) +
-                ", child=" + nullOrPriority(child) +
-                ", value=" + value +
-                ", key=" + key +
-                '}';
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Entry<?> entry = (Entry<?>) o;
+
+        return value.equals(entry.value);
     }
 
-    private String nullOrPriority(Entry<T> entry){
-        return String.valueOf(entry==null?"null":entry.getKey());
+    @Override
+    public String toString() {
+        return PrintHelper.transformEntry(this);
     }
 }

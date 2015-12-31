@@ -1,6 +1,7 @@
 package algorithm.fibo;
 
 import com.google.common.truth.Truth;
+import datastructure.GraphHelper;
 import datastructure.Vertex;
 import datastructure.fibo.EdgeImplFibo;
 import datastructure.fibo.GraphImplFibo;
@@ -8,7 +9,6 @@ import datastructure.standard.EdgeImpl;
 import datastructure.standard.GraphImpl;
 import org.junit.Before;
 import org.junit.Test;
-import datastructure.GraphHelper;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ import java.util.List;
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
  *         01.11.15 - 18:41
  */
-public class DijkstraTest {
+public class DijkstraImplFiboTest {
 
     GraphImplFibo graph;
     GraphImpl graphStd;
@@ -35,7 +35,7 @@ public class DijkstraTest {
         Vertex end = graph.getVertex(7);
         List<Integer> actual = dijkstra.shortestPath(graph, start, end);
 
-        Truth.assertThat(actual).containsAllOf(1, 5, 7).inOrder();
+        Truth.assertThat(actual).containsAllOf(0, 1, 5, 7).inOrder();
         //TODO: resolve Test
     }
 

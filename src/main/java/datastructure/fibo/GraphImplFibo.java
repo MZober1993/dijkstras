@@ -18,33 +18,39 @@ public class GraphImplFibo implements FiboGraph {
     private final Map<Integer, List<FiboEdge>> outgoingEdges;
     private final List<FiboEdge> allEdges;
     private final Map<Integer, Vertex> vertices;
+    private final Map<Integer, Entry<Vertex>> entryVertices;
 
     public GraphImplFibo(Integer... identifier) {
         checkNotNull(identifier);
         outgoingEdges = new LinkedHashMap<>();
         allEdges = new ArrayList<>();
         vertices = new LinkedHashMap<>();
+        entryVertices = new LinkedHashMap<>();
         for (Integer id : identifier) {
-            this.vertices.put(id, new VertexImpl(id));
+            VertexImpl v = new VertexImpl(id);
+            this.vertices.put(id, v);
+            this.entryVertices.put(id, new Entry<>(v, Double.MAX_VALUE));
         }
     }
 
     @Override
     public void addConnection(Integer signOne, Integer signTwo, Double distance) {
-        Vertex one = getVertexOrCreateOne(signOne);
-        Vertex two = getVertexOrCreateOne(signTwo);
+        Entry<Vertex> one = getEntryOrCreateOne(signOne);
+        Entry<Vertex> two = getEntryOrCreateOne(signTwo);
         EdgeImplFibo edge = new EdgeImplFibo(one, two, distance);
         if (!allEdges.contains(edge)) {
             allEdges.add(edge);
         }
-        Optional<List<FiboEdge>> edges = Optional.ofNullable(outgoingEdges.get(one.getId()));
+        Optional<List<FiboEdge>> edges = Optional.ofNullable(outgoingEdges.get(
+                one.getValue().getId()));
         if (edges.isPresent()) {
             List<FiboEdge> value = edges.get();
             if (!value.contains(edge)) {
-                outgoingEdges.put(one.getId(), ImmutableList.<FiboEdge>builder().addAll(value).add(edge).build());
+                outgoingEdges.put(one.getValue().getId(), ImmutableList.<FiboEdge>builder()
+                        .addAll(value).add(edge).build());
             }
         } else {
-            outgoingEdges.put(one.getId(), ImmutableList.of(edge));
+            outgoingEdges.put(one.getValue().getId(), ImmutableList.of(edge));
         }
     }
 
@@ -53,7 +59,7 @@ public class GraphImplFibo implements FiboGraph {
         checkNotNull(builder);
         Integer id = builder.getCurrentId();
         List<FiboEdge> edges = builder.build();
-        if (vertices.get(id) != null) {
+        if (entryVertices.get(id) != null) {
             checkNotNull(edges);
             this.outgoingEdges.put(id, edges);
         } else {
@@ -67,7 +73,7 @@ public class GraphImplFibo implements FiboGraph {
         ImmutableList.Builder<FiboEdge> edgesFromNodeBuilder = new ImmutableList.Builder<>();
         for (List<FiboEdge> edges : outgoingEdges.values()) {
             for (FiboEdge currentEdge : edges) {
-                if (currentEdge.contains(vertices.get(identifier))) {
+                if (currentEdge.contains(entryVertices.get(identifier))) {
                     edgesFromNodeBuilder.add(currentEdge);
                 }
             }
@@ -88,6 +94,11 @@ public class GraphImplFibo implements FiboGraph {
     @Override
     public Map<Integer, Vertex> getVertices() {
         return vertices;
+    }
+
+    @Override
+    public Map<Integer, Entry<Vertex>> getEntryVertices() {
+        return entryVertices;
     }
 
     @Override

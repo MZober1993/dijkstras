@@ -135,8 +135,7 @@ public class VertexImpl implements Vertex {
     public String toString() {
         return "Vertex{" +
                 "id=" + id +
-                ",g=" + g +
-                ",f=" + f +
+                ",g=" + PrintHelper.transformDouble(g) +
                 '}';
     }
 }

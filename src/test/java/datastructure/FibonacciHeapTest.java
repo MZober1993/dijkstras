@@ -114,6 +114,37 @@ public class FibonacciHeapTest {
         childAssert(four, five);
     }
 
+    @Test
+    public void testExtractMinWithMaxValues() {
+        Entry<Vertex> min = new Entry<>(new VertexImpl(1), 0.0);
+        Entry<Vertex> entry1 = new Entry<>(new VertexImpl(2), Double.MAX_VALUE);
+        Entry<Vertex> entry2 = new Entry<>(new VertexImpl(3), Double.MAX_VALUE);
+        Entry<Vertex> entry3 = new Entry<>(new VertexImpl(4), Double.MAX_VALUE);
+        Entry<Vertex> entry4 = new Entry<>(new VertexImpl(5), Double.MAX_VALUE);
+        Stream.of(min
+                , entry1
+                , entry2
+                , entry3
+                , entry4)
+                .forEach(insert);
+
+        Entry<Vertex> entry = heap.extractMin();
+        Truth.assertThat(entry).isEqualTo(min);
+        System.out.println(heap);
+
+        System.out.println();
+        heap.decreaseKey(entry1, 0.0);
+        System.out.println(heap);
+
+        Entry<Vertex> newMin = heap.extractMin();
+        Truth.assertThat(newMin).isEqualTo(entry1);
+        System.out.println(heap);
+
+        System.out.println();
+        heap.decreaseKey(entry3, 0.0);
+        System.out.println(heap);
+    }
+
     private void checkSizeOfEntriesWithDeg(Stream<Entry<Vertex>> stream, Integer deg, Long countOfEntries) {
         Truth.assertThat(stream.filter(x -> x.getDeg() == deg).count()).isEqualTo(countOfEntries);
     }

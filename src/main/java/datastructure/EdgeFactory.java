@@ -1,8 +1,8 @@
 package datastructure;
 
 import datastructure.fibo.EdgeImplFibo;
+import datastructure.fibo.Entry;
 import datastructure.standard.EdgeImpl;
-import datastructure.standard.StandardEdge;
 
 import java.util.Objects;
 
@@ -22,7 +22,8 @@ public class EdgeFactory<E extends Edge> {
         if (Objects.equals(clazz.getName(), EdgeImpl.class.getName())) {
             return (E) new EdgeImpl(one, two, distance);
         } else if (Objects.equals(clazz.getName(), EdgeImplFibo.class.getName())) {
-            return (E) new EdgeImplFibo(one, two, distance);
+            return (E) new EdgeImplFibo(new Entry<>(one, Double.MAX_VALUE)
+                    , new Entry<>(two, Double.MAX_VALUE), distance);
         } else {
             throw new RuntimeException("The given clazz is not an Edge-Class");
         }

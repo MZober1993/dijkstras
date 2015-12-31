@@ -1,12 +1,12 @@
 package algorithm.standard;
 
 import com.google.common.truth.Truth;
+import datastructure.GraphHelper;
 import datastructure.Vertex;
 import datastructure.standard.EdgeImpl;
 import datastructure.standard.GraphImpl;
 import org.junit.Before;
 import org.junit.Test;
-import datastructure.GraphHelper;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ import java.util.List;
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
  *         01.11.15 - 18:41
  */
-public class DijkstraTest {
+public class DijkstraImplTest {
 
     GraphImpl graph;
     DijkstraImpl dijkstra;

@@ -2,10 +2,11 @@ package algorithm.fibo;
 
 import algorithm.Dijkstra;
 import datastructure.Graph;
-import datastructure.Vertex;
-import datastructure.fibo.FiboEdge;
-import datastructure.fibo.FibonacciHeapBig;
 import datastructure.GraphHelper;
+import datastructure.Vertex;
+import datastructure.fibo.Entry;
+import datastructure.fibo.FiboEdge;
+import datastructure.fibo.FibonacciHeap;
 import util.LoggingHelper;
 
 import java.util.Collections;
@@ -24,24 +25,21 @@ public class DijkstraImplFibo implements Dijkstra {
 
     @Override
     public List<Integer> shortestPath(Graph graph, Vertex start, Vertex finish) {
-        FibonacciHeapBig<Vertex> nodes = new FibonacciHeapBig<>();
-        LOGGER.info("graph = [" + graph + "]\n, start = [" + start + "]\n, finish = [" + finish + "]\n");
-        for (Vertex vertex : graph.getVertices().values()) {
-            if (vertex.equals(start)) {
-                vertex.setGAndUpdateF(0.0);
+        FibonacciHeap<Vertex> nodes = new FibonacciHeap<>();
+        for (Entry<Vertex> entry : graph.getEntryVertices().values()) {
+            if (entry.getValue().equals(start)) {
+                entry.getValue().setGAndUpdateF(0.0);
+                entry.setKey(0.0);
             } else {
-                vertex.setGAndUpdateF(Double.MAX_VALUE);
+                entry.getValue().setGAndUpdateF(Double.MAX_VALUE);
+                entry.setKey(Double.MAX_VALUE);
             }
-            nodes.enqueue(vertex, vertex.getG());
+            nodes.insert(entry);
         }
 
-        LOGGER.info(nodes.toString());
-        LoggingHelper.logNewLine(LOGGER);
         while (!nodes.isEmpty()) {
-            final FibonacciHeapBig.Entry<Vertex> smallestEntry = nodes.dequeueMin();
+            final Entry<Vertex> smallestEntry = nodes.extractMin();
             final Vertex smallest = smallestEntry.getValue();
-            LOGGER.info("smallestEntry = " + smallestEntry);
-            LOGGER.info("smallest = " + smallest);
 
             if (smallest.equals(finish)) {
                 return GraphHelper.reconstructPath(smallest);
@@ -50,25 +48,18 @@ public class DijkstraImplFibo implements Dijkstra {
             if (smallest.getG() == Double.MAX_VALUE) {
                 continue;
             }
-            //TODO: fix dijkstra
             LoggingHelper.logNewLine(LOGGER);
             for (FiboEdge edge : graph.<FiboEdge>getEdgesFromNode(smallest.getId())) {
-                LoggingHelper.logMinusLine(LOGGER);
-                LOGGER.info("edge = " + edge);
                 final Double alt = smallest.getG() + edge.getDistance();
-                LOGGER.info("alt = " + alt);
-                final FibonacciHeapBig.Entry<Vertex> connectedEntry = edge.getConnectedEntry(smallestEntry);
-                LOGGER.info("old connectedEntry = " + connectedEntry);
+                final Entry<Vertex> connectedEntry = edge.getConnectedEntry(smallestEntry);
                 final Vertex connectedVertex = connectedEntry.getValue();
-                LOGGER.info("connectedVertex = " + connectedVertex);
 
                 if (alt < connectedVertex.getG()) {
                     connectedVertex.setGAndUpdateF(alt);
                     connectedVertex.setPrevious(smallest);
+                    nodes.insertIfNotExist(connectedEntry);
                     nodes.decreaseKey(connectedEntry, connectedVertex.getG());
-                    LOGGER.info("new connectedEntry = " + connectedEntry);
                 }
-                LoggingHelper.logNewLine(LOGGER);
             }
         }
         return Collections.emptyList();
