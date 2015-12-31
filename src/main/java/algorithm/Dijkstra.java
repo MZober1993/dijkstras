@@ -1,7 +1,6 @@
 package algorithm;
 
 import datastructure.Graph;
-import datastructure.standard.StandardGraph;
 import datastructure.Vertex;
 
 import java.util.List;
@@ -17,5 +16,5 @@ public interface Dijkstra {
      * @param endNode   The character of the end-vertex.
      * @return a list of characters, representing a shortestPath in an example
      */
-    List<Integer> shortestPath(Graph graph, Vertex startNode, Vertex endNode);
+    <G extends Graph> List<Integer> shortestPath(G graph, Vertex startNode, Vertex endNode);
 }

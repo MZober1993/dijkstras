@@ -10,33 +10,21 @@ public class VertexImpl implements Vertex {
 
     private Integer id;
     private Double g;
-    private Double h;
-    private Double f;
     private VertexImpl previous;
-    private boolean close;
-    private Double x;
-    private Double y;
+    private boolean closed;
 
     public VertexImpl(Integer id) {
         super();
         checkNotNull(id);
         this.id = id;
         this.g = 0.0;
-        this.h = 0.0;
-        this.f = 0.0;
         previous = null;
-        close = false;
+        closed = false;
     }
 
     @Override
     public Integer getId() {
         return id;
-    }
-
-    @Override
-    public void setId(Integer id) {
-        checkNotNull(id);
-        this.id = id;
     }
 
     @Override
@@ -50,33 +38,6 @@ public class VertexImpl implements Vertex {
     }
 
     @Override
-    public void setGAndUpdateF(Double g) {
-        this.g = g;
-        this.f = h + g;
-    }
-
-    @Override
-    public Double getH() {
-        return h;
-    }
-
-    @Override
-    public void setHAndUpdateF(Double h) {
-        this.h = h;
-        this.f = g + h;
-    }
-
-    @Override
-    public Double getF() {
-        return f;
-    }
-
-    @Override
-    public void setF(Double f) {
-        this.f = f;
-    }
-
-    @Override
     public VertexImpl getPrevious() {
         return previous;
     }
@@ -86,34 +47,12 @@ public class VertexImpl implements Vertex {
         this.previous = (VertexImpl) previous;
     }
 
-    @Override
-    public boolean isClose() {
-        return close;
+    public boolean isClosed() {
+        return closed;
     }
 
-    @Override
-    public void setClose(boolean close) {
-        this.close = close;
-    }
-
-    @Override
-    public Double getX() {
-        return x;
-    }
-
-    @Override
-    public void setX(Double x) {
-        this.x = x;
-    }
-
-    @Override
-    public Double getY() {
-        return y;
-    }
-
-    @Override
-    public void setY(Double y) {
-        this.y = y;
+    public void setClosed(boolean closed) {
+        this.closed = closed;
     }
 
     @Override

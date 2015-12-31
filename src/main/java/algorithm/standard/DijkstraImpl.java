@@ -2,9 +2,9 @@ package algorithm.standard;
 
 import algorithm.Dijkstra;
 import datastructure.Graph;
-import datastructure.standard.StandardEdge;
-import datastructure.Vertex;
 import datastructure.GraphHelper;
+import datastructure.Vertex;
+import datastructure.standard.StandardEdge;
 
 import java.util.Collections;
 import java.util.List;
@@ -22,15 +22,16 @@ public class DijkstraImpl implements Dijkstra {
 
         for (Vertex vertex : graph.getVertices().values()) {
             if (vertex.equals(start)) {
-                vertex.setGAndUpdateF(0.0);
+                vertex.setG(0.0);
             } else {
-                vertex.setGAndUpdateF(Double.MAX_VALUE);
+                vertex.setG(Double.MAX_VALUE);
             }
             nodes.add(vertex);
         }
 
         while (!nodes.isEmpty()) {
             final Vertex smallest = nodes.poll();
+            smallest.setClosed(true);
 
             if (smallest.equals(finish)) {
                 return GraphHelper.reconstructPath(smallest);
@@ -44,8 +45,8 @@ public class DijkstraImpl implements Dijkstra {
                 final Double alt = smallest.getG() + edge.getDistance();
                 final Vertex connectedVertex = edge.getConnectedVertex(smallest);
 
-                if (alt < connectedVertex.getG()) {
-                    connectedVertex.setGAndUpdateF(alt);
+                if (!connectedVertex.isClosed() && alt < connectedVertex.getG()) {
+                    connectedVertex.setG(alt);
                     connectedVertex.setPrevious(smallest);
                     nodes.remove(connectedVertex);
                     nodes.add(connectedVertex);

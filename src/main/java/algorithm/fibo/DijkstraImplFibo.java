@@ -7,13 +7,9 @@ import datastructure.Vertex;
 import datastructure.fibo.Entry;
 import datastructure.fibo.FiboEdge;
 import datastructure.fibo.FibonacciHeap;
-import util.LoggingHelper;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Logger;
-
-import static util.LoggingHelper.buildLoggerWithStandardOutputConfig;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
@@ -21,17 +17,15 @@ import static util.LoggingHelper.buildLoggerWithStandardOutputConfig;
  */
 public class DijkstraImplFibo implements Dijkstra {
 
-    private static final Logger LOGGER = buildLoggerWithStandardOutputConfig(DijkstraImplFibo.class);
-
     @Override
     public List<Integer> shortestPath(Graph graph, Vertex start, Vertex finish) {
         FibonacciHeap<Vertex> nodes = new FibonacciHeap<>();
         for (Entry<Vertex> entry : graph.getEntryVertices().values()) {
             if (entry.getValue().equals(start)) {
-                entry.getValue().setGAndUpdateF(0.0);
+                entry.getValue().setG(0.0);
                 entry.setKey(0.0);
             } else {
-                entry.getValue().setGAndUpdateF(Double.MAX_VALUE);
+                entry.getValue().setG(Double.MAX_VALUE);
                 entry.setKey(Double.MAX_VALUE);
             }
             nodes.insert(entry);
@@ -40,6 +34,7 @@ public class DijkstraImplFibo implements Dijkstra {
         while (!nodes.isEmpty()) {
             final Entry<Vertex> smallestEntry = nodes.extractMin();
             final Vertex smallest = smallestEntry.getValue();
+            smallest.setClosed(true);
 
             if (smallest.equals(finish)) {
                 return GraphHelper.reconstructPath(smallest);
@@ -48,14 +43,14 @@ public class DijkstraImplFibo implements Dijkstra {
             if (smallest.getG() == Double.MAX_VALUE) {
                 continue;
             }
-            LoggingHelper.logNewLine(LOGGER);
+
             for (FiboEdge edge : graph.<FiboEdge>getEdgesFromNode(smallest.getId())) {
                 final Double alt = smallest.getG() + edge.getDistance();
                 final Entry<Vertex> connectedEntry = edge.getConnectedEntry(smallestEntry);
                 final Vertex connectedVertex = connectedEntry.getValue();
 
-                if (alt < connectedVertex.getG()) {
-                    connectedVertex.setGAndUpdateF(alt);
+                if (!connectedVertex.isClosed() && alt < connectedVertex.getG()) {
+                    connectedVertex.setG(alt);
                     connectedVertex.setPrevious(smallest);
                     nodes.insertIfNotExist(connectedEntry);
                     nodes.decreaseKey(connectedEntry, connectedVertex.getG());
