@@ -1,5 +1,6 @@
 package datastructure.fibo;
 
+import datastructure.Edge;
 import datastructure.Vertex;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -8,40 +9,37 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
  *         04.11.15 - 11:55
  */
-public class EdgeImplFibo implements FiboEdge {
+public class EdgeImplFibo implements Edge<Entry<Vertex>> {
 
-    private final Entry<Vertex> entryOne;
-    private final Entry<Vertex> entryTwo;
+    private Entry<Vertex> first;
+    private Entry<Vertex> second;
     private Double distance;
 
-    public EdgeImplFibo(Entry<Vertex> nodeOne, Entry<Vertex> nodeTwo, Double distance) {
-        checkNotNull(nodeOne);
-        checkNotNull(nodeTwo);
-        checkNotNull(distance);
-
-        entryOne = nodeOne;
-        entryTwo = nodeTwo;
-        this.distance = distance;
+    public EdgeImplFibo() {
     }
 
-    @Override
-    public Entry<Vertex> getFirstEntry() {
-        return entryOne;
-    }
-
-    @Override
-    public Entry<Vertex> getSecondEntry() {
-        return entryTwo;
+    public EdgeImplFibo(Entry<Vertex> first, Entry<Vertex> second, Double distance) {
+        initEdge(first, second, distance);
     }
 
     @Override
     public boolean contains(Vertex vertex) {
-        return entryOne.getValue().equals(vertex) || entryTwo.getValue().equals(vertex);
+        return first.getValue().equals(vertex) || second.getValue().equals(vertex);
     }
 
     @Override
     public boolean contains(Entry<Vertex> entry) {
-        return entryOne.equals(entry) || entryTwo.equals(entry);
+        return first.equals(entry) || second.equals(entry);
+    }
+
+    @Override
+    public Entry<Vertex> getFirst() {
+        return null;
+    }
+
+    @Override
+    public Entry<Vertex> getSecond() {
+        return null;
     }
 
     @Override
@@ -49,9 +47,19 @@ public class EdgeImplFibo implements FiboEdge {
         return distance;
     }
 
+    @Override
+    public void initEdge(Entry<Vertex> first, Entry<Vertex> second
+            , Double distance) {
+        checkNotNull(first);
+        checkNotNull(second);
+        checkNotNull(distance);
+        this.first = first;
+        this.second = second;
+        this.distance = distance;
+    }
 
     @Override
     public String toString() {
-        return entryOne.getValue().getId() + "-[" + distance + "]->" + entryTwo.getValue().getId();
+        return first.getValue().getId() + "-[" + distance + "]->" + second.getValue().getId();
     }
 }

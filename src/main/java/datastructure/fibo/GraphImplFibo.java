@@ -1,9 +1,7 @@
 package datastructure.fibo;
 
 import com.google.common.collect.ImmutableList;
-import datastructure.EdgeBuilder;
-import datastructure.Vertex;
-import datastructure.VertexImpl;
+import datastructure.*;
 
 import java.util.*;
 
@@ -13,10 +11,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
  *         01.11.15 - 18:40
  */
-public class GraphImplFibo implements FiboGraph {
+public class GraphImplFibo implements Graph<Entry<Vertex>> {
 
-    private final Map<Integer, List<FiboEdge>> outgoingEdges;
-    private final List<FiboEdge> allEdges;
+    private final Map<Integer, List<Edge<Entry<Vertex>>>> outgoingEdges;
+    private final List<Edge<Entry<Vertex>>> allEdges;
     private final Map<Integer, Vertex> vertices;
     private final Map<Integer, Entry<Vertex>> entryVertices;
 
@@ -35,18 +33,18 @@ public class GraphImplFibo implements FiboGraph {
 
     @Override
     public void addConnection(Integer signOne, Integer signTwo, Double distance) {
-        Entry<Vertex> one = getEntryOrCreateOne(signOne);
-        Entry<Vertex> two = getEntryOrCreateOne(signTwo);
+        Entry<Vertex> one = getElementOrCreateOne(signOne);
+        Entry<Vertex> two = getElementOrCreateOne(signTwo);
         EdgeImplFibo edge = new EdgeImplFibo(one, two, distance);
         if (!allEdges.contains(edge)) {
             allEdges.add(edge);
         }
-        Optional<List<FiboEdge>> edges = Optional.ofNullable(outgoingEdges.get(
+        Optional<List<Edge<Entry<Vertex>>>> edges = Optional.ofNullable(outgoingEdges.get(
                 one.getValue().getId()));
         if (edges.isPresent()) {
-            List<FiboEdge> value = edges.get();
+            List<Edge<Entry<Vertex>>> value = edges.get();
             if (!value.contains(edge)) {
-                outgoingEdges.put(one.getValue().getId(), ImmutableList.<FiboEdge>builder()
+                outgoingEdges.put(one.getValue().getId(), ImmutableList.<Edge<Entry<Vertex>>>builder()
                         .addAll(value).add(edge).build());
             }
         } else {
@@ -58,7 +56,7 @@ public class GraphImplFibo implements FiboGraph {
     public void linkVertex(EdgeBuilder builder) {
         checkNotNull(builder);
         Integer id = builder.getCurrentId();
-        List<FiboEdge> edges = builder.build();
+        List<Edge<Entry<Vertex>>> edges = builder.build();
         if (entryVertices.get(id) != null) {
             checkNotNull(edges);
             this.outgoingEdges.put(id, edges);
@@ -68,12 +66,12 @@ public class GraphImplFibo implements FiboGraph {
     }
 
     @Override
-    public List<FiboEdge> getEdgesFromNode(Integer identifier) {
+    public List<Edge<Entry<Vertex>>> getEdgesFromNode(Integer identifier) {
         //todo: doing this completely with entryVertices
         checkNotNull(identifier);
-        ImmutableList.Builder<FiboEdge> edgesFromNodeBuilder = new ImmutableList.Builder<>();
-        for (List<FiboEdge> edges : outgoingEdges.values()) {
-            for (FiboEdge currentEdge : edges) {
+        ImmutableList.Builder<Edge<Entry<Vertex>>> edgesFromNodeBuilder = new ImmutableList.Builder<>();
+        for (List<Edge<Entry<Vertex>>> edges : outgoingEdges.values()) {
+            for (Edge<Entry<Vertex>> currentEdge : edges) {
                 if (currentEdge.contains(entryVertices.get(identifier))) {
                     edgesFromNodeBuilder.add(currentEdge);
                 }
@@ -82,23 +80,27 @@ public class GraphImplFibo implements FiboGraph {
         return edgesFromNodeBuilder.build();
     }
 
-    @Override
-    public Map<Integer, List<FiboEdge>> getOutgoingEdges() {
-        return outgoingEdges;
-    }
-
-    @Override
-    public List<FiboEdge> getEdges() {
+    public List<Edge<Entry<Vertex>>> getEdges() {
         return allEdges;
     }
 
-    @Override
     public Map<Integer, Vertex> getVertices() {
         return vertices;
     }
 
     @Override
-    public Map<Integer, Entry<Vertex>> getEntryVertices() {
+    public Entry<Vertex> getElementOrCreateOne(int id) {
+        if (getElements().containsKey(id)) {
+            return getElements().get(id);
+        } else {
+            Entry<Vertex> value = new Entry<>(new VertexImpl(id), Double.MAX_VALUE);
+            getElements().put(id, value);
+            return value;
+        }
+    }
+
+    @Override
+    public Map<Integer, Entry<Vertex>> getElements() {
         return entryVertices;
     }
 

@@ -2,7 +2,7 @@ import algorithm.Dijkstra;
 import algorithm.standard.DijkstraImpl;
 import datastructure.GraphHelper;
 import datastructure.Vertex;
-import datastructure.standard.StandardGraph;
+import datastructure.standard.GraphImpl;
 import util.GraphImporter;
 import util.ImportFile;
 import util.Measures;
@@ -19,15 +19,15 @@ public class ShowDijkstra {
 
     public static void main(String[] args) {
         Dijkstra dijkstra = new DijkstraImpl();
-        StandardGraph graph = new GraphImporter<StandardGraph>(ImportFile.CREATED).importNVerticesAndGetSequentialGraph(10000L);
+        GraphImpl graph = new GraphImporter<GraphImpl>(ImportFile.CREATED).importNVerticesAndGetSequentialGraph(10000L);
         Measures.prepareMeasure(graph, dijkstra);
 
-        Vertex start = graph.getVertex(FIRST);
-        int size = graph.getVertices().size();
+        Vertex start = graph.getElement(FIRST);
+        int size = graph.getElements().size();
 
         for (int i = 0; i < 500; i++) {
             int id = size * (1 + i) / (800 + i);
-            Vertex end = graph.getVertex(id);
+            Vertex end = graph.getElement(id);
 
             System.out.println("id: " + id + ",T(10000):" +
                     GraphHelper.calculateTimeWithLastRandom(graph, dijkstra) / A_MILLION + " ms");

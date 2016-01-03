@@ -1,16 +1,12 @@
 package datastructure;
 
-import datastructure.fibo.EdgeImplFibo;
-import datastructure.fibo.Entry;
-import datastructure.standard.EdgeImpl;
-
-import java.util.Objects;
+import java.util.Optional;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
  *         18.11.15 - 13:15
  */
-public class EdgeFactory<E extends Edge> {
+public class EdgeFactory<E extends Edge<T>, T> {
 
     private Class<E> clazz;
 
@@ -18,14 +14,21 @@ public class EdgeFactory<E extends Edge> {
         this.clazz = clazz;
     }
 
-    public E newInstance(Vertex one, Vertex two, Double distance) {
-        if (Objects.equals(clazz.getName(), EdgeImpl.class.getName())) {
-            return (E) new EdgeImpl(one, two, distance);
-        } else if (Objects.equals(clazz.getName(), EdgeImplFibo.class.getName())) {
-            return (E) new EdgeImplFibo(new Entry<>(one, Double.MAX_VALUE)
-                    , new Entry<>(two, Double.MAX_VALUE), distance);
-        } else {
-            throw new RuntimeException("The given clazz is not an Edge-Class");
+    public E newInstance(T one, T two, Double distance) {
+        E edge;
+        try {
+            System.out.println(clazz);
+            //TODO: 10 times EdgeImplFibo then EdgeImpl, fix this
+            edge = clazz.newInstance();
+        } catch (InstantiationException e) {
+            throw new RuntimeException("InstantiationException: The given clazz is not an Edge-Class");
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException("IllegalAccessException: The given clazz is not an Edge-Class");
         }
+        edge.initEdge(one, two, distance);
+        if (!Optional.ofNullable(edge).isPresent()) {
+            throw new RuntimeException("Not instantiated Edge.");
+        }
+        return edge;
     }
 }

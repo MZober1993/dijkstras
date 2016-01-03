@@ -4,8 +4,8 @@ import algorithm.Dijkstra;
 import datastructure.Graph;
 import datastructure.GraphHelper;
 import datastructure.Vertex;
+import datastructure.fibo.EdgeImplFibo;
 import datastructure.fibo.Entry;
-import datastructure.fibo.FiboEdge;
 import datastructure.fibo.FibonacciHeap;
 
 import java.util.Collections;
@@ -15,13 +15,13 @@ import java.util.List;
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
  *         01.11.15 - 18:40
  */
-public class DijkstraImplFibo implements Dijkstra {
+public class DijkstraImplFibo implements Dijkstra<Entry<Vertex>> {
 
     @Override
-    public List<Integer> shortestPath(Graph graph, Vertex start, Vertex finish) {
+    public <G extends Graph<Entry<Vertex>>> List<Integer> shortestPath(G graph, Entry<Vertex> start, Entry<Vertex> finish) {
         FibonacciHeap<Vertex> nodes = new FibonacciHeap<>();
-        for (Entry<Vertex> entry : graph.getEntryVertices().values()) {
-            if (entry.getValue().equals(start)) {
+        for (Entry<Vertex> entry : graph.getElements().values()) {
+            if (entry.equals(start)) {
                 entry.getValue().setG(0.0);
                 entry.setKey(0.0);
             } else {
@@ -35,7 +35,7 @@ public class DijkstraImplFibo implements Dijkstra {
             final Entry<Vertex> smallestEntry = nodes.extractMin();
             final Vertex smallest = smallestEntry.getValue();
 
-            if (smallest.equals(finish)) {
+            if (smallestEntry.equals(finish)) {
                 return GraphHelper.reconstructPath(smallest);
             }
 
@@ -43,9 +43,9 @@ public class DijkstraImplFibo implements Dijkstra {
                 continue;
             }
 
-            for (FiboEdge edge : graph.<FiboEdge>getEdgesFromNode(smallest.getId())) {
+            for (EdgeImplFibo edge : graph.<EdgeImplFibo>getEdgesFromNode(smallest.getId())) {
                 final Double alt = smallest.getG() + edge.getDistance();
-                final Entry<Vertex> connectedEntry = edge.getConnectedEntry(smallestEntry);
+                final Entry<Vertex> connectedEntry = edge.getConnected(smallestEntry);
                 final Vertex connectedVertex = connectedEntry.getValue();
 
                 if (alt < connectedVertex.getG()) {

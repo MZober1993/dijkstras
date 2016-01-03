@@ -3,9 +3,9 @@ package util;
 import algorithm.Dijkstra;
 import algorithm.standard.DijkstraImpl;
 import com.google.common.truth.Truth;
+import datastructure.Edge;
 import datastructure.Vertex;
-import datastructure.standard.StandardEdge;
-import datastructure.standard.StandardGraph;
+import datastructure.standard.GraphImpl;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -27,7 +27,7 @@ public class GraphImporterIT {
     public static final long EMPTY = 0;
     public static final long HUGE_LIMIT_NUMBER = 2000000000;
     public static final long SMALL_LIMIT_NUMBER = 20;
-    GraphImporter<StandardGraph> graphImporter;
+    GraphImporter<GraphImpl> graphImporter;
     Dijkstra dijkstra;
 
     @Before
@@ -39,10 +39,10 @@ public class GraphImporterIT {
 
     @Test
     public void testImportGraph() {
-        StandardGraph graph = graphImporter.importLinesOfFileAndGetSequentialGraph(HUGE_LIMIT_NUMBER);
+        GraphImpl graph = graphImporter.importLinesOfFileAndGetSequentialGraph(HUGE_LIMIT_NUMBER);
         Vertex vertex = graph.getOne();
-        List<StandardEdge> edgesFromNode = graph.getEdgesFromNode(vertex);
-        StandardEdge edge = edgesFromNode.get(FIRST);
+        List<Edge<Vertex>> edgesFromNode = graph.getEdgesFromNode(vertex.getId());
+        Edge<Vertex> edge = edgesFromNode.get(FIRST);
 
         checkGraphContainsVerticesAndEdges(graph, edgesFromNode);
         checkEdgeContainsDistanceAndTwoVertices(edge);
@@ -50,31 +50,22 @@ public class GraphImporterIT {
 
     @Test
     public void testImportSmallGraphAndUseDijkstra() {
-        StandardGraph graph = graphImporter.importLinesOfFileAndGetSequentialGraph(SMALL_LIMIT_NUMBER);
-        Vertex start = graph.getVertexWithIndex(0);
-        Vertex end = graph.getVertex(13);
+        GraphImpl graph = graphImporter.importLinesOfFileAndGetSequentialGraph(SMALL_LIMIT_NUMBER);
+        Vertex start = graph.getElementWithIndex(0);
+        Vertex end = graph.getElementWithIndex(13);
         List<Integer> shortestPath = dijkstra.shortestPath(graph, start, end);
 
         checkShortestPath(start, end, shortestPath);
     }
 
-    @Test
-    public void testImportHugeGraphAndUseDijkstra() {
-        StandardGraph graph = graphImporter.importLinesOfFileAndGetSequentialGraph(HUGE_LIMIT_NUMBER);
-        Vertex start = graph.getVertexWithIndex(0);
-        Vertex end = graph.getVertexWithIndex(graph.getVertices().values().size() - 1);
-        List<Integer> shortestPath = dijkstra.shortestPath(graph, start, end);
-        checkShortestPath(start, end, shortestPath);
-    }
-
-    private static void checkEdgeContainsDistanceAndTwoVertices(StandardEdge edge) {
+    private static void checkEdgeContainsDistanceAndTwoVertices(Edge<Vertex> edge) {
         assertNotNull(edge.getDistance());
-        assertNotNull(edge.getFirstVertex());
-        assertNotNull(edge.getSecondVertex());
+        assertNotNull(edge.getFirst());
+        assertNotNull(edge.getSecond());
     }
 
-    private void checkGraphContainsVerticesAndEdges(StandardGraph graph, List<StandardEdge> edgesFromNode) {
-        Truth.assertThat(graph.getVertices().size() > MINIMUM_COUNT);
+    private void checkGraphContainsVerticesAndEdges(GraphImpl graph, List<Edge<Vertex>> edgesFromNode) {
+        Truth.assertThat(graph.getElements().size() > MINIMUM_COUNT);
         Truth.assertThat(edgesFromNode.size() > EMPTY);
     }
 

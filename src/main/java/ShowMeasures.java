@@ -1,7 +1,7 @@
 import algorithm.fibo.DijkstraImplFibo;
 import algorithm.standard.DijkstraImpl;
 import datastructure.fibo.GraphImplFibo;
-import datastructure.standard.StandardGraph;
+import datastructure.standard.GraphImpl;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
@@ -12,7 +12,7 @@ public class ShowMeasures {
         MeasureAlgorithm<GraphImplFibo, DijkstraImplFibo> fiboMeasures = new MeasureAlgorithm<>();
         fiboMeasures.measures(new DijkstraImplFibo(), fiboMeasures.CREATED_IMPORTER);
         //measuresForNY();
-        MeasureAlgorithm<StandardGraph, DijkstraImpl> stdMeasures = new MeasureAlgorithm<>();
+        MeasureAlgorithm<GraphImpl, DijkstraImpl> stdMeasures = new MeasureAlgorithm<>();
         stdMeasures.measures(new DijkstraImpl(), stdMeasures.CREATED_IMPORTER);
     }
 }

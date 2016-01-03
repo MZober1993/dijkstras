@@ -1,6 +1,6 @@
 package util;
 
-import datastructure.standard.StandardGraph;
+import datastructure.standard.GraphImpl;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -25,13 +25,13 @@ public class TheoreticalWriter extends FileWriter {
     }
 
     public void writeRoutine() {
-        GraphImporter<StandardGraph> graphImporter = new GraphImporter<>(ImportFile.CREATED);
+        GraphImporter<GraphImpl> graphImporter = new GraphImporter<>(ImportFile.CREATED);
         try {
             writeHeader();
             scaleMeasureSample(100).forEach(element -> {
-                StandardGraph graph = graphImporter.importNVerticesAndGetSequentialGraph(element);
+                GraphImpl graph = graphImporter.importNVerticesAndGetSequentialGraph(element);
                 int m = graph.getEdges().size();
-                int n = graph.getVertices().size();
+                int n = graph.getElements().size();
                 writeTn(n, (m + n) * Math.log(n) * n, 2 * n + 2 * n * Math.log(n) + m + m * n * Math.log(n) * 2);
             });
         } catch (IOException e) {

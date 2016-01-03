@@ -2,7 +2,7 @@ package util;
 
 import algorithm.standard.DijkstraImpl;
 import datastructure.GraphHelper;
-import datastructure.standard.StandardGraph;
+import datastructure.standard.GraphImpl;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -30,7 +30,7 @@ public class MeasureFileWriter extends FileWriter {
         super(path);
     }
 
-    public void writeRoutine(List<Long> limits, Integer times, GraphImporter<StandardGraph> graphImporter, boolean scaledN) {
+    public void writeRoutine(List<Long> limits, Integer times, GraphImporter<GraphImpl> graphImporter, boolean scaledN) {
         DijkstraImpl algorithm = new DijkstraImpl();
         long time;
 
@@ -38,8 +38,8 @@ public class MeasureFileWriter extends FileWriter {
             writeHeader(scaledN);
             for (Long limit : limits) {
                 Stream.Builder<Long> builder = Stream.builder();
-                StandardGraph graph = graphImporter.importNVerticesAndGetSequentialGraph(limit);
-                int n = graph.getVertices().size();
+                GraphImpl graph = graphImporter.importNVerticesAndGetSequentialGraph(limit);
+                int n = graph.getElements().size();
                 int m = graph.getEdges().size();
 
                 for (int i = 0; i < times - 1; i++) {

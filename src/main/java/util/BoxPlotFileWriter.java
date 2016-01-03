@@ -2,7 +2,7 @@ package util;
 
 import algorithm.standard.DijkstraImpl;
 import datastructure.GraphHelper;
-import datastructure.standard.StandardGraph;
+import datastructure.standard.GraphImpl;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -31,7 +31,7 @@ public class BoxPlotFileWriter extends FileWriter {
         super(path);
     }
 
-    public void writeRoutine(List<Long> limits, Integer times, GraphImporter<StandardGraph> graphImporter, boolean scaledN) {
+    public void writeRoutine(List<Long> limits, Integer times, GraphImporter<GraphImpl> graphImporter, boolean scaledN) {
         DijkstraImpl algorithm = new DijkstraImpl();
         long time;
         int aQuarter = (int) Math.ceil(times / 4.0);
@@ -46,8 +46,8 @@ public class BoxPlotFileWriter extends FileWriter {
                 Double quartile0_75;
 
                 Stream.Builder<Long> builder = Stream.builder();
-                StandardGraph graph = graphImporter.importNVerticesAndGetSequentialGraph(limit);
-                int numberOfVertices = graph.getVertices().size();
+                GraphImpl graph = graphImporter.importNVerticesAndGetSequentialGraph(limit);
+                int numberOfVertices = graph.getElements().size();
                 int numberOfEdges = graph.getEdges().size();
 
                 for (int i = 0; i < times - 1; i++) {

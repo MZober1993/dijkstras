@@ -2,8 +2,8 @@ package util;
 
 import algorithm.Dijkstra;
 import com.google.common.collect.ImmutableList;
-import datastructure.standard.StandardGraph;
 import datastructure.Vertex;
+import datastructure.standard.GraphImpl;
 
 import java.util.List;
 
@@ -14,14 +14,14 @@ import java.util.List;
 public class MemberFinder {
 
     public List<Integer> findMemberForHighestShortestPathFromTheBeginningOfTheGraph(
-            Dijkstra algorithm, StandardGraph graph) {
-        Vertex start = graph.getVertex(1);
+            Dijkstra algorithm, GraphImpl graph) {
+        Vertex start = graph.getElement(1);
         ImmutableList.Builder<Integer> builder = ImmutableList.builder();
         builder.add(start.getId());
         Integer length = 0;
         Integer member = 0;
 
-        for (Vertex vertex : graph.getVertices().values()) {
+        for (Vertex vertex : graph.getElements().values()) {
             List<Integer> shortestPath = algorithm.shortestPath(graph, start, vertex);
 
             if (shortestPath.isEmpty()) {

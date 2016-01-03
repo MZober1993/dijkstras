@@ -1,8 +1,6 @@
 package datastructure;
 
 import com.google.common.collect.ImmutableList;
-import datastructure.standard.StandardEdge;
-import datastructure.standard.StandardGraph;
 
 import java.util.List;
 
@@ -10,12 +8,12 @@ import java.util.List;
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
  *         04.11.15 - 13:39
  */
-public class EdgeBuilder<G extends Graph, E extends Edge> {
+public class EdgeBuilder<G extends Graph, E extends Edge<T>, T> {
 
     private ImmutableList.Builder<E> edgeBuilder;
     private Integer currentId;
     private G graph;
-    private EdgeFactory<E> edgeFactory;
+    private EdgeFactory<E, T> edgeFactory;
 
     public EdgeBuilder(G graph, Class<E> clazz) {
         this.graph = graph;
@@ -24,8 +22,8 @@ public class EdgeBuilder<G extends Graph, E extends Edge> {
         edgeBuilder = new ImmutableList.Builder<>();
     }
 
-    public EdgeBuilder<G, E> current(Integer currentId) {
-        if (!graph.getVertices().containsKey(currentId)) {
+    public EdgeBuilder<G, E, T> current(Integer currentId) {
+        if (!graph.getElements().containsKey(currentId)) {
             throw new RuntimeException("Unknown identifiers:" + currentId);
         }
         this.currentId = currentId;
@@ -33,10 +31,11 @@ public class EdgeBuilder<G extends Graph, E extends Edge> {
         return this;
     }
 
-    public EdgeBuilder<G, E> to(Integer id, Double dist) {
-        if (graph.getVertices().containsKey(currentId) && graph.getVertices().containsKey(id)) {
+    public EdgeBuilder<G, E, T> to(Integer id, Double dist) {
+        if (graph.getElements().containsKey(currentId) && graph.getElements().containsKey(id)) {
             edgeBuilder.add(edgeFactory.newInstance(
-                    graph.getVertices().get(currentId), graph.getVertices().get(id), dist));
+                    (T) graph.getElements().get(currentId)
+                    , (T) graph.getElements().get(id), dist));
             return this;
         } else {
             throw new RuntimeException("Unknown pair of identifiers:" + currentId + "," + id);

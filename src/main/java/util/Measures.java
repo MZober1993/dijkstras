@@ -4,7 +4,7 @@ import algorithm.Dijkstra;
 import com.google.common.collect.ImmutableList;
 import datastructure.Graph;
 import datastructure.GraphHelper;
-import datastructure.standard.StandardGraph;
+import datastructure.standard.GraphImpl;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,14 +29,14 @@ public enum Measures {
     public static <T extends Graph> void prepareMeasure(GraphImporter<T> graphImporter, Dijkstra algorithm) {
         for (int i = 0; i < 5; i++) {
             T graphSeq = graphImporter.importNVerticesAndGetSequentialGraph(TEN_THOUSAND);
-            System.out.println(algorithm.shortestPath(graphSeq, graphSeq.getVertex(GraphHelper.FIRST),
-                    graphSeq.getLastRandomVertex()));
+            System.out.println(algorithm.shortestPath(graphSeq, graphSeq.getElement(GraphHelper.FIRST),
+                    graphSeq.getLastRandomElement()));
         }
     }
 
-    public static void prepareMeasure(StandardGraph graph, Dijkstra algorithm) {
+    public static void prepareMeasure(GraphImpl graph, Dijkstra algorithm) {
         for (int i = 0; i < 10; i++) {
-            algorithm.shortestPath(graph, graph.getVertex(GraphHelper.FIRST), graph.getLastRandomVertex());
+            algorithm.shortestPath(graph, graph.getElement(GraphHelper.FIRST), graph.getLastRandomElement());
         }
     }
 }

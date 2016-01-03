@@ -28,8 +28,8 @@ public class DijkstraImplTest {
 
     @Test
     public void testMinimumShortestPath() throws Exception {
-        Vertex start = graph.getVertex(0);
-        Vertex end = graph.getVertex(7);
+        Vertex start = graph.getElement(0);
+        Vertex end = graph.getElement(7);
         List<Integer> actual = dijkstra.shortestPath(graph, start, end);
         Truth.assertThat(actual).containsAllOf(1, 5, 7).inOrder();
     }

@@ -4,6 +4,7 @@ import com.google.common.truth.Truth;
 import datastructure.GraphHelper;
 import datastructure.Vertex;
 import datastructure.fibo.EdgeImplFibo;
+import datastructure.fibo.Entry;
 import datastructure.fibo.GraphImplFibo;
 import datastructure.standard.EdgeImpl;
 import datastructure.standard.GraphImpl;
@@ -31,8 +32,8 @@ public class DijkstraImplFiboTest {
 
     @Test
     public void testMinimumShortestPath() throws Exception {
-        Vertex start = graph.getVertex(0);
-        Vertex end = graph.getVertex(7);
+        Entry<Vertex> start = graph.getElement(0);
+        Entry<Vertex> end = graph.getElement(7);
         List<Integer> actual = dijkstra.shortestPath(graph, start, end);
 
         Truth.assertThat(actual).containsAllOf(0, 1, 5, 7).inOrder();
@@ -41,6 +42,6 @@ public class DijkstraImplFiboTest {
     @Test
     public void testSameGraph() throws Exception {
         Truth.assertThat(graph.getEdges()).containsAllIn(graphStd.getEdges());
-        Truth.assertThat(graph.getVertices().toString()).isEqualTo(graphStd.getVertices().toString());
+        Truth.assertThat(graph.getVertices().toString()).isEqualTo(graphStd.getElements().toString());
     }
 }

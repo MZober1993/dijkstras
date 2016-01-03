@@ -1,5 +1,6 @@
 package datastructure.standard;
 
+import datastructure.Edge;
 import datastructure.Vertex;
 import datastructure.fibo.Entry;
 
@@ -9,24 +10,19 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
  *         04.11.15 - 11:55
  */
-public class EdgeImpl implements StandardEdge {
+public class EdgeImpl implements Edge<Vertex> {
 
-    private final Vertex nodeOne;
-    private final Vertex nodeTwo;
+    private Vertex first;
+    private Vertex second;
     private Double distance;
 
-    public EdgeImpl(Vertex nodeOne, Vertex nodeTwo, Double distance) {
-        checkNotNull(nodeOne);
-        checkNotNull(nodeTwo);
-        checkNotNull(distance);
-        this.nodeOne = nodeOne;
-        this.nodeTwo = nodeTwo;
-        this.distance = distance;
+    public EdgeImpl(Vertex first, Vertex second, Double distance) {
+        initEdge(first, second, distance);
     }
 
     @Override
     public boolean contains(Vertex vertex) {
-        return nodeOne.equals(vertex) || nodeTwo.equals(vertex);
+        return first.equals(vertex) || second.equals(vertex);
     }
 
     @Override
@@ -35,23 +31,32 @@ public class EdgeImpl implements StandardEdge {
     }
 
     @Override
+    public Vertex getFirst() {
+        return first;
+    }
+
+    @Override
+    public Vertex getSecond() {
+        return null;
+    }
+
+    @Override
     public Double getDistance() {
         return distance;
     }
 
     @Override
-    public Vertex getFirstVertex() {
-        return nodeOne;
-    }
-
-    @Override
-    public Vertex getSecondVertex() {
-        return nodeTwo;
+    public void initEdge(Vertex first, Vertex second, Double distance) {
+        checkNotNull(first);
+        checkNotNull(second);
+        checkNotNull(distance);
+        this.first = first;
+        this.second = second;
+        this.distance = distance;
     }
 
     @Override
     public String toString() {
-        return nodeOne.getId() + "-[" + distance + "]->" + nodeTwo.getId();
+        return first.getId() + "-[" + distance + "]->" + second.getId();
     }
-
 }
