@@ -93,6 +93,9 @@ public final class FibonacciHeap<T> {
             if (size > 0) {
                 consolidate();
             }
+
+            cutConnection(entry);
+            selfLink(entry);
             return entry;
         }
         return null;
@@ -105,7 +108,9 @@ public final class FibonacciHeap<T> {
             degree[i] = null;
         }
 
-        cutAndSummarizeTrees(degree);
+        if (minimum != null) {
+            cutAndSummarizeTrees(degree);
+        }
 
         updateMinimum(degreeSize, degree);
     }
@@ -169,6 +174,7 @@ public final class FibonacciHeap<T> {
             } else if (key < element.getParent().getKey()) {
                 cutHeap(element);
             }
+            insertIfNotExist(element);
         }
     }
 
@@ -192,7 +198,7 @@ public final class FibonacciHeap<T> {
             }
         }
 
-        listConcat(element);
+        mainListConcat(element);
         element.setParent(null);
 
         if (parent.getParent() != null) {

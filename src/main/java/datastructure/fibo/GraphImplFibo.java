@@ -1,7 +1,10 @@
 package datastructure.fibo;
 
 import com.google.common.collect.ImmutableList;
-import datastructure.*;
+import datastructure.Edge;
+import datastructure.Graph;
+import datastructure.Vertex;
+import datastructure.VertexImpl;
 
 import java.util.*;
 
@@ -53,29 +56,11 @@ public class GraphImplFibo implements Graph<Entry<Vertex>> {
     }
 
     @Override
-    public void linkVertex(EdgeBuilder builder) {
-        checkNotNull(builder);
-        Integer id = builder.getCurrentId();
-        List<Edge<Entry<Vertex>>> edges = builder.build();
-        if (entryVertices.get(id) != null) {
-            checkNotNull(edges);
-            this.outgoingEdges.put(id, edges);
-        } else {
-            throw new RuntimeException("Unknown Vertex with id:" + id);
-        }
-    }
-
-    @Override
     public List<Edge<Entry<Vertex>>> getEdgesFromNode(Integer identifier) {
-        //todo: doing this completely with entryVertices
         checkNotNull(identifier);
         ImmutableList.Builder<Edge<Entry<Vertex>>> edgesFromNodeBuilder = new ImmutableList.Builder<>();
         for (List<Edge<Entry<Vertex>>> edges : outgoingEdges.values()) {
-            for (Edge<Entry<Vertex>> currentEdge : edges) {
-                if (currentEdge.contains(entryVertices.get(identifier))) {
-                    edgesFromNodeBuilder.add(currentEdge);
-                }
-            }
+            edges.stream().filter(currentEdge -> currentEdge.contains(entryVertices.get(identifier))).forEach(edgesFromNodeBuilder::add);
         }
         return edgesFromNodeBuilder.build();
     }

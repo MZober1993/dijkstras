@@ -97,7 +97,7 @@ public final class Entry<T> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Entry<?> entry = (Entry<?>) o;
+        Entry<T> entry = (Entry<T>) o;
 
         return value.equals(entry.value);
     }

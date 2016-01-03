@@ -1,7 +1,10 @@
 package datastructure.standard;
 
 import com.google.common.collect.ImmutableList;
-import datastructure.*;
+import datastructure.Edge;
+import datastructure.Graph;
+import datastructure.Vertex;
+import datastructure.VertexImpl;
 
 import java.util.*;
 
@@ -50,19 +53,6 @@ public class GraphImpl implements Graph<Vertex> {
             }
         } else {
             outgoingEdges.put(one.getId(), ImmutableList.of(edge));
-        }
-    }
-
-    @Override
-    public void linkVertex(EdgeBuilder builder) {
-        checkNotNull(builder);
-        Integer id = builder.getCurrentId();
-        List<Edge<Vertex>> edges = builder.build();
-        if (vertices.get(id) != null) {
-            checkNotNull(edges);
-            this.outgoingEdges.put(id, edges);
-        } else {
-            throw new RuntimeException("Unknown Vertex with id:" + id);
         }
     }
 

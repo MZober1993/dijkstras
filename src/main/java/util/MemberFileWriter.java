@@ -32,14 +32,13 @@ public class MemberFileWriter<T extends Graph> extends FileWriter {
 
         try {
             writeHeader();
-            /*
-            TODO: repair this
+
+            /*TODO: repair this
             for (T graph : graphImporter.calculateParallelGraphsWithNVertices(n)) {
                 writeMember(memberFinder.findMemberForHighestShortestPathFromTheBeginningOfTheGraph(algorithm, graph)
-                        , graph.getVertices().size());
+                        , graph.getElements().size());
                 writeNewLine();
-            }
-*/
+            }*/
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -1,16 +1,12 @@
 package datastructure;
 
-import datastructure.fibo.Entry;
-
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
  *         On 16.12.15 - 20:18
  */
 public interface Edge<T> {
 
-    boolean contains(datastructure.Vertex vertex);
-
-    boolean contains(Entry<datastructure.Vertex> entry);
+    boolean contains(T element);
 
     default T getConnected(T element) {
         if (element.equals(getFirst())) {

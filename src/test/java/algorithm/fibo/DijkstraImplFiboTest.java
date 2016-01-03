@@ -25,8 +25,10 @@ public class DijkstraImplFiboTest {
 
     @Before
     public void setUp() {
-        graph = GraphHelper.buildSampleGraph(new GraphImplFibo(0, 1, 2, 3, 4, 5, 6, 7), EdgeImplFibo.class);
-        graphStd = GraphHelper.buildSampleGraph(new GraphImpl(0, 1, 2, 3, 4, 5, 6, 7), EdgeImpl.class);
+        graph = GraphHelper.<GraphImplFibo, EdgeImplFibo, Entry<Vertex>>buildSampleGraph(
+                new GraphImplFibo(0, 1, 2, 3, 4, 5, 6, 7));
+        graphStd = GraphHelper.<GraphImpl, EdgeImpl, Vertex>buildSampleGraph(
+                new GraphImpl(0, 1, 2, 3, 4, 5, 6, 7));
         dijkstra = new DijkstraImplFibo();
     }
 
@@ -41,7 +43,7 @@ public class DijkstraImplFiboTest {
 
     @Test
     public void testSameGraph() throws Exception {
-        Truth.assertThat(graph.getEdges()).containsAllIn(graphStd.getEdges());
-        Truth.assertThat(graph.getVertices().toString()).isEqualTo(graphStd.getElements().toString());
+        Truth.assertThat(graph.getVertices()).isEqualTo(graphStd.getElements());
+        Truth.assertThat(graph.getEdges().toString()).isEqualTo(graphStd.getEdges().toString());
     }
 }

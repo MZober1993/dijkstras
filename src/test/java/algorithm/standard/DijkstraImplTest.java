@@ -21,8 +21,7 @@ public class DijkstraImplTest {
 
     @Before
     public void setUp() {
-        graph = GraphHelper.buildSampleGraph(new GraphImpl(0, 1, 2, 3, 4, 5, 6, 7)
-                , EdgeImpl.class);
+        graph = GraphHelper.<GraphImpl, EdgeImpl, Vertex>buildSampleGraph(new GraphImpl(0, 1, 2, 3, 4, 5, 6, 7));
         dijkstra = new DijkstraImpl();
     }
 

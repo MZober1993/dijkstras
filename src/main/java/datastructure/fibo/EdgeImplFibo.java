@@ -15,16 +15,8 @@ public class EdgeImplFibo implements Edge<Entry<Vertex>> {
     private Entry<Vertex> second;
     private Double distance;
 
-    public EdgeImplFibo() {
-    }
-
     public EdgeImplFibo(Entry<Vertex> first, Entry<Vertex> second, Double distance) {
         initEdge(first, second, distance);
-    }
-
-    @Override
-    public boolean contains(Vertex vertex) {
-        return first.getValue().equals(vertex) || second.getValue().equals(vertex);
     }
 
     @Override
@@ -34,12 +26,12 @@ public class EdgeImplFibo implements Edge<Entry<Vertex>> {
 
     @Override
     public Entry<Vertex> getFirst() {
-        return null;
+        return first;
     }
 
     @Override
     public Entry<Vertex> getSecond() {
-        return null;
+        return second;
     }
 
     @Override
@@ -48,8 +40,7 @@ public class EdgeImplFibo implements Edge<Entry<Vertex>> {
     }
 
     @Override
-    public void initEdge(Entry<Vertex> first, Entry<Vertex> second
-            , Double distance) {
+    public void initEdge(Entry<Vertex> first, Entry<Vertex> second, Double distance) {
         checkNotNull(first);
         checkNotNull(second);
         checkNotNull(distance);

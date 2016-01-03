@@ -31,11 +31,9 @@ public interface Graph<T> {
         return getElements().entrySet().stream().findAny().get().getValue();
     }
 
-    <E extends Edge<T>> List<E> getEdgesFromNode(Integer identifier);
+    List<Edge<T>> getEdgesFromNode(Integer identifier);
 
     void addConnection(Integer signOne, Integer signTwo, Double distance);
-
-    void linkVertex(EdgeBuilder builder);
 
     default T getElementWithIndex(int index) {
         T element = (T) getElements().values().toArray()[index];

@@ -42,14 +42,16 @@ public class DijkstraImpl implements Dijkstra<Vertex> {
             }
 
             for (Edge<Vertex> edge : graph.<Edge<Vertex>>getEdgesFromNode(smallest.getId())) {
-                final Double alt = smallest.getG() + edge.getDistance();
                 final Vertex connectedVertex = edge.getConnected(smallest);
+                if (!connectedVertex.isClosed()) {
+                    final Double alt = smallest.getG() + edge.getDistance();
 
-                if (!connectedVertex.isClosed() && alt < connectedVertex.getG()) {
-                    connectedVertex.setG(alt);
-                    connectedVertex.setPrevious(smallest);
-                    nodes.remove(connectedVertex);
-                    nodes.add(connectedVertex);
+                    if (alt < connectedVertex.getG()) {
+                        connectedVertex.setG(alt);
+                        connectedVertex.setPrevious(smallest);
+                        nodes.remove(connectedVertex);
+                        nodes.add(connectedVertex);
+                    }
                 }
             }
         }
