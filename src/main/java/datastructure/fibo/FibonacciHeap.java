@@ -1,38 +1,39 @@
 package datastructure.fibo;
 
+import datastructure.Element;
 import datastructure.PrintHelper;
 import util.MathHelper;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 import static datastructure.fibo.FiboHelper.*;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
  *         On 20.12.15 - 17:03
  */
-public final class FibonacciHeap<T> {
+public final class FibonacciHeap<T extends Element> {
 
     private Entry<T> minimum = null;
     private Integer size = 0;
+    private List<Entry<T>> elements = new ArrayList<>();
 
     public Entry<T> insert(T value, Double priority) {
         return insert(new Entry<>(value, priority));
     }
 
     public Entry<T> insert(Entry<T> entry) {
-        mainListConcat(entry);
+        listConcat(entry);
+        elements.add(entry);
         size++;
         return entry;
     }
 
-    public void mainListConcat(Entry<T> element) {
-        cyclicListConcat(minimum, element);
-        if (minimum == null || element.getKey() < minimum.getKey()) {
-            minimum = element;
-        }
-    }
-
     public void listConcat(Entry<T> element) {
         if (minimum == null) {
+            selfLink(element);
             minimum = element;
         } else {
             Entry<T> endHeap = minimum.getPrevious();
@@ -48,42 +49,33 @@ public final class FibonacciHeap<T> {
         }
     }
 
-    public FibonacciHeap<T> merge(FibonacciHeap<T> heap1, FibonacciHeap<T> heap2) {
-        if (heap2.minimum != null) {
-            if (heap1.minimum == null) {
-                heap1.minimum = heap2.minimum;
-            } else {
-                cyclicListConcat(heap1.minimum, heap2.minimum);
-                if (heap2.minimum.getKey() < heap1.minimum.getKey()) {
-                    heap1.minimum = heap2.minimum;
-                }
-                heap1.size = heap1.size + heap2.size;
-            }
-        }
-        return heap1;
-    }
-
     public Entry<T> extractMin() {
+        //TODO: fix this nullPointerException
         Entry<T> entry = minimum;
         if (entry != null) {
             //add all children of minimum to the parent list
             for (int i = 0; i < entry.getDeg(); i++) {
                 Entry<T> child = entry.getChild();
-                if (child == child.getNext()) {
-                    entry.setChild(null);
-                } else {
-                    entry.setChild(child.getNext());
-                    cutConnection(child);
+                if (child != null) {
+                    if (child == child.getNext()) {
+                        entry.setChild(null);
+                    } else {
+                        entry.setChild(child.getNext());
+                        cutConnection(child);
+                    }
+                    child.setParent(null);
+                    child.setNext(entry);
+                    child.setPrevious(entry.getPrevious());
+                    entry.getPrevious().setNext(child);
+                    entry.setPrevious(child);
                 }
-                child.setParent(null);
-                child.setNext(entry);
-                child.setPrevious(entry.getPrevious());
-                entry.getPrevious().setNext(child);
-                entry.setPrevious(child);
             }
+            entry.setDeg(0);
 
-            //remove the minimum
+            //remove the minimum TODO: check here the child-connection
             if (entry == entry.getNext()) {
+                System.out.println("entry selfpointed:\n" + entry);
+                System.out.println("child of entry:\n" + entry.getChild());
                 minimum = null;
             } else {
                 cutConnection(entry);
@@ -94,72 +86,57 @@ public final class FibonacciHeap<T> {
                 consolidate();
             }
 
-            cutConnection(entry);
-            selfLink(entry);
             return entry;
         }
+        elements.stream().sorted((entry1, t1) -> entry1.getId() < t1.getId()
+                ? -1 : entry1.getId() == t1.getId()
+                ? 0 : 1).forEach(System.out::println);
+        minimumCheckPrint();
         return null;
     }
 
     private void consolidate() {
-        int degreeSize = 2 * MathHelper.log2(size) + 1;
+        int degreeSize = MathHelper.log2(size) + 1;
         Entry<T>[] degree = new Entry[degreeSize];
         for (int i = 0; i < degreeSize; i++) {
             degree[i] = null;
         }
 
         if (minimum != null) {
-            cutAndSummarizeTrees(degree);
+            Entry<T> element = minimum;
+            Entry<T> next;
+            do {
+                if (element == element.getNext()) {
+                    next = null;
+                } else {
+                    next = element.getNext();
+                }
+
+                cutConnection(element);
+                selfLink(element);
+                int currentDegree = element.getDeg();
+                while (degree[currentDegree] != null) {
+                    if (element.getKey() > degree[currentDegree].getKey()) {
+                        Entry<T> tmp = degree[currentDegree];
+                        degree[currentDegree] = element;
+                        element = tmp;
+                    }
+                    degree[currentDegree].setMarked(false);
+                    becomesChildOfEntry(degree[currentDegree], element);
+                    element.setDeg(element.getDeg() + 1);
+                    degree[currentDegree] = null;
+                    currentDegree++;
+                }
+
+                degree[currentDegree] = element;
+                element = next;
+            } while (element != null);
         }
 
-        updateMinimum(degreeSize, degree);
-    }
-
-    private void cutAndSummarizeTrees(Entry<T>[] degree) {
-        Entry<T> element = minimum;
-        Entry<T> next;
-        do {
-            if (element == element.getNext()) {
-                next = null;
-            } else {
-                next = element.getNext();
-            }
-            cutConnection(element);
-            selfLink(element);
-
-            int currentDegree = element.getDeg();
-            while (degree[currentDegree] != null) {
-                if (element.getKey() > degree[currentDegree].getKey()) {
-                    swap(element, degree[currentDegree]);
-                }
-                becomesChildOfEntry(degree[currentDegree], element);
-
-                element.setDeg(element.getDeg() + 1);
-                degree[currentDegree].setMarked(false);
-                degree[currentDegree] = null;
-                currentDegree++;
-            }
-            degree[currentDegree] = element;
-            element = next;
-        } while (element != null);
-    }
-
-    private void updateMinimum(int degreeSize, Entry<T>[] degree) {
         minimum = null;
         for (int i = 0; i < degreeSize; i++) {
             if (degree[i] != null) {
-                if (minimum == null) {
-                    minimum = degree[i];
-                    selfLink(degree[i]);
-                } else {
-                    degree[i].setNext(minimum);
-                    degree[i].setPrevious(minimum.getPrevious());
-                    minimum.getPrevious().setNext(degree[i]);
-                    minimum.setPrevious(degree[i]);
-                    if (degree[i].getKey() < minimum.getKey()) {
-                        minimum = degree[i];
-                    }
-                }
+                listConcat(degree[i]);
             }
         }
     }
@@ -167,46 +144,48 @@ public final class FibonacciHeap<T> {
     public void decreaseKey(Entry<T> element, Double key) {
         if (element != null && element.getKey() > key) {
             element.setKey(key);
-            if (element.getParent() == null) {
-                if (element.getKey() < minimum.getKey()) {
-                    minimum = element;
-                }
-            } else if (key < element.getParent().getKey()) {
-                cutHeap(element);
+            Entry<T> parent = element.getParent();
+            if (parent != null && element.getKey() < parent.getKey()) {
+                cut(element, parent);
+                cascadingCut(parent);
+            } else if (element.getKey() < minimum.getKey()) {
+                minimum = element;
             }
-            insertIfNotExist(element);
         }
     }
 
-    public void insertIfNotExist(Entry<T> element) {
-        if (minimum != element && FiboHelper.selfLinked(element)) {
-            insert(element);
+    private void minimumCheckPrint() {
+        if (minimum == null) {
+            System.out.println("minimum is null and size is:" + size);
         }
     }
 
-    private void cutHeap(Entry<T> element) {
-        Entry<T> parent = element.getParent();
-        if (parent != null) {
-            parent.setDeg(parent.getDeg() - 1);
-        }
-        if (element.getNext() == element) {
+    private void cut(Entry<T> child, Entry<T> parent) {
+        checkNotNull(child);
+        checkNotNull(parent);
+        if (child.getNext() == child) {
             parent.setChild(null);
         } else {
-            cutConnection(element);
-            if (parent.getChild() == element) {
-                parent.setChild(element.getNext());
+            cutConnection(child);
+            if (parent.getChild() == child) {
+                parent.setChild(child.getNext());
             }
         }
+        parent.setDeg(parent.getDeg() - 1);
+        listConcat(child);
+        child.setParent(null);
+        child.setMarked(false);
+    }
 
-        mainListConcat(element);
-        element.setParent(null);
-
-        if (parent.getParent() != null) {
-            if (parent.isMarked()) {
-                cutHeap(parent);
-                parent.setMarked(false);
+    private void cascadingCut(Entry<T> k) {
+        checkNotNull(k);
+        Entry<T> parent = k.getParent();
+        if (parent != null) {
+            if (!k.isMarked()) {
+                k.setMarked(true);
             } else {
-                parent.setMarked(true);
+                cut(k, parent);
+                cascadingCut(parent);
             }
         }
     }

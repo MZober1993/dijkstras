@@ -6,11 +6,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
  *         01.11.15 - 18:40
  */
-public class VertexImpl implements Vertex {
+public class VertexImpl implements Element {
 
     private Integer id;
     private Double g;
-    private VertexImpl previous;
+    private Element anchor;
     private boolean closed;
 
     public VertexImpl(Integer id) {
@@ -18,7 +18,7 @@ public class VertexImpl implements Vertex {
         checkNotNull(id);
         this.id = id;
         this.g = 0.0;
-        previous = null;
+        anchor = null;
         closed = false;
     }
 
@@ -38,13 +38,13 @@ public class VertexImpl implements Vertex {
     }
 
     @Override
-    public VertexImpl getPrevious() {
-        return previous;
+    public Element getAnchor() {
+        return anchor;
     }
 
     @Override
-    public void setPrevious(Vertex previous) {
-        this.previous = (VertexImpl) previous;
+    public void setAnchor(Element element) {
+        this.anchor = element;
     }
 
     public boolean isClosed() {
@@ -72,7 +72,7 @@ public class VertexImpl implements Vertex {
 
     @Override
     public String toString() {
-        return "Vertex{" +
+        return "Element{" +
                 "id=" + id +
                 ",g=" + PrintHelper.transformDouble(g) +
                 '}';

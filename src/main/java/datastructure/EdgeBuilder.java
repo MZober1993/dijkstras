@@ -4,7 +4,7 @@ package datastructure;
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
  *         04.11.15 - 13:39
  */
-public class EdgeBuilder<G extends Graph<T>, E extends Edge<T>, T> {
+public class EdgeBuilder<G extends Graph<T>, E extends Edge<T>, T extends Element> {
 
     private Integer currentId;
     private G graph;

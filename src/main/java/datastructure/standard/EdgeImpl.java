@@ -1,7 +1,7 @@
 package datastructure.standard;
 
 import datastructure.Edge;
-import datastructure.Vertex;
+import datastructure.Element;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -9,28 +9,28 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
  *         04.11.15 - 11:55
  */
-public class EdgeImpl implements Edge<Vertex> {
+public class EdgeImpl implements Edge<Element> {
 
-    private Vertex first;
-    private Vertex second;
+    private Element first;
+    private Element second;
     private Double distance;
 
-    public EdgeImpl(Vertex first, Vertex second, Double distance) {
+    public EdgeImpl(Element first, Element second, Double distance) {
         initEdge(first, second, distance);
     }
 
     @Override
-    public boolean contains(Vertex vertex) {
+    public boolean contains(Element vertex) {
         return first.equals(vertex) || second.equals(vertex);
     }
 
     @Override
-    public Vertex getFirst() {
+    public Element getFirst() {
         return first;
     }
 
     @Override
-    public Vertex getSecond() {
+    public Element getSecond() {
         return second;
     }
 
@@ -40,7 +40,7 @@ public class EdgeImpl implements Edge<Vertex> {
     }
 
     @Override
-    public void initEdge(Vertex first, Vertex second, Double distance) {
+    public void initEdge(Element first, Element second, Double distance) {
         checkNotNull(first);
         checkNotNull(second);
         checkNotNull(distance);

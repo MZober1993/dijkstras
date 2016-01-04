@@ -1,7 +1,11 @@
+import datastructure.Element;
+import datastructure.Graph;
+import datastructure.GraphFactory;
+import datastructure.fibo.Entry;
+import datastructure.fibo.GraphImplFibo;
+import datastructure.standard.GraphImpl;
 import util.GraphImporter;
 import util.ImportFile;
-
-import java.nio.file.Paths;
 
 import static util.ImportFile.NY;
 import static util.ImportFile.SAMPLE;
@@ -13,13 +17,17 @@ import static util.ImportFile.SAMPLE;
 public class ShowGraph {
 
     public static void main(String[] args) {
-        createAndShow(NY, 20L);
-        createAndShow(SAMPLE, 20L);
+        GraphFactory<GraphImpl, Element> stdFactory = new GraphFactory<>(GraphImpl.class);
+        createAndShow(NY, 20L, stdFactory);
+        createAndShow(SAMPLE, 20L, stdFactory);
+
+        GraphFactory<GraphImplFibo, Entry<Element>> fiboFactory = new GraphFactory<>(GraphImplFibo.class);
+        createAndShow(NY, 20L, fiboFactory);
+        createAndShow(SAMPLE, 20L, fiboFactory);
     }
 
-    private static void createAndShow(ImportFile file, Long limit) {
-        System.out.println(Paths.get(file.name().toLowerCase()).toAbsolutePath().normalize().toString());
-        GraphImporter graphImporterSample = new GraphImporter(file);
-        System.out.println(graphImporterSample.importLinesOfFileAndGetSequentialGraph(limit));
+    private static <G extends Graph<T>, T> void createAndShow(ImportFile file, Long limit, GraphFactory<G, T> factory) {
+        GraphImporter<G> graphImporterSample = new GraphImporter<>(file);
+        System.out.println(graphImporterSample.importNVerticesAndGetGraph(limit, factory.create()));
     }
 }

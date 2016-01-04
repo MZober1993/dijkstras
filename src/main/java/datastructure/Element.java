@@ -6,7 +6,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
  *         17.11.15 - 14:24
  */
-public interface Vertex extends Comparable<Vertex> {
+public interface Element extends Comparable<Element> {
 
     Integer getId();
 
@@ -14,19 +14,19 @@ public interface Vertex extends Comparable<Vertex> {
 
     Double getG();
 
-    Vertex getPrevious();
+    Element getAnchor();
 
-    void setPrevious(Vertex previous);
+    void setAnchor(Element element);
 
     boolean isClosed();
 
     void setClosed(boolean close);
 
     @Override
-    default int compareTo(Vertex vertex) {
-        checkNotNull(vertex);
-        return this.getG() < vertex.getG()
-                ? -1 : this.getG() == vertex.getG()
+    default int compareTo(Element element) {
+        checkNotNull(element);
+        return this.getG() < element.getG()
+                ? -1 : this.getG() == element.getG()
                 ? 0 : 1;
     }
 }

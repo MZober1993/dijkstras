@@ -91,7 +91,7 @@ public class GraphFileCreator extends FileWriter {
 
     private void writeConnection(int i, int element, int r) throws IOException {
         writeConnectionInOneDirection(i, element, r);
-        writeConnectionInOneDirection(element, i, r);
+        //writeConnectionInOneDirection(element, i, r);
     }
 
     private void writeConnectionInOneDirection(int first, int second, int distance) throws IOException {

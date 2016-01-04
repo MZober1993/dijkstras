@@ -33,6 +33,8 @@ public interface Graph<T> {
 
     List<Edge<T>> getEdgesFromNode(Integer identifier);
 
+    List<Edge<T>> getEdgesFromNode(T element);
+
     void addConnection(Integer signOne, Integer signTwo, Double distance);
 
     default T getElementWithIndex(int index) {
@@ -46,5 +48,11 @@ public interface Graph<T> {
     default T getLastRandomElement() {
         int size = getElements().size();
         return getElement(MathHelper.calculateRandomNodeId((size * 3) / 4, size));
+    }
+
+    List<Edge<T>> getEdges();
+
+    default boolean isEmpty() {
+        return getElements().size() == 0;
     }
 }

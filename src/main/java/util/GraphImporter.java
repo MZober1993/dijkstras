@@ -1,9 +1,7 @@
 package util;
 
 
-import com.google.common.collect.ImmutableList;
 import datastructure.Graph;
-import datastructure.standard.GraphImpl;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -45,13 +43,7 @@ public class GraphImporter<T extends Graph> {
         fileCreator.createSampleGraphFile();
     }
 
-    public T importLinesOfFileAndGetSequentialGraph(Long limit) {
-
-        //ToDo:create a factory to get the wanted graphimpl instead of GraphImpl
-        return importLinesOfFile(limit, (T) new GraphImpl());
-    }
-
-    private T importLinesOfFile(Long limit, T graph) {
+    public T importLinesOfFileAndGetGraph(Long limit, T graph) {
         try {
             Stream<String> lines = Files.lines(pathOfGraphFile).filter(line -> line.contains("a "));
             List<List<String>> lineList = lines.map(line -> Arrays.asList(line.split(" "))).collect(Collectors.toList());
@@ -66,11 +58,7 @@ public class GraphImporter<T extends Graph> {
         return graph;
     }
 
-    public T importNVerticesAndGetSequentialGraph(Long n) {
-        return importNVertices(n, (T) new GraphImpl());
-    }
-
-    private T importNVertices(Long n, T graph) {
+    public T importNVerticesAndGetGraph(Long n, T graph) {
         if (!Files.exists(pathOfGraphFile)) {
             createDirAndPlainImportFile();
         }
@@ -91,11 +79,4 @@ public class GraphImporter<T extends Graph> {
         return graph;
     }
 
-    public List<T> calculateParallelGraphsWithNVertices(Long... n) {
-        ImmutableList.Builder<T> builder = ImmutableList.builder();
-        for (Long number : n) {
-            builder.add(importNVerticesAndGetSequentialGraph(number));
-        }
-        return builder.build();
-    }
 }

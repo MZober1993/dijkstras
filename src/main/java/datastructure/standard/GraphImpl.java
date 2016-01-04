@@ -2,8 +2,8 @@ package datastructure.standard;
 
 import com.google.common.collect.ImmutableList;
 import datastructure.Edge;
+import datastructure.Element;
 import datastructure.Graph;
-import datastructure.Vertex;
 import datastructure.VertexImpl;
 
 import java.util.*;
@@ -14,13 +14,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
  *         01.11.15 - 18:40
  */
-public class GraphImpl implements Graph<Vertex> {
+public class GraphImpl implements Graph<Element> {
 
-    private final Map<Integer, List<Edge<Vertex>>> outgoingEdges;
-    private final List<Edge<Vertex>> allEdges;
-    private final Map<Integer, Vertex> vertices;
+    private final Map<Integer, List<Edge<Element>>> outgoingEdges;
+    private final List<Edge<Element>> allEdges;
+    private final Map<Integer, Element> vertices;
 
-    private GraphImpl() {
+    public GraphImpl() {
         outgoingEdges = new LinkedHashMap<>();
         allEdges = new ArrayList<>();
         vertices = new LinkedHashMap<>();
@@ -38,52 +38,64 @@ public class GraphImpl implements Graph<Vertex> {
 
     @Override
     public void addConnection(Integer signOne, Integer signTwo, Double distance) {
-        Vertex one = getElementOrCreateOne(signOne);
-        Vertex two = getElementOrCreateOne(signTwo);
+        Element one = getElementOrCreateOne(signOne);
+        Element two = getElementOrCreateOne(signTwo);
         EdgeImpl edge = new EdgeImpl(one, two, distance);
         if (!allEdges.contains(edge)) {
             allEdges.add(edge);
         }
-        Optional<List<Edge<Vertex>>> edges = Optional.ofNullable(outgoingEdges.get(one.getId()));
+        Optional<List<Edge<Element>>> edges = Optional.ofNullable(outgoingEdges.get(one.getId()));
         if (edges.isPresent()) {
-            List<Edge<Vertex>> value = edges.get();
+            List<Edge<Element>> value = edges.get();
             if (!value.contains(edge)) {
                 outgoingEdges.put(one.getId(),
-                        ImmutableList.<Edge<Vertex>>builder().addAll(value).add(edge).build());
+                        ImmutableList.<Edge<Element>>builder().addAll(value).add(edge).build());
             }
         } else {
             outgoingEdges.put(one.getId(), ImmutableList.of(edge));
         }
     }
 
-    public List<Edge<Vertex>> getEdgesFromNode(Integer identifier) {
+    @Override
+    public List<Edge<Element>> getEdgesFromNode(Integer identifier) {
         checkNotNull(identifier);
-        ImmutableList.Builder<Edge<Vertex>> edgesFromNodeBuilder = new ImmutableList.Builder<>();
-        for (List<Edge<Vertex>> edges : outgoingEdges.values()) {
-            edges.stream().filter(currentEdge -> currentEdge.contains(vertices.get(identifier))).forEach(edgesFromNodeBuilder::add);
+        return edgesFromNodes(vertices.get(identifier));
+    }
+
+    @Override
+    public List<Edge<Element>> getEdgesFromNode(Element vertex) {
+        checkNotNull(vertex);
+        return edgesFromNodes(vertex);
+    }
+
+    private List<Edge<Element>> edgesFromNodes(Element element) {
+        ImmutableList.Builder<Edge<Element>> edgesFromNodeBuilder = new ImmutableList.Builder<>();
+        for (List<Edge<Element>> edges : outgoingEdges.values()) {
+            edges.stream().filter(currentEdge -> currentEdge.contains(element)).forEach(edgesFromNodeBuilder::add);
         }
         return edgesFromNodeBuilder.build();
     }
 
-    public Map<Integer, List<Edge<Vertex>>> getOutgoingEdges() {
+    public Map<Integer, List<Edge<Element>>> getOutgoingEdges() {
         return outgoingEdges;
     }
 
-    public List<Edge<Vertex>> getEdges() {
+    @Override
+    public List<Edge<Element>> getEdges() {
         return allEdges;
     }
 
     @Override
-    public Map<Integer, Vertex> getElements() {
+    public Map<Integer, Element> getElements() {
         return vertices;
     }
 
     @Override
-    public Vertex getElementOrCreateOne(int id) {
+    public Element getElementOrCreateOne(int id) {
         if (getElements().containsKey(id)) {
             return getElements().get(id);
         } else {
-            Vertex value = new VertexImpl(id);
+            Element value = new VertexImpl(id);
             getElements().put(id, value);
             return value;
         }

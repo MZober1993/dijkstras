@@ -1,7 +1,11 @@
 import algorithm.Dijkstra;
+import algorithm.fibo.DijkstraImplFibo;
 import algorithm.standard.DijkstraImpl;
+import datastructure.Element;
+import datastructure.Graph;
+import datastructure.GraphFactory;
 import datastructure.GraphHelper;
-import datastructure.Vertex;
+import datastructure.fibo.GraphImplFibo;
 import datastructure.standard.GraphImpl;
 import util.GraphImporter;
 import util.ImportFile;
@@ -18,16 +22,24 @@ public class ShowDijkstra {
     public static final int FIRST = 1;
 
     public static void main(String[] args) {
-        Dijkstra dijkstra = new DijkstraImpl();
-        GraphImpl graph = new GraphImporter<GraphImpl>(ImportFile.CREATED).importNVerticesAndGetSequentialGraph(10000L);
+        showDijkstra(new DijkstraImplFibo(), new GraphImporter<>(ImportFile.CREATED), GraphImplFibo.class);
+        //todo: check this nullpointer
+        showDijkstra(new DijkstraImpl(), new GraphImporter<>(ImportFile.CREATED), GraphImpl.class);
+    }
+
+    private static <G extends Graph<T>, T extends Element> void showDijkstra(Dijkstra<T> dijkstra
+            , GraphImporter<G> importer, Class<G> clazz) {
+        G graph = importer.importNVerticesAndGetGraph(10000L, GraphFactory.create(clazz));
         Measures.prepareMeasure(graph, dijkstra);
+        testDijkstras(dijkstra, graph);
+    }
 
-        Vertex start = graph.getElement(FIRST);
+    private static <G extends Graph<T>, T extends Element> void testDijkstras(Dijkstra<T> dijkstra, G graph) {
         int size = graph.getElements().size();
-
-        for (int i = 0; i < 500; i++) {
+        T start = graph.getElement(FIRST);
+        for (int i = 0; i < 100; i++) {
             int id = size * (1 + i) / (800 + i);
-            Vertex end = graph.getElement(id);
+            T end = graph.getElement(id);
 
             System.out.println("id: " + id + ",T(10000):" +
                     GraphHelper.calculateTimeWithLastRandom(graph, dijkstra) / A_MILLION + " ms");

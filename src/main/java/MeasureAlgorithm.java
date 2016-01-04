@@ -1,6 +1,7 @@
 import algorithm.Dijkstra;
-import algorithm.standard.DijkstraImpl;
+import datastructure.Element;
 import datastructure.Graph;
+import datastructure.GraphFactory;
 import util.*;
 
 import java.nio.file.Path;
@@ -14,21 +15,23 @@ import static util.MeasureFileWriter.PLAIN_FILE_NAME;
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
  *         16.11.15 - 23:53
  */
-public class MeasureAlgorithm<G extends Graph, A extends Dijkstra> {
+public class MeasureAlgorithm<G extends Graph<T>, A extends Dijkstra<T>, T extends Element> {
 
     public static final int REPUTATIONS = 40;
     public final GraphImporter<G> NY_IMPORTER = new GraphImporter<>(ImportFile.NY);
     public final GraphImporter<G> CREATED_IMPORTER = new GraphImporter<>(ImportFile.CREATED);
 
 
-    public void measures(A algorithm, GraphImporter<G> importer) {
-        Measures.<G>prepareMeasure(importer, algorithm);
+    public void measures(A algorithm, GraphImporter<G> importer, GraphFactory<G, T> factory) {
+        Measures.prepareMeasure(importer, algorithm, factory);
+        //TODO: fix this
         //expectStdErrorForNReputationsWithoutScaledN(CREATED_IMPORTER, 100L);
         //boxPlotForNReputationsWithoutScaledN(CREATED_IMPORTER, 100L);
     }
 
     private void measuresForNY() {
-        Measures.prepareMeasure(NY_IMPORTER, new DijkstraImpl());
+        //todo:fix me
+        //Measures.prepareMeasure(NY_IMPORTER, new DijkstraImpl());
         expectStdErrorForNReputationsWithScaledN(NY_IMPORTER, 10L, 100L, 1000L);
         boxPlotForNReputationsWithScaledN(NY_IMPORTER, 10L, 100L, 1000L);
     }

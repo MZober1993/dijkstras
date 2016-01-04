@@ -1,36 +1,36 @@
-package algorithm.standard;
+package algorithm.sample;
 
 import algorithm.Dijkstra;
 import datastructure.Edge;
 import datastructure.Element;
 import datastructure.Graph;
 import datastructure.GraphHelper;
+import datastructure.sample.FiboHeap;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.PriorityQueue;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
- *         01.11.15 - 18:40
+ *         On 07.01.16 - 19:37
  */
-public class DijkstraImpl implements Dijkstra<Element> {
+public class DijkstraFibo implements Dijkstra<FiboHeap.Node<Element>> {
 
     @Override
-    public <G extends Graph<Element>> List<Integer> shortestPath(G graph, Element start, Element finish) {
-        PriorityQueue<Element> nodes = new PriorityQueue<>();
-
-        for (Element vertex : graph.getElements().values()) {
-            if (vertex.equals(start)) {
-                vertex.setG(0.0);
+    public <G extends Graph<FiboHeap.Node<Element>>> List<Integer> shortestPath(G graph
+            , FiboHeap.Node<Element> start, FiboHeap.Node<Element> finish) {
+        FiboHeap<Element> nodes = new FiboHeap<>();
+        for (Element entry : graph.getElements().values()) {
+            if (entry.equals(start)) {
+                entry.setG(0.0);
             } else {
-                vertex.setG(Double.MAX_VALUE);
+                entry.setG(Double.MAX_VALUE);
             }
-            nodes.add(vertex);
+            nodes.enqueue(entry, entry.getG());
         }
 
         while (!nodes.isEmpty()) {
-            final Element smallest = nodes.poll();
+            final FiboHeap.Node<Element> smallest = nodes.dequeueMin();
             smallest.setClosed(true);
 
             if (smallest.equals(finish)) {
@@ -41,16 +41,16 @@ public class DijkstraImpl implements Dijkstra<Element> {
                 continue;
             }
 
-            for (Edge<Element> edge : graph.<Edge<Element>>getEdgesFromNode(smallest.getId())) {
-                final Element connected = edge.getConnected(smallest);
+            for (Edge<FiboHeap.Node<Element>> edge : graph
+                    .<Edge<FiboHeap.Node<Element>>>getEdgesFromNode(smallest.getId())) {
+                final FiboHeap.Node<Element> connected = edge.getConnected(smallest);
                 if (!connected.isClosed()) {
                     final Double alt = smallest.getG() + edge.getDistance();
 
                     if (alt < connected.getG()) {
                         connected.setG(alt);
                         connected.setAnchor(smallest);
-                        nodes.remove(connected);
-                        nodes.add(connected);
+                        nodes.decreaseKey(connected, alt);
                     }
                 }
             }
@@ -58,3 +58,4 @@ public class DijkstraImpl implements Dijkstra<Element> {
         return Collections.emptyList();
     }
 }
+

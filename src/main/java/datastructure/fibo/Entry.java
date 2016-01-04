@@ -1,12 +1,13 @@
 package datastructure.fibo;
 
+import datastructure.Element;
 import datastructure.PrintHelper;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
  *         On 25.12.15 - 17:55
  */
-public final class Entry<T> {
+public final class Entry<T extends Element> implements Element {
 
     private int deg = 0;
     private boolean isMarked;
@@ -16,6 +17,9 @@ public final class Entry<T> {
     private Entry<T> child;
     private T value;
     private Double key;
+
+    private Entry() {
+    }
 
     public Entry(T value, Double key) {
         deg = 0;
@@ -45,11 +49,8 @@ public final class Entry<T> {
     }
 
     public T getValue() {
-        if (value != null) {
-            return value;
-        } else {
-            throw new NullPointerException("Value of Entry:" + this + " , is null.");
-        }
+        checkValueNotNull();
+        return value;
     }
 
     public int getDeg() {
@@ -100,6 +101,47 @@ public final class Entry<T> {
         Entry<T> entry = (Entry<T>) o;
 
         return value.equals(entry.value);
+    }
+
+    @Override
+    public Integer getId() {
+        return value.getId();
+    }
+
+    @Override
+    public void setG(Double g) {
+        value.setG(g);
+    }
+
+    @Override
+    public Double getG() {
+        return value.getG();
+    }
+
+    @Override
+    public Element getAnchor() {
+        return value.getAnchor();
+    }
+
+    @Override
+    public void setAnchor(Element element) {
+        value.setAnchor(element);
+    }
+
+    @Override
+    public boolean isClosed() {
+        return value.isClosed();
+    }
+
+    @Override
+    public void setClosed(boolean close) {
+        value.setClosed(close);
+    }
+
+    private void checkValueNotNull() {
+        if (value == null) {
+            throw new NullPointerException("Value of Entry:" + this + " , is null.");
+        }
     }
 
     @Override

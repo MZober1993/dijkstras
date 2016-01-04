@@ -2,9 +2,10 @@ package util;
 
 import algorithm.Dijkstra;
 import com.google.common.collect.ImmutableList;
+import datastructure.Element;
 import datastructure.Graph;
+import datastructure.GraphFactory;
 import datastructure.GraphHelper;
-import datastructure.standard.GraphImpl;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,17 +27,22 @@ public enum Measures {
                 .collect(Collectors.toList());
     }
 
-    public static <T extends Graph> void prepareMeasure(GraphImporter<T> graphImporter, Dijkstra algorithm) {
+    public static <G extends Graph<T>, T extends Element> void prepareMeasure(GraphImporter<G> graphImporter,
+                                                                              Dijkstra<T> algorithm,
+                                                                              GraphFactory<G, T> factory) {
         for (int i = 0; i < 5; i++) {
-            T graphSeq = graphImporter.importNVerticesAndGetSequentialGraph(TEN_THOUSAND);
-            System.out.println(algorithm.shortestPath(graphSeq, graphSeq.getElement(GraphHelper.FIRST),
-                    graphSeq.getLastRandomElement()));
+            G graph = graphImporter.importNVerticesAndGetGraph(TEN_THOUSAND, factory.create());
+            System.out.println(algorithm.shortestPath(graph, graph.getElement(GraphHelper.FIRST),
+                    graph.getLastRandomElement()));
         }
     }
 
-    public static void prepareMeasure(GraphImpl graph, Dijkstra algorithm) {
+    public static <G extends Graph<T>, T extends Element> void prepareMeasure(G graph, Dijkstra<T> algorithm) {
         for (int i = 0; i < 10; i++) {
-            algorithm.shortestPath(graph, graph.getElement(GraphHelper.FIRST), graph.getLastRandomElement());
+            int id = 40 + i;
+            List<Integer> path = algorithm.shortestPath(graph, graph.getElement(GraphHelper.FIRST),
+                    graph.getElement(id));
+            System.out.println(path + " Last: " + id);
         }
     }
 }

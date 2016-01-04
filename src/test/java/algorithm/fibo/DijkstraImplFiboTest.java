@@ -1,8 +1,8 @@
 package algorithm.fibo;
 
 import com.google.common.truth.Truth;
+import datastructure.Element;
 import datastructure.GraphHelper;
-import datastructure.Vertex;
 import datastructure.fibo.EdgeImplFibo;
 import datastructure.fibo.Entry;
 import datastructure.fibo.GraphImplFibo;
@@ -25,17 +25,17 @@ public class DijkstraImplFiboTest {
 
     @Before
     public void setUp() {
-        graph = GraphHelper.<GraphImplFibo, EdgeImplFibo, Entry<Vertex>>buildSampleGraph(
+        graph = GraphHelper.<GraphImplFibo, EdgeImplFibo, Entry<Element>>buildSampleGraph(
                 new GraphImplFibo(0, 1, 2, 3, 4, 5, 6, 7));
-        graphStd = GraphHelper.<GraphImpl, EdgeImpl, Vertex>buildSampleGraph(
+        graphStd = GraphHelper.<GraphImpl, EdgeImpl, Element>buildSampleGraph(
                 new GraphImpl(0, 1, 2, 3, 4, 5, 6, 7));
         dijkstra = new DijkstraImplFibo();
     }
 
     @Test
     public void testMinimumShortestPath() throws Exception {
-        Entry<Vertex> start = graph.getElement(0);
-        Entry<Vertex> end = graph.getElement(7);
+        Entry<Element> start = graph.getElement(0);
+        Entry<Element> end = graph.getElement(7);
         List<Integer> actual = dijkstra.shortestPath(graph, start, end);
 
         Truth.assertThat(actual).containsAllOf(0, 1, 5, 7).inOrder();

@@ -38,7 +38,7 @@ public class MeasureFileWriter extends FileWriter {
             writeHeader(scaledN);
             for (Long limit : limits) {
                 Stream.Builder<Long> builder = Stream.builder();
-                GraphImpl graph = graphImporter.importNVerticesAndGetSequentialGraph(limit);
+                GraphImpl graph = graphImporter.importNVerticesAndGetGraph(limit, new GraphImpl());
                 int n = graph.getElements().size();
                 int m = graph.getEdges().size();
 

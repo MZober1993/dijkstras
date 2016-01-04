@@ -1,16 +1,20 @@
 package util;
 
 import algorithm.Dijkstra;
+import algorithm.fibo.DijkstraImplFibo;
 import algorithm.standard.DijkstraImpl;
 import com.google.common.truth.Truth;
 import datastructure.Edge;
-import datastructure.Vertex;
+import datastructure.Element;
+import datastructure.Graph;
+import datastructure.fibo.Entry;
+import datastructure.fibo.GraphImplFibo;
 import datastructure.standard.GraphImpl;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.List;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static junit.framework.Assert.*;
 
 /**
@@ -25,53 +29,107 @@ public class GraphImporterIT {
     public static final long MINIMUM_COUNT = 2;
     public static final int FIRST = 0;
     public static final long EMPTY = 0;
-    public static final long HUGE_LIMIT_NUMBER = 2000000000;
     public static final long SMALL_LIMIT_NUMBER = 20;
-    GraphImporter<GraphImpl> graphImporter;
-    Dijkstra dijkstra;
+    public static final GraphImporter<GraphImpl> STD_GRAPH_IMPORTER = new GraphImporter<>(ImportFile.CREATED);
+    public static final Dijkstra<Element> STD_DIJKSTRA = new DijkstraImpl();
+    public static final GraphImporter<GraphImplFibo> FIBO_GRAPH_IMPORTER = new GraphImporter<>(ImportFile.CREATED);
+    public static final Dijkstra<Entry<Element>> FIBO_DIJKSTRA = new DijkstraImplFibo();
 
-    @Before
-    public void setUp() {
-        graphImporter = new GraphImporter<>(ImportFile.NY);
-        dijkstra = new DijkstraImpl();
-
+    @Test
+    public void testImportStdGraph() {
+        GraphImpl graph = STD_GRAPH_IMPORTER
+                .importNVerticesAndGetGraph(SMALL_LIMIT_NUMBER, new GraphImpl());
+        importGraphTest(graph);
     }
 
     @Test
-    public void testImportGraph() {
-        GraphImpl graph = graphImporter.importLinesOfFileAndGetSequentialGraph(HUGE_LIMIT_NUMBER);
-        Vertex vertex = graph.getOne();
-        List<Edge<Vertex>> edgesFromNode = graph.getEdgesFromNode(vertex.getId());
-        Edge<Vertex> edge = edgesFromNode.get(FIRST);
+    public void testImportStdGraphAndUseDijkstra() {
+        GraphImpl graph = STD_GRAPH_IMPORTER
+                .importNVerticesAndGetGraph(SMALL_LIMIT_NUMBER, new GraphImpl());
+        Element start = graph.getElement(1);
+        Element end = graph.getElement(15);
+        List<Integer> shortestPath = STD_DIJKSTRA.shortestPath(graph, start, end);
+
+        checkShortestPath(start.getId(), end.getId(), shortestPath);
+    }
+
+    @Test
+    public void testImportFiboGraph() {
+        GraphImplFibo graph = FIBO_GRAPH_IMPORTER
+                .importNVerticesAndGetGraph(SMALL_LIMIT_NUMBER, new GraphImplFibo());
+        Entry<Element> element = graph.getOne();
+        List<Edge<Entry<Element>>> edgesFromNode = graph.getEdgesFromNode(element);
+        Edge<Entry<Element>> edge = edgesFromNode.get(FIRST);
 
         checkGraphContainsVerticesAndEdges(graph, edgesFromNode);
         checkEdgeContainsDistanceAndTwoVertices(edge);
     }
 
     @Test
-    public void testImportSmallGraphAndUseDijkstra() {
-        GraphImpl graph = graphImporter.importLinesOfFileAndGetSequentialGraph(SMALL_LIMIT_NUMBER);
-        Vertex start = graph.getElementWithIndex(0);
-        Vertex end = graph.getElementWithIndex(13);
-        List<Integer> shortestPath = dijkstra.shortestPath(graph, start, end);
+    public void testImportFiboGraphAndUseDijkstra() {
+        GraphImplFibo graph = FIBO_GRAPH_IMPORTER
+                .importNVerticesAndGetGraph(SMALL_LIMIT_NUMBER, new GraphImplFibo());
+        Entry<Element> start = graph.getElement(1);
+        Entry<Element> end = graph.getElement(15);
+        List<Integer> shortestPath = FIBO_DIJKSTRA.shortestPath(graph, start, end);
 
-        checkShortestPath(start, end, shortestPath);
+        checkShortestPath(start.getId(), end.getId(), shortestPath);
     }
 
-    private static void checkEdgeContainsDistanceAndTwoVertices(Edge<Vertex> edge) {
+    @Test
+    public void testImportFiboGraphAndUseMultipleDijkstra() {
+        GraphImplFibo graph = FIBO_GRAPH_IMPORTER
+                .importNVerticesAndGetGraph(SMALL_LIMIT_NUMBER, new GraphImplFibo());
+        multipleDijkstra(graph, SMALL_LIMIT_NUMBER);
+    }
+
+    private void multipleDijkstra(GraphImplFibo graph, Long limit) {
+        Entry<Element> start = graph.getElement(1);
+        for (int i = 2; i < limit; i++) {
+            try {
+                Entry<Element> end = graph.getElement(i);
+                checkNotNull(start);
+                checkNotNull(end);
+                List<Integer> shortestPath = FIBO_DIJKSTRA.shortestPath(graph, start, end);
+                checkShortestPath(start.getId(), end.getId(), shortestPath);
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new RuntimeException("Failure at Entry<Element> with the id:" + i);
+            }
+        }
+    }
+
+    @Test
+    public void testImportSimpleFiboGraphAndUseMultipleDijkstra() {
+        long limit = 7L;
+        GraphImplFibo graph = FIBO_GRAPH_IMPORTER
+                .importNVerticesAndGetGraph(limit, new GraphImplFibo());
+        multipleDijkstra(graph, limit);
+    }
+
+    private <T> void importGraphTest(Graph<T> graph) {
+        T element = graph.getOne();
+        List<Edge<T>> edgesFromNode = graph.getEdgesFromNode(element);
+        Edge<T> edge = edgesFromNode.get(FIRST);
+
+        checkGraphContainsVerticesAndEdges(graph, edgesFromNode);
+        checkEdgeContainsDistanceAndTwoVertices(edge);
+    }
+
+    private static <T> void checkEdgeContainsDistanceAndTwoVertices(Edge<T> edge) {
         assertNotNull(edge.getDistance());
         assertNotNull(edge.getFirst());
         assertNotNull(edge.getSecond());
     }
 
-    private void checkGraphContainsVerticesAndEdges(GraphImpl graph, List<Edge<Vertex>> edgesFromNode) {
+    private <T> void checkGraphContainsVerticesAndEdges(Graph<T> graph, List<Edge<T>> edgesFromNode) {
         Truth.assertThat(graph.getElements().size() > MINIMUM_COUNT);
         Truth.assertThat(edgesFromNode.size() > EMPTY);
     }
 
-    private void checkShortestPath(Vertex start, Vertex end, List<Integer> shortestPath) {
+    private void checkShortestPath(Integer start, Integer end, List<Integer> shortestPath) {
         assertFalse("Empty shortestPath", shortestPath.isEmpty());
-        assertTrue("ShortestPath contains not the start-vertex.", shortestPath.contains(start.getId()));
-        assertTrue("ShortestPath contains not the end-vertex.", shortestPath.contains(end.getId()));
+        assertTrue("ShortestPath contains not the start-vertex.", shortestPath.contains(start));
+        assertTrue("ShortestPath contains not the end-vertex.", shortestPath.contains(end));
     }
 }

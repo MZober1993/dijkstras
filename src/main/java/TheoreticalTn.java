@@ -1,3 +1,6 @@
+import datastructure.Element;
+import datastructure.GraphFactory;
+import datastructure.standard.GraphImpl;
 import util.TheoreticalWriter;
 
 import static util.TheoreticalWriter.DEFAULT_PATH;
@@ -9,7 +12,8 @@ import static util.TheoreticalWriter.DEFAULT_PATH;
 public class TheoreticalTn {
 
     public static void main(String[] args) {
-        TheoreticalWriter theoreticalWriter = new TheoreticalWriter(DEFAULT_PATH);
+        TheoreticalWriter<Element> theoreticalWriter =
+                new TheoreticalWriter<>(DEFAULT_PATH, GraphFactory.create(GraphImpl.class));
         theoreticalWriter.writeRoutine();
     }
 }

@@ -1,6 +1,6 @@
 package util;
 
-import datastructure.standard.GraphImpl;
+import datastructure.Graph;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,21 +15,24 @@ import static util.Measures.scaleMeasureSample;
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
  *         26.11.15 - 20:35
  */
-public class TheoreticalWriter extends FileWriter {
+public class TheoreticalWriter<T> extends FileWriter {
 
     public static final Path DEFAULT_PATH = Paths.get(GraphImporter.PATH_TO_RESOURCE + THEORETICAL.name().toLowerCase()
             + ".csv");
+    private Graph<T> emptyGraph;
 
-    public TheoreticalWriter(Path path) {
+    public TheoreticalWriter(Path path, Graph<T> graph) {
         super(path);
+        this.emptyGraph = graph;
     }
 
     public void writeRoutine() {
-        GraphImporter<GraphImpl> graphImporter = new GraphImporter<>(ImportFile.CREATED);
+        GraphImporter<Graph<T>> graphImporter = new GraphImporter<>(ImportFile.CREATED);
         try {
             writeHeader();
             scaleMeasureSample(100).forEach(element -> {
-                GraphImpl graph = graphImporter.importNVerticesAndGetSequentialGraph(element);
+                Graph<T> graph = graphImporter
+                        .importNVerticesAndGetGraph(element, this.emptyGraph);
                 int m = graph.getEdges().size();
                 int n = graph.getElements().size();
                 writeTn(n, (m + n) * Math.log(n) * n, 2 * n + 2 * n * Math.log(n) + m + m * n * Math.log(n) * 2);
@@ -55,5 +58,4 @@ public class TheoreticalWriter extends FileWriter {
     public void writeHeader() throws IOException {
         Files.write(getPath(), "n, T(n) first,T(n) second\n".getBytes());
     }
-
 }
