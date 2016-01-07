@@ -6,7 +6,7 @@ import datastructure.Element;
 import datastructure.Graph;
 import datastructure.GraphHelper;
 import datastructure.fibo.Entry;
-import datastructure.fibo.FHeap;
+import datastructure.fibo.FibonacciHeap;
 
 import java.util.Collections;
 import java.util.List;
@@ -20,8 +20,7 @@ public class DijkstraImplFibo implements Dijkstra<Entry<Element>> {
     @Override
     public <G extends Graph<Entry<Element>>> List<Integer> shortestPath(G graph
             , Entry<Element> start, Entry<Element> finish) {
-        //FibonacciHeap<Element> nodes = new FibonacciHeap<>();
-        FHeap<Element> nodes = new FHeap<>();
+        FibonacciHeap<Element> nodes = new FibonacciHeap<>();
         for (Entry<Element> entry : graph.getElements().values()) {
             entry.setKey(Double.MAX_VALUE);
             nodes.insert(entry);
@@ -38,10 +37,6 @@ public class DijkstraImplFibo implements Dijkstra<Entry<Element>> {
 
             if (smallest.getKey() == Double.MAX_VALUE) {
                 continue;
-            }
-
-            if (!smallest.equals(start)) {
-                System.out.println(smallest);
             }
 
             for (Edge<Entry<Element>> edge : graph.<Edge<Entry<Element>>>getEdgesFromNode(smallest.getId())) {

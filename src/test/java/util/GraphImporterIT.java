@@ -78,15 +78,15 @@ public class GraphImporterIT {
 
     @Test
     public void testImportFiboGraphAndUseMultipleDijkstra() {
-        GraphImplFibo graph = FIBO_GRAPH_IMPORTER
-                .importNVerticesAndGetGraph(SMALL_LIMIT_NUMBER, new GraphImplFibo());
-        multipleDijkstra(graph, SMALL_LIMIT_NUMBER);
+        multipleDijkstra(FIBO_GRAPH_IMPORTER, SMALL_LIMIT_NUMBER);
     }
 
-    private void multipleDijkstra(GraphImplFibo graph, Long limit) {
-        Entry<Element> start = graph.getElement(1);
+    private void multipleDijkstra(GraphImporter<GraphImplFibo> importer, Long limit) {
         for (int i = 2; i < limit; i++) {
             try {
+                GraphImplFibo graph = importer
+                        .importNVerticesAndGetGraph(SMALL_LIMIT_NUMBER, new GraphImplFibo());
+                Entry<Element> start = graph.getElement(1);
                 Entry<Element> end = graph.getElement(i);
                 checkNotNull(start);
                 checkNotNull(end);
@@ -101,10 +101,7 @@ public class GraphImporterIT {
 
     @Test
     public void testImportSimpleFiboGraphAndUseMultipleDijkstra() {
-        long limit = 7L;
-        GraphImplFibo graph = FIBO_GRAPH_IMPORTER
-                .importNVerticesAndGetGraph(limit, new GraphImplFibo());
-        multipleDijkstra(graph, limit);
+        multipleDijkstra(FIBO_GRAPH_IMPORTER, 7L);
     }
 
     private <T> void importGraphTest(Graph<T> graph) {

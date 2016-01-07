@@ -4,9 +4,6 @@ import datastructure.Element;
 import datastructure.PrintHelper;
 import util.MathHelper;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static com.google.common.base.Preconditions.checkNotNull;
 import static datastructure.fibo.FiboHelper.*;
 
@@ -16,94 +13,71 @@ import static datastructure.fibo.FiboHelper.*;
  */
 public final class FibonacciHeap<T extends Element> {
 
-    private Entry<T> minimum = null;
+    private Entry<T> min = null;
     private Integer size = 0;
-    private List<Entry<T>> elements = new ArrayList<>();
-
-    public Entry<T> insert(T value, Double priority) {
-        return insert(new Entry<>(value, priority));
-    }
 
     public Entry<T> insert(Entry<T> entry) {
         listConcat(entry);
-        elements.add(entry);
         size++;
         return entry;
     }
 
     public void listConcat(Entry<T> element) {
-        if (minimum == null) {
+        if (min == null) {
             selfLink(element);
-            minimum = element;
+            min = element;
         } else {
-            Entry<T> endHeap = minimum.getPrevious();
-            minimum.setPrevious(element);
-            element.setPrevious(endHeap);
-            endHeap.setNext(element);
-            element.setNext(minimum);
+            addElementLeftToEntry(element, min);
 
-            // set new minimum
-            if (minimum.getKey() > element.getKey()) {
-                minimum = element;
+            if (min.getKey() > element.getKey()) {
+                min = element;
             }
         }
     }
 
     public Entry<T> extractMin() {
-        //TODO: fix this nullPointerException
-        Entry<T> entry = minimum;
+        Entry<T> entry = min;
         if (entry != null) {
-            //add all children of minimum to the parent list
-            for (int i = 0; i < entry.getDeg(); i++) {
-                Entry<T> child = entry.getChild();
-                if (child != null) {
-                    if (child == child.getNext()) {
-                        entry.setChild(null);
-                    } else {
-                        entry.setChild(child.getNext());
-                        cutConnection(child);
-                    }
-                    child.setParent(null);
-                    child.setNext(entry);
-                    child.setPrevious(entry.getPrevious());
-                    entry.getPrevious().setNext(child);
-                    entry.setPrevious(child);
-                }
-            }
-            entry.setDeg(0);
+            moveChildsToRootList(entry);
 
-            //remove the minimum TODO: check here the child-connection
+            cutConnection(entry);
             if (entry == entry.getNext()) {
-                System.out.println("entry selfpointed:\n" + entry);
-                System.out.println("child of entry:\n" + entry.getChild());
-                minimum = null;
+                min = null;
             } else {
-                cutConnection(entry);
-                minimum = entry.getNext();
-            }
-            size--;
-            if (size > 0) {
+                min = entry.getNext();
                 consolidate();
             }
+            size--;
 
             return entry;
         }
-        elements.stream().sorted((entry1, t1) -> entry1.getId() < t1.getId()
-                ? -1 : entry1.getId() == t1.getId()
-                ? 0 : 1).forEach(System.out::println);
-        minimumCheckPrint();
         return null;
     }
 
     private void consolidate() {
-        int degreeSize = MathHelper.log2(size) + 1;
+        int degreeSize = MathHelper.log2(size);
         Entry<T>[] degree = new Entry[degreeSize];
         for (int i = 0; i < degreeSize; i++) {
             degree[i] = null;
         }
 
-        if (minimum != null) {
-            Entry<T> element = minimum;
+        cutAndSummarize(degree);
+
+        updateMin(degreeSize, degree);
+    }
+
+    private void updateMin(int degreeSize, Entry<T>[] degree) {
+        min = null;
+        for (int i = 0; i < degreeSize; i++) {
+            if (degree[i] != null) {
+                listConcat(degree[i]);
+            }
+        }
+    }
+
+    private void cutAndSummarize(Entry<T>[] degree) {
+        if (min != null) {
+            Entry<T> element = min;
             Entry<T> next;
             do {
                 if (element == element.getNext()) {
@@ -117,6 +91,7 @@ public final class FibonacciHeap<T extends Element> {
                 int currentDegree = element.getDeg();
                 while (degree[currentDegree] != null) {
                     if (element.getKey() > degree[currentDegree].getKey()) {
+                        //swap
                         Entry<T> tmp = degree[currentDegree];
                         degree[currentDegree] = element;
                         element = tmp;
@@ -132,13 +107,6 @@ public final class FibonacciHeap<T extends Element> {
                 element = next;
             } while (element != null);
         }
-
-        minimum = null;
-        for (int i = 0; i < degreeSize; i++) {
-            if (degree[i] != null) {
-                listConcat(degree[i]);
-            }
-        }
     }
 
     public void decreaseKey(Entry<T> element, Double key) {
@@ -148,30 +116,14 @@ public final class FibonacciHeap<T extends Element> {
             if (parent != null && element.getKey() < parent.getKey()) {
                 cut(element, parent);
                 cascadingCut(parent);
-            } else if (element.getKey() < minimum.getKey()) {
-                minimum = element;
+            } else if (element.getKey() < min.getKey()) {
+                min = element;
             }
-        }
-    }
-
-    private void minimumCheckPrint() {
-        if (minimum == null) {
-            System.out.println("minimum is null and size is:" + size);
         }
     }
 
     private void cut(Entry<T> child, Entry<T> parent) {
-        checkNotNull(child);
-        checkNotNull(parent);
-        if (child.getNext() == child) {
-            parent.setChild(null);
-        } else {
-            cutConnection(child);
-            if (parent.getChild() == child) {
-                parent.setChild(child.getNext());
-            }
-        }
-        parent.setDeg(parent.getDeg() - 1);
+        removeChildFromChildListOfParent(child, parent);
         listConcat(child);
         child.setParent(null);
         child.setMarked(false);
@@ -194,8 +146,8 @@ public final class FibonacciHeap<T extends Element> {
         return getSize() == 0;
     }
 
-    public Entry<T> getMinimum() {
-        return minimum;
+    public Entry<T> getMin() {
+        return min;
     }
 
     public Integer getSize() {
@@ -206,8 +158,8 @@ public final class FibonacciHeap<T extends Element> {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         return "FibonacciHeap{" +
-                "\nminimum=\n" + minimum +
+                "\nmin=\n" + min +
                 "\n, size=" + size +
-                "\n, elem=\n" + PrintHelper.printFibonacciHeap(this, minimum) + '}';
+                "\n, elem=\n" + PrintHelper.printFibonacciHeap(this, min) + '}';
     }
 }

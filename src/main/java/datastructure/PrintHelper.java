@@ -1,7 +1,6 @@
 package datastructure;
 
 import datastructure.fibo.Entry;
-import datastructure.fibo.FiboHelper;
 import datastructure.fibo.FibonacciHeap;
 
 /**
@@ -32,7 +31,7 @@ public class PrintHelper {
     }
 
     private static <T extends Element> String transformToFlatElement(Entry<T> currentElement) {
-        return "[id:" + currentElement.getId() + ",g:" + transformDouble(currentElement.getG()) + "]";
+        return "[id:" + currentElement.getId() + "]";
     }
 
     public static <T extends Element> String printFibonacciHeap(FibonacciHeap<T> heap, Entry<T> startElement) {
@@ -70,13 +69,10 @@ public class PrintHelper {
     }
 
     public static <T extends Element> String transformEntry(Entry<T> currentElement) {
-        boolean closed = (currentElement.getChild() == null) && (currentElement.getParent() == null)
-                && (FiboHelper.selfLinked(currentElement));
         return elemString(currentElement.getPrevious()) + "<-" +
                 currentElemString(currentElement) + "->" +
                 elemString(currentElement.getNext()) + "|" +
                 "c=" + elemString(currentElement.getChild()) + "|" +
-                "p=" + elemString(currentElement.getParent()) +
-                "|closed:" + closed;
+                "p=" + elemString(currentElement.getParent());
     }
 }

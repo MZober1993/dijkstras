@@ -47,7 +47,7 @@ public class FibonacciHeapTest {
     @Test
     public void testInsert() {
         miniSample();
-        Truth.assertThat(heap.getMinimum().getValue()).isEqualTo(new VertexImpl(1));
+        Truth.assertThat(heap.getMin().getValue()).isEqualTo(new VertexImpl(1));
         Truth.assertThat(heap.getSize()).isEqualTo(3);
     }
 
@@ -55,7 +55,7 @@ public class FibonacciHeapTest {
     public void testNextPointer() {
         miniSample();
         Stream.Builder<Entry<Element>> builder = Stream.builder();
-        Entry<Element> tmp = heap.getMinimum();
+        Entry<Element> tmp = heap.getMin();
         for (int i = 0; i < 4; i++) {
             tmp = tmp.getNext();
             builder.add(tmp);
@@ -68,7 +68,7 @@ public class FibonacciHeapTest {
     public void testPreviousPointer() {
         miniSample();
         Stream.Builder<Entry<Element>> builder = Stream.builder();
-        Entry<Element> tmp = heap.getMinimum();
+        Entry<Element> tmp = heap.getMin();
         for (int i = 0; i < 4; i++) {
             tmp = tmp.getPrevious();
             builder.add(tmp);
@@ -97,7 +97,7 @@ public class FibonacciHeapTest {
         Entry<Element> actualMin = heap.extractMin();
 
         Truth.assertThat(actualMin).isEqualTo(one);
-        Truth.assertThat(heap.getMinimum()).isEqualTo(two);
+        Truth.assertThat(heap.getMin()).isEqualTo(two);
     }
 
     @Test
@@ -105,7 +105,7 @@ public class FibonacciHeapTest {
         degTwoSample();
         heap.extractMin();
 
-        Truth.assertThat(heap.getMinimum()).isEqualTo(two);
+        Truth.assertThat(heap.getMin()).isEqualTo(two);
         checkSizeOfEntriesWithDeg(degTwoAsStreamWithOutMin(), 2, 1L);
         checkSizeOfEntriesWithDeg(degTwoAsStreamWithOutMin(), 1, 1L);
         parentAssert(Stream.of(four, three), two);
@@ -149,7 +149,7 @@ public class FibonacciHeapTest {
         Entry<Element> actualMin = heap.extractMin();
 
         Truth.assertThat(actualMin).isEqualTo(one);
-        Truth.assertThat(heap.getMinimum()).isEqualTo(two);
+        Truth.assertThat(heap.getMin()).isEqualTo(two);
     }
 
     @Test
@@ -157,7 +157,7 @@ public class FibonacciHeapTest {
         degThreeSample();
         heap.extractMin();
 
-        Truth.assertThat(heap.getMinimum()).isEqualTo(two);
+        Truth.assertThat(heap.getMin()).isEqualTo(two);
         checkSizeOfEntriesWithDeg(degThreeAsStreamWithOutMin(), 3, 1L);
         checkSizeOfEntriesWithDeg(degThreeAsStreamWithOutMin(), 2, 1L);
         checkSizeOfEntriesWithDeg(degThreeAsStreamWithOutMin(), 1, 2L);
@@ -177,7 +177,7 @@ public class FibonacciHeapTest {
         double minimumKey = 1.0;
         heap.decreaseKey(nine, minimumKey);
 
-        Truth.assertThat(heap.getMinimum()).isEqualTo(nine);
+        Truth.assertThat(heap.getMin()).isEqualTo(nine);
     }
 
     @Test
@@ -186,7 +186,7 @@ public class FibonacciHeapTest {
         double minimumKey = 1.0;
         heap.decreaseKey(nine, minimumKey);
 
-        Truth.assertThat(heap.getMinimum()).isEqualTo(nine);
+        Truth.assertThat(heap.getMin()).isEqualTo(nine);
         Truth.assertThat(nine.getKey()).isEqualTo(minimumKey);
         checkSizeOfEntriesWithDeg(degThreeAsStreamWithOutMin(), 3, 1L);
         checkSizeOfEntriesWithDeg(degThreeAsStreamWithOutMin(), 2, 1L);
@@ -203,7 +203,7 @@ public class FibonacciHeapTest {
         double minimumKey = 1.0;
         heap.decreaseKey(six, minimumKey);
 
-        Truth.assertThat(heap.getMinimum()).isEqualTo(six);
+        Truth.assertThat(heap.getMin()).isEqualTo(six);
         Truth.assertThat(six.getKey()).isEqualTo(minimumKey);
         checkSizeOfEntriesWithDeg(degThreeAsStreamWithOutMin(), 3, 0L);
         checkSizeOfEntriesWithDeg(degThreeAsStreamWithOutMin(), 2, 2L);
@@ -232,15 +232,15 @@ public class FibonacciHeapTest {
         miniSample();
         checkRootList(one);
 
-        Truth.assertThat(heap.getMinimum()).isEqualTo(one);
+        Truth.assertThat(heap.getMin()).isEqualTo(one);
         Truth.assertThat(one).isEqualTo(heap.extractMin());
 
-        Truth.assertThat(heap.getMinimum()).isEqualTo(two);
+        Truth.assertThat(heap.getMin()).isEqualTo(two);
         childAssert(two, three);
         parentAssert(Stream.of(three), two);
         Truth.assertThat(two).isEqualTo(heap.extractMin());
 
-        Truth.assertThat(heap.getMinimum()).isEqualTo(three);
+        Truth.assertThat(heap.getMin()).isEqualTo(three);
         Truth.assertThat(three).isEqualTo(heap.extractMin());
     }
 
@@ -249,28 +249,28 @@ public class FibonacciHeapTest {
         Stream.of(one, two, three, four).forEach(insert);
         checkRootList(one);
 
-        Truth.assertThat(heap.getMinimum()).isEqualTo(one);
+        Truth.assertThat(heap.getMin()).isEqualTo(one);
         Truth.assertThat(one).isEqualTo(heap.extractMin());
-        Truth.assertThat(heap.getMinimum()).isEqualTo(two);
+        Truth.assertThat(heap.getMin()).isEqualTo(two);
         childAssert(two, three);
         parentAssert(Stream.of(three), two);
         Truth.assertThat(three.getNext()).isEqualTo(three);
         Truth.assertThat(four.getPrevious()).isEqualTo(two);
 
         heap.decreaseKey(four, 1.0);
-        Truth.assertThat(heap.getMinimum()).isEqualTo(four);
+        Truth.assertThat(heap.getMin()).isEqualTo(four);
         Truth.assertThat(four.getNext()).isEqualTo(two);
         Truth.assertThat(two.getPrevious()).isEqualTo(four);
         childAssert(two, three);
         parentAssert(Stream.of(three), two);
         Truth.assertThat(four).isEqualTo(heap.extractMin());
 
-        Truth.assertThat(heap.getMinimum()).isEqualTo(two);
+        Truth.assertThat(heap.getMin()).isEqualTo(two);
         childAssert(two, three);
         parentAssert(Stream.of(three), two);
         Truth.assertThat(two).isEqualTo(heap.extractMin());
 
-        Truth.assertThat(heap.getMinimum()).isEqualTo(three);
+        Truth.assertThat(heap.getMin()).isEqualTo(three);
         Truth.assertThat(three).isEqualTo(heap.extractMin());
         Truth.assertThat(heap.isEmpty()).isEqualTo(true);
     }
@@ -298,7 +298,7 @@ public class FibonacciHeapTest {
 
     private Set<Entry<Element>> buildNextMemberSet(Integer lengthsOfNext) {
         Stream.Builder<Entry<Element>> builder = Stream.builder();
-        Entry<Element> tmp = heap.getMinimum();
+        Entry<Element> tmp = heap.getMin();
         for (int i = 0; i < lengthsOfNext; i++) {
             builder.add(tmp);
             tmp = tmp.getNext();
@@ -308,7 +308,7 @@ public class FibonacciHeapTest {
 
     private Set<Entry<Element>> buildPreviousMemberSet(Integer lengthsOfPrevious) {
         Stream.Builder<Entry<Element>> builder = Stream.builder();
-        Entry<Element> tmp = heap.getMinimum();
+        Entry<Element> tmp = heap.getMin();
         for (int i = 0; i < lengthsOfPrevious; i++) {
             builder.add(tmp);
             tmp = tmp.getPrevious();
