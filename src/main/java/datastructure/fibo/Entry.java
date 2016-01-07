@@ -93,6 +93,62 @@ public final class Entry<T extends Element> implements Element {
         this.child = child;
     }
 
+    //TODO: check from here
+
+    public boolean isSingle() {
+        return (this == this.getNext());
+    }
+
+    public void addChild(Entry<T> child) {
+        if (this.getChild() != null) {
+            this.getChild().addSibling(child);
+        } else {
+            setChild(child);
+        }
+        child.setParent(this);
+        child.setMarked(false);
+        deg++;
+    }
+
+    public void addSibling(Entry<T> sibling) {
+        if (sibling == null)
+            return;
+
+        Entry<T> tLeft = getPrevious();
+        Entry<T> sLeft = sibling.getPrevious();
+
+        tLeft.setNext(sLeft);
+        sLeft.setNext(this);
+
+        this.setPrevious(sLeft);
+        sibling.setPrevious(tLeft);
+    }
+
+    public void removeSibling() {
+        this.getPrevious().setNext(getNext());
+        this.getNext().setPrevious(getPrevious());
+        this.setNext(this);
+        this.setPrevious(this);
+    }
+
+    public void remove() {
+        if (this.parent != null) {
+            // node have parent
+            if (this == getNext())
+                this.parent.setChild(null);
+            else
+                this.parent.setChild(getNext());
+            this.parent.setDeg(parent.getDeg() - 1);
+        }
+
+        if (this != getNext()) {
+            removeSibling();
+        }
+        setParent(null);
+        setMarked(false);
+    }
+    //TODO: check until here
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

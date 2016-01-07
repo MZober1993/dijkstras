@@ -43,6 +43,10 @@ public final class FiboHeap<T extends Element> {
             this.priority = priority;
         }
 
+        public boolean selfPointed() {
+            return next.equals(this) && previous.equals(this);
+        }
+
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
@@ -126,7 +130,7 @@ public final class FiboHeap<T extends Element> {
      * priority.  Its priority must be a valid double, so you cannot set the
      * priority to NaN.
      *
-     * @param value The value to insert.
+     * @param value    The value to insert.
      * @param priority Its priority, which must be valid.
      * @return An Node representing that element in the tree.
      */
@@ -150,8 +154,8 @@ public final class FiboHeap<T extends Element> {
      * Inserts the specified element into the Fibonacci heap with the specified
      * priority.  Its priority must be a valid double, so you cannot set the
      * priority to NaN.
-     * @param node
      *
+     * @param node
      * @return An Node representing that element in the tree.
      */
     public Node<T> enqueue(Node<T> node) {
@@ -197,7 +201,7 @@ public final class FiboHeap<T extends Element> {
      * @param one The first Fibonacci heap to merge.
      * @param two The second Fibonacci heap to merge.
      * @return A new FiboHeap containing all of the elements of both
-     *         heaps.
+     * heaps.
      */
     public static <T extends Element> FiboHeap<T> merge(FiboHeap<T> one, FiboHeap<T> two) {
         FiboHeap<T> result = new FiboHeap<T>();
@@ -241,6 +245,7 @@ public final class FiboHeap<T extends Element> {
          * reassign the min.
          */
         if (minimum.next == minimum) { // Case one
+            System.out.println("self-pointer-> set minimum to null");
             minimum = null;
         } else { // Case two
             minimum.previous.next = minimum.next;
@@ -365,14 +370,14 @@ public final class FiboHeap<T extends Element> {
      * IllegalArgumentException.  The new priority must be a finite double,
      * so you cannot set the priority to be NaN, or +/- infinity.  Doing
      * so also throws an IllegalArgumentException.
-     *
+     * <p>
      * It is assumed that the node belongs in this heap.  For efficiency
      * reasons, this is not checked at runtime.
      *
-     * @param node The element whose priority should be decreased.
+     * @param node        The element whose priority should be decreased.
      * @param newPriority The new priority to associate with this node.
      * @throws IllegalArgumentException If the new priority exceeds the old
-     *         priority, or if the argument is not a finite double.
+     *                                  priority, or if the argument is not a finite double.
      */
     public void decreaseKey(Node<T> node, double newPriority) {
         checkPriority(newPriority);
@@ -385,7 +390,7 @@ public final class FiboHeap<T extends Element> {
 
     /**
      * Deletes this Node from the Fibonacci heap that contains it.
-     *
+     * <p>
      * It is assumed that the node belongs in this heap.  For efficiency
      * reasons, this is not checked at runtime.
      *
@@ -419,7 +424,7 @@ public final class FiboHeap<T extends Element> {
      * list in O(1) time.  Because the lists may be empty, the return value
      * is the only pointer that's guaranteed to be to an element of the
      * resulting list.
-     *
+     * <p>
      * This function assumes that one and two are the minimum elements of the
      * lists they are in, and returns a pointer to whichever is smaller.  If
      * this condition does not hold, the return value is some arbitrary pointer
@@ -455,7 +460,7 @@ public final class FiboHeap<T extends Element> {
      * Decreases the key of a node in the tree without doing any checking to ensure
      * that the new priority is valid.
      *
-     * @param node The node whose key should be decreased.
+     * @param node     The node whose key should be decreased.
      * @param priority The node's new priority.
      */
     private void decreaseKeyUnchecked(Node<T> node, double priority) {

@@ -46,7 +46,9 @@ public class DijkstraFibo implements Dijkstra<FiboHeap.Node<Element>> {
                 final FiboHeap.Node<Element> connected = edge.getConnected(smallest);
                 if (!connected.isClosed()) {
                     final Double alt = smallest.getG() + edge.getDistance();
-
+                    if (nodes.min().selfPointed()) {
+                        System.out.println("minimum is selfpointed");
+                    }
                     if (alt < connected.getG()) {
                         connected.setG(alt);
                         connected.setAnchor(smallest);
