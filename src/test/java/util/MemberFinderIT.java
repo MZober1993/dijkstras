@@ -46,7 +46,7 @@ public class MemberFinderIT {
 
     private void findMemberOfPlaceWithNOccurrence(ImportFile file, Long n) {
         GraphImporter<Element> graphImporter = new GraphImporter<>(file);
-        GraphImpl graph = graphImporter.importNVerticesAndGetGraph(n, new GraphImpl());
+        GraphImpl graph = graphImporter.importElementGraph(n);
         DijkstraImpl algorithm = new DijkstraImpl();
 
         List<Integer> member = memberFinder.findMemberForHighestShortestPathFromTheBeginningOfTheGraph(algorithm, graph);

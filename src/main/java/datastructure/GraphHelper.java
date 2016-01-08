@@ -76,27 +76,27 @@ public class GraphHelper {
     }
 
 
-    public Graph<Entry<Element>> transformGraphToEntryGraph(Graph<Element> graph) {
+    public static GraphImplFibo transformGraphToEntryGraph(Graph<Element> graph) {
         GraphImplFibo entryGraph = new GraphImplFibo(elementsToIdList(graph));
         graph.getEdges().stream().forEach(edgeMapper(entryGraph));
         return entryGraph;
     }
 
-    private Consumer<Edge<Element>> edgeMapper(GraphImplFibo entryGraph) {
+    private static Consumer<Edge<Element>> edgeMapper(GraphImplFibo entryGraph) {
         return edge -> entryGraph.addConnection(edge.getFirst().getId(), edge.getSecond().getId(), edge.getDistance());
     }
 
-    public Graph<Element> transformGraphToElementGraph(Graph<Entry<Element>> entryGraph) {
+    public static GraphImpl transformGraphToElementGraph(Graph<Entry<Element>> entryGraph) {
         GraphImpl graph = new GraphImpl(elementsToIdList(entryGraph));
         entryGraph.getEdges().stream().forEach(edgeMapper(graph));
         return graph;
     }
 
-    private Consumer<Edge<Entry<Element>>> edgeMapper(GraphImpl graph) {
+    private static Consumer<Edge<Entry<Element>>> edgeMapper(GraphImpl graph) {
         return edge -> graph.addConnection(edge.getFirst().getId(), edge.getSecond().getId(), edge.getDistance());
     }
 
-    private <T extends Element> List<Integer> elementsToIdList(Graph<T> entryGraph) {
+    private static <T extends Element> List<Integer> elementsToIdList(Graph<T> entryGraph) {
         return entryGraph.getElements().values()
                 .stream().map(T::getId).collect(Collectors.toList());
     }

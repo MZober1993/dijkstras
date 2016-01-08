@@ -29,7 +29,7 @@ public class MeasureAlgorithm<G extends Graph<T>, A extends Dijkstra<T>, T exten
 
     private void measuresForNY() {
         //todo:fix me
-        //Measures.prepareMeasure(NY_IMPORTER, new DijkstraImpl());
+        //Measures.prepareFibo(NY_IMPORTER, new DijkstraImpl());
         expectStdErrorForNReputationsWithScaledN(NY_IMPORTER, 10L, 100L, 1000L);
         boxPlotForNReputationsWithScaledN(NY_IMPORTER, 10L, 100L, 1000L);
     }

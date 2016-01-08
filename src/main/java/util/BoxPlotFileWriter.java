@@ -47,7 +47,7 @@ public class BoxPlotFileWriter extends FileWriter {
                 Double quartile0_75;
 
                 Stream.Builder<Long> builder = Stream.builder();
-                GraphImpl graph = graphImporter.importNVerticesAndGetGraph(limit, new GraphImpl());
+                GraphImpl graph = graphImporter.importElementGraph(limit);
                 int numberOfVertices = graph.getElements().size();
                 int numberOfEdges = graph.getEdges().size();
 

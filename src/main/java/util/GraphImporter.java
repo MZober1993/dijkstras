@@ -2,7 +2,9 @@ package util;
 
 
 import datastructure.Element;
-import datastructure.Graph;
+import datastructure.GraphHelper;
+import datastructure.fibo.GraphImplFibo;
+import datastructure.standard.GraphImpl;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -50,7 +52,9 @@ public class GraphImporter<T extends Element> {
         fileCreator.createSampleGraphFile();
     }
 
-    public <G extends Graph<T>> G importNVerticesAndGetGraph(Long n, G graph) {
+
+    public GraphImpl importElementGraph(Long n) {
+        GraphImpl graph = new GraphImpl();
         if (!Files.exists(pathOfGraphFile)) {
             createDirAndPlainImportFile();
         }
@@ -71,8 +75,8 @@ public class GraphImporter<T extends Element> {
         return graph;
     }
 
-    public <G extends Graph<T>> G importGraphWithLimit(G graph) {
-        return importNVerticesAndGetGraph(limit, graph);
+    public GraphImplFibo importEntryGraph(Long n) {
+        return GraphHelper.transformGraphToEntryGraph(importElementGraph(n));
     }
 
     public Long getLimit() {

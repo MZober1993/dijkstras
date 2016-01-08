@@ -30,22 +30,19 @@ public class GraphImporterIT {
     public static final int FIRST = 0;
     public static final long EMPTY = 0;
     public static final long SMALL_LIMIT_NUMBER = 20;
-    public static final GraphImporter<Element> STD_GRAPH_IMPORTER = new GraphImporter<>(ImportFile.CREATED);
+    public static final GraphImporter<Element> IMPORTER = new GraphImporter<>(ImportFile.CREATED);
     public static final Dijkstra<Element> STD_DIJKSTRA = new DijkstraImpl();
-    public static final GraphImporter<Entry<Element>> FIBO_GRAPH_IMPORTER = new GraphImporter<>(ImportFile.CREATED);
     public static final Dijkstra<Entry<Element>> FIBO_DIJKSTRA = new DijkstraImplFibo();
 
     @Test
     public void testImportStdGraph() {
-        GraphImpl graph = STD_GRAPH_IMPORTER
-                .importNVerticesAndGetGraph(SMALL_LIMIT_NUMBER, new GraphImpl());
+        GraphImpl graph = IMPORTER.importElementGraph(SMALL_LIMIT_NUMBER);
         importGraphTest(graph);
     }
 
     @Test
     public void testImportStdGraphAndUseDijkstra() {
-        GraphImpl graph = STD_GRAPH_IMPORTER
-                .importNVerticesAndGetGraph(SMALL_LIMIT_NUMBER, new GraphImpl());
+        GraphImpl graph = IMPORTER.importElementGraph(SMALL_LIMIT_NUMBER);
         Element start = graph.getElement(1);
         Element end = graph.getElement(15);
         List<Integer> shortestPath = STD_DIJKSTRA.shortestPath(graph, start, end);
@@ -55,8 +52,7 @@ public class GraphImporterIT {
 
     @Test
     public void testImportFiboGraph() {
-        GraphImplFibo graph = FIBO_GRAPH_IMPORTER
-                .importNVerticesAndGetGraph(SMALL_LIMIT_NUMBER, new GraphImplFibo());
+        GraphImplFibo graph = IMPORTER.importEntryGraph(SMALL_LIMIT_NUMBER);
         Entry<Element> element = graph.getOne();
         List<Edge<Entry<Element>>> edgesFromNode = graph.getEdgesFromNode(element);
         Edge<Entry<Element>> edge = edgesFromNode.get(FIRST);
@@ -67,8 +63,7 @@ public class GraphImporterIT {
 
     @Test
     public void testImportFiboGraphAndUseDijkstra() {
-        GraphImplFibo graph = FIBO_GRAPH_IMPORTER
-                .importNVerticesAndGetGraph(SMALL_LIMIT_NUMBER, new GraphImplFibo());
+        GraphImplFibo graph = IMPORTER.importEntryGraph(SMALL_LIMIT_NUMBER);
         Entry<Element> start = graph.getElement(1);
         Entry<Element> end = graph.getElement(15);
         List<Integer> shortestPath = FIBO_DIJKSTRA.shortestPath(graph, start, end);
@@ -78,14 +73,13 @@ public class GraphImporterIT {
 
     @Test
     public void testImportFiboGraphAndUseMultipleDijkstra() {
-        multipleDijkstra(FIBO_GRAPH_IMPORTER, SMALL_LIMIT_NUMBER);
+        multipleDijkstra(SMALL_LIMIT_NUMBER);
     }
 
-    private void multipleDijkstra(GraphImporter<Entry<Element>> importer, Long limit) {
+    private void multipleDijkstra(Long limit) {
         for (int i = 2; i < limit; i++) {
             try {
-                GraphImplFibo graph = importer
-                        .importNVerticesAndGetGraph(SMALL_LIMIT_NUMBER, new GraphImplFibo());
+                GraphImplFibo graph = IMPORTER.importEntryGraph(SMALL_LIMIT_NUMBER);
                 Entry<Element> start = graph.getElement(1);
                 Entry<Element> end = graph.getElement(i);
                 checkNotNull(start);
@@ -101,7 +95,7 @@ public class GraphImporterIT {
 
     @Test
     public void testImportSimpleFiboGraphAndUseMultipleDijkstra() {
-        multipleDijkstra(FIBO_GRAPH_IMPORTER, 7L);
+        multipleDijkstra(7L);
     }
 
     private <T> void importGraphTest(Graph<T> graph) {

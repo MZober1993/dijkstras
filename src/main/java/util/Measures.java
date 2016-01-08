@@ -1,10 +1,13 @@
 package util;
 
-import algorithm.Dijkstra;
+import algorithm.fibo.DijkstraImplFibo;
+import algorithm.standard.DijkstraImpl;
 import com.google.common.collect.ImmutableList;
 import datastructure.Element;
 import datastructure.Graph;
 import datastructure.GraphHelper;
+import datastructure.fibo.Entry;
+import datastructure.standard.GraphImpl;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,22 +27,23 @@ public enum Measures {
                 .collect(Collectors.toList());
     }
 
-    public static <G extends Graph<T>, T extends Element> void prepareMeasure(G graph, Dijkstra<T> algorithm) {
+    public static void prepareStd(GraphImpl graph) {
+        DijkstraImpl algo = new DijkstraImpl();
         for (int i = 0; i < 10; i++) {
             int id = 40 + i;
-            List<Integer> path = algorithm.shortestPath(graph, graph.getElement(GraphHelper.FIRST),
-                    graph.getElement(id));
+            List<Integer> path = algo.shortestPath(graph, graph.getElement(GraphHelper.FIRST), graph.getElement(id));
             System.out.println(path + " Last: " + id);
         }
     }
 
-    public static <T extends Element> void prepareWithRecreation(GraphImporter<T> importer
-            , Graph<T> emptyGraph, Dijkstra<T> algorithm) {
-        for (int i = 0; i < 10; i++) {
-            int id = 40 + i;
-            Graph<T> graph = importer.importGraphWithLimit(emptyGraph);
-            List<Integer> path = algorithm.shortestPath(graph, graph.getElement(GraphHelper.FIRST),
-                    graph.getElement(id));
+    public static void prepareFibo(GraphImporter<Element> importer) {
+        DijkstraImplFibo algo = new DijkstraImplFibo();
+        long limit = 1000L;
+        for (int i = 0; i < limit - 2; i++) {
+            int id = 2 + i;
+            Graph<Entry<Element>> fibo = importer.importEntryGraph(limit);
+            List<Integer> path = algo.shortestPath(fibo, fibo.getElement(GraphHelper.FIRST),
+                    fibo.getElement(id));
             System.out.println(path + " Last: " + id);
         }
     }
