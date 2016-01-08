@@ -55,7 +55,7 @@ public final class FibonacciHeap<T extends Element> {
     }
 
     private void consolidate() {
-        int degreeSize = MathHelper.log2(size);
+        int degreeSize = MathHelper.log2(size) + 1;
         Entry<T>[] degree = new Entry[degreeSize];
         for (int i = 0; i < degreeSize; i++) {
             degree[i] = null;

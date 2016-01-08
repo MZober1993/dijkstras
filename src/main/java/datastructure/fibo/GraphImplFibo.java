@@ -16,29 +16,40 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class GraphImplFibo implements Graph<Entry<Element>> {
 
-    private final Map<Integer, List<Edge<Entry<Element>>>> outgoingEdges;
-    private final List<Edge<Entry<Element>>> allEdges;
-    private final Map<Integer, Element> vertices;
-    private final Map<Integer, Entry<Element>> entryVertices;
+    private Map<Integer, List<Edge<Entry<Element>>>> outgoingEdges;
+    private List<Edge<Entry<Element>>> allEdges;
+    private Map<Integer, Element> vertices;
+    private Map<Integer, Entry<Element>> entryVertices;
 
     public GraphImplFibo() {
-        outgoingEdges = new LinkedHashMap<>();
-        allEdges = new ArrayList<>();
-        vertices = new LinkedHashMap<>();
-        entryVertices = new LinkedHashMap<>();
+        init();
     }
 
     public GraphImplFibo(Integer... identifier) {
         checkNotNull(identifier);
-        outgoingEdges = new LinkedHashMap<>();
-        allEdges = new ArrayList<>();
-        vertices = new LinkedHashMap<>();
-        entryVertices = new LinkedHashMap<>();
+        init();
         for (Integer id : identifier) {
             VertexImpl v = new VertexImpl(id);
             this.vertices.put(id, v);
             this.entryVertices.put(id, new Entry<>(v, Double.MAX_VALUE));
         }
+    }
+
+    public GraphImplFibo(List<Integer> identifiers) {
+        checkNotNull(identifiers);
+        init();
+        for (Integer id : identifiers) {
+            VertexImpl v = new VertexImpl(id);
+            this.vertices.put(id, v);
+            this.entryVertices.put(id, new Entry<>(v, Double.MAX_VALUE));
+        }
+    }
+
+    private void init() {
+        outgoingEdges = new LinkedHashMap<>();
+        allEdges = new ArrayList<>();
+        vertices = new LinkedHashMap<>();
+        entryVertices = new LinkedHashMap<>();
     }
 
     @Override

@@ -16,24 +16,34 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class GraphImpl implements Graph<Element> {
 
-    private final Map<Integer, List<Edge<Element>>> outgoingEdges;
-    private final List<Edge<Element>> allEdges;
-    private final Map<Integer, Element> vertices;
+    private Map<Integer, List<Edge<Element>>> outgoingEdges;
+    private List<Edge<Element>> allEdges;
+    private Map<Integer, Element> vertices;
 
     public GraphImpl() {
-        outgoingEdges = new LinkedHashMap<>();
-        allEdges = new ArrayList<>();
-        vertices = new LinkedHashMap<>();
+        init();
     }
 
     public GraphImpl(Integer... identifier) {
         checkNotNull(identifier);
-        outgoingEdges = new LinkedHashMap<>();
-        allEdges = new ArrayList<>();
-        vertices = new LinkedHashMap<>();
+        init();
         for (Integer id : identifier) {
             this.vertices.put(id, new VertexImpl(id));
         }
+    }
+
+    public GraphImpl(List<Integer> identifiers) {
+        checkNotNull(identifiers);
+        init();
+        for (Integer id : identifiers) {
+            this.vertices.put(id, new VertexImpl(id));
+        }
+    }
+
+    private void init() {
+        outgoingEdges = new LinkedHashMap<>();
+        allEdges = new ArrayList<>();
+        vertices = new LinkedHashMap<>();
     }
 
     @Override

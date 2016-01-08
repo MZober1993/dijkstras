@@ -4,13 +4,10 @@ import algorithm.Dijkstra;
 import com.google.common.collect.ImmutableList;
 import datastructure.Element;
 import datastructure.Graph;
-import datastructure.GraphFactory;
 import datastructure.GraphHelper;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static util.MathHelper.TEN_THOUSAND;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
@@ -27,19 +24,20 @@ public enum Measures {
                 .collect(Collectors.toList());
     }
 
-    public static <G extends Graph<T>, T extends Element> void prepareMeasure(GraphImporter<G> graphImporter,
-                                                                              Dijkstra<T> algorithm,
-                                                                              GraphFactory<G, T> factory) {
-        for (int i = 0; i < 5; i++) {
-            G graph = graphImporter.importNVerticesAndGetGraph(TEN_THOUSAND, factory.create());
-            System.out.println(algorithm.shortestPath(graph, graph.getElement(GraphHelper.FIRST),
-                    graph.getLastRandomElement()));
-        }
-    }
-
     public static <G extends Graph<T>, T extends Element> void prepareMeasure(G graph, Dijkstra<T> algorithm) {
         for (int i = 0; i < 10; i++) {
             int id = 40 + i;
+            List<Integer> path = algorithm.shortestPath(graph, graph.getElement(GraphHelper.FIRST),
+                    graph.getElement(id));
+            System.out.println(path + " Last: " + id);
+        }
+    }
+
+    public static <T extends Element> void prepareWithRecreation(GraphImporter<T> importer
+            , Graph<T> emptyGraph, Dijkstra<T> algorithm) {
+        for (int i = 0; i < 10; i++) {
+            int id = 40 + i;
+            Graph<T> graph = importer.importGraphWithLimit(emptyGraph);
             List<Integer> path = algorithm.shortestPath(graph, graph.getElement(GraphHelper.FIRST),
                     graph.getElement(id));
             System.out.println(path + " Last: " + id);

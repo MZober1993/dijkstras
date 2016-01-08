@@ -1,7 +1,6 @@
 import algorithm.Dijkstra;
 import datastructure.Element;
 import datastructure.Graph;
-import datastructure.GraphFactory;
 import util.*;
 
 import java.nio.file.Path;
@@ -18,15 +17,14 @@ import static util.MeasureFileWriter.PLAIN_FILE_NAME;
 public class MeasureAlgorithm<G extends Graph<T>, A extends Dijkstra<T>, T extends Element> {
 
     public static final int REPUTATIONS = 40;
-    public final GraphImporter<G> NY_IMPORTER = new GraphImporter<>(ImportFile.NY);
-    public final GraphImporter<G> CREATED_IMPORTER = new GraphImporter<>(ImportFile.CREATED);
+    public final GraphImporter<T> NY_IMPORTER = new GraphImporter<>(ImportFile.NY);
+    public final GraphImporter<T> CREATED_IMPORTER = new GraphImporter<>(ImportFile.CREATED);
 
+    public MeasureAlgorithm() {
+    }
 
-    public void measures(A algorithm, GraphImporter<G> importer, GraphFactory<G, T> factory) {
-        Measures.prepareMeasure(importer, algorithm, factory);
-        //TODO: fix this
-        //expectStdErrorForNReputationsWithoutScaledN(CREATED_IMPORTER, 100L);
-        //boxPlotForNReputationsWithoutScaledN(CREATED_IMPORTER, 100L);
+    public MeasureAlgorithm(Long limit) {
+        CREATED_IMPORTER.setLimit(limit);
     }
 
     private void measuresForNY() {

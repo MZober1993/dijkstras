@@ -30,9 +30,9 @@ public class GraphImporterIT {
     public static final int FIRST = 0;
     public static final long EMPTY = 0;
     public static final long SMALL_LIMIT_NUMBER = 20;
-    public static final GraphImporter<GraphImpl> STD_GRAPH_IMPORTER = new GraphImporter<>(ImportFile.CREATED);
+    public static final GraphImporter<Element> STD_GRAPH_IMPORTER = new GraphImporter<>(ImportFile.CREATED);
     public static final Dijkstra<Element> STD_DIJKSTRA = new DijkstraImpl();
-    public static final GraphImporter<GraphImplFibo> FIBO_GRAPH_IMPORTER = new GraphImporter<>(ImportFile.CREATED);
+    public static final GraphImporter<Entry<Element>> FIBO_GRAPH_IMPORTER = new GraphImporter<>(ImportFile.CREATED);
     public static final Dijkstra<Entry<Element>> FIBO_DIJKSTRA = new DijkstraImplFibo();
 
     @Test
@@ -81,7 +81,7 @@ public class GraphImporterIT {
         multipleDijkstra(FIBO_GRAPH_IMPORTER, SMALL_LIMIT_NUMBER);
     }
 
-    private void multipleDijkstra(GraphImporter<GraphImplFibo> importer, Long limit) {
+    private void multipleDijkstra(GraphImporter<Entry<Element>> importer, Long limit) {
         for (int i = 2; i < limit; i++) {
             try {
                 GraphImplFibo graph = importer

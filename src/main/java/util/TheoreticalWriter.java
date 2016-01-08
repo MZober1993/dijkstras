@@ -1,5 +1,6 @@
 package util;
 
+import datastructure.Element;
 import datastructure.Graph;
 
 import java.io.IOException;
@@ -15,7 +16,7 @@ import static util.Measures.scaleMeasureSample;
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
  *         26.11.15 - 20:35
  */
-public class TheoreticalWriter<T> extends FileWriter {
+public class TheoreticalWriter<T extends Element> extends FileWriter {
 
     public static final Path DEFAULT_PATH = Paths.get(GraphImporter.PATH_TO_RESOURCE + THEORETICAL.name().toLowerCase()
             + ".csv");
@@ -27,7 +28,7 @@ public class TheoreticalWriter<T> extends FileWriter {
     }
 
     public void writeRoutine() {
-        GraphImporter<Graph<T>> graphImporter = new GraphImporter<>(ImportFile.CREATED);
+        GraphImporter<T> graphImporter = new GraphImporter<>(ImportFile.CREATED);
         try {
             writeHeader();
             scaleMeasureSample(100).forEach(element -> {

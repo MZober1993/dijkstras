@@ -26,8 +26,9 @@ public class ShowGraph {
         createAndShow(SAMPLE, 20L, fiboFactory);
     }
 
-    private static <G extends Graph<T>, T> void createAndShow(ImportFile file, Long limit, GraphFactory<G, T> factory) {
-        GraphImporter<G> graphImporterSample = new GraphImporter<>(file);
+    private static <G extends Graph<T>, T extends Element> void createAndShow(ImportFile file, Long limit
+            , GraphFactory<G, T> factory) {
+        GraphImporter<T> graphImporterSample = new GraphImporter<>(file);
         System.out.println(graphImporterSample.importNVerticesAndGetGraph(limit, factory.create()));
     }
 }

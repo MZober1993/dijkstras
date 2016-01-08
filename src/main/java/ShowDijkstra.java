@@ -28,7 +28,7 @@ public class ShowDijkstra {
     }
 
     private static <G extends Graph<T>, T extends Element> void showDijkstra(Dijkstra<T> dijkstra
-            , GraphImporter<G> importer, Class<G> clazz) {
+            , GraphImporter<T> importer, Class<G> clazz) {
         G graph = importer.importNVerticesAndGetGraph(10000L, GraphFactory.create(clazz));
         Measures.prepareMeasure(graph, dijkstra);
         testDijkstras(dijkstra, graph);

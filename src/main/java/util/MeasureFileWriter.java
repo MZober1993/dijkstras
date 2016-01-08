@@ -1,6 +1,7 @@
 package util;
 
 import algorithm.standard.DijkstraImpl;
+import datastructure.Element;
 import datastructure.GraphHelper;
 import datastructure.standard.GraphImpl;
 
@@ -30,7 +31,7 @@ public class MeasureFileWriter extends FileWriter {
         super(path);
     }
 
-    public void writeRoutine(List<Long> limits, Integer times, GraphImporter<GraphImpl> graphImporter, boolean scaledN) {
+    public void writeRoutine(List<Long> limits, Integer times, GraphImporter<Element> graphImporter, boolean scaledN) {
         DijkstraImpl algorithm = new DijkstraImpl();
         long time;
 

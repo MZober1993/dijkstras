@@ -2,10 +2,15 @@ package datastructure;
 
 import algorithm.Dijkstra;
 import com.google.common.base.Stopwatch;
+import datastructure.fibo.Entry;
+import datastructure.fibo.GraphImplFibo;
+import datastructure.standard.GraphImpl;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
@@ -68,5 +73,31 @@ public class GraphHelper {
         }
         path.add(0, current.getId());
         return path;
+    }
+
+
+    public Graph<Entry<Element>> transformGraphToEntryGraph(Graph<Element> graph) {
+        GraphImplFibo entryGraph = new GraphImplFibo(elementsToIdList(graph));
+        graph.getEdges().stream().forEach(edgeMapper(entryGraph));
+        return entryGraph;
+    }
+
+    private Consumer<Edge<Element>> edgeMapper(GraphImplFibo entryGraph) {
+        return edge -> entryGraph.addConnection(edge.getFirst().getId(), edge.getSecond().getId(), edge.getDistance());
+    }
+
+    public Graph<Element> transformGraphToElementGraph(Graph<Entry<Element>> entryGraph) {
+        GraphImpl graph = new GraphImpl(elementsToIdList(entryGraph));
+        entryGraph.getEdges().stream().forEach(edgeMapper(graph));
+        return graph;
+    }
+
+    private Consumer<Edge<Entry<Element>>> edgeMapper(GraphImpl graph) {
+        return edge -> graph.addConnection(edge.getFirst().getId(), edge.getSecond().getId(), edge.getDistance());
+    }
+
+    private <T extends Element> List<Integer> elementsToIdList(Graph<T> entryGraph) {
+        return entryGraph.getElements().values()
+                .stream().map(T::getId).collect(Collectors.toList());
     }
 }
