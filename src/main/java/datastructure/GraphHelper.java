@@ -92,6 +92,10 @@ public class GraphHelper {
         return graph;
     }
 
+    public static GraphImplFibo refreshGraph(Graph<Entry<Element>> graph) {
+        return transformGraphToEntryGraph(transformGraphToElementGraph(graph));
+    }
+
     private static Consumer<Edge<Entry<Element>>> edgeMapper(GraphImpl graph) {
         return edge -> graph.addConnection(edge.getFirst().getId(), edge.getSecond().getId(), edge.getDistance());
     }

@@ -15,13 +15,35 @@ public class GraphFileCreator extends FileWriter {
     public static final Path DEFAULT_PATH = Paths.get(GraphImporter.PATH_TO_IMPORT_FILES +
             ImportFile.CREATED.name().toLowerCase());
 
+    public static final Path COMPLETE_PATH = Paths.get(GraphImporter.PATH_TO_IMPORT_FILES +
+            ImportFile.COMPLETE.name().toLowerCase());
+
 
     public GraphFileCreator(Path path) {
         super(path);
     }
 
-    public void createSampleGraphFile() {
-        createFile(13000, 5, 100);
+    public void createSampleGraphFile(int limit) {
+        createFile(limit, 5, 100);
+    }
+
+    public void createCompleteConnectedGraphFile(int limit, int begin) {
+        Path path = getPath();
+        try {
+            setPath(COMPLETE_PATH);
+            Files.write(COMPLETE_PATH, "".getBytes());
+            for (int i = begin; i <= limit; i++) {
+                for (int j = begin; j <= limit; j++) {
+                    if (i != j) {
+                        int r = MathHelper.calculateRandomDistance();
+                        writeConnectionInOneDirection(i, j, r);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        setPath(path);
     }
 
     public void createFile(int n, int countOfSectors, int connectivity) {

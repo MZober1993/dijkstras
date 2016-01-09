@@ -1,15 +1,19 @@
 package util;
 
+import algorithm.Dijkstra;
 import algorithm.fibo.DijkstraImplFibo;
 import algorithm.standard.DijkstraImpl;
+import com.google.common.base.Stopwatch;
 import com.google.common.collect.ImmutableList;
 import datastructure.Element;
 import datastructure.Graph;
 import datastructure.GraphHelper;
 import datastructure.fibo.Entry;
+import datastructure.fibo.GraphImplFibo;
 import datastructure.standard.GraphImpl;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -27,24 +31,46 @@ public enum Measures {
                 .collect(Collectors.toList());
     }
 
-    public static void prepareStd(GraphImpl graph) {
+    public static String prepareStd(GraphImpl graph, long limit, int endBegin) {
+        StringBuilder builder = new StringBuilder();
         DijkstraImpl algo = new DijkstraImpl();
-        for (int i = 0; i < 10; i++) {
-            int id = 40 + i;
+        for (int i = 0; i < limit - endBegin; i++) {
+            int id = endBegin + i;
+            Stopwatch stopwatch = Stopwatch.createStarted();
             List<Integer> path = algo.shortestPath(graph, graph.getElement(GraphHelper.FIRST), graph.getElement(id));
+            stopwatch.stop();
+
+            System.out.println(stopwatch.elapsed(TimeUnit.NANOSECONDS));
             System.out.println(path + " Last: " + id);
+            builder.append(path).append(" Last: ").append(id);
         }
+        return builder.toString();
     }
 
-    public static void prepareFibo(GraphImporter<Element> importer) {
+    public static String prepareFibo(GraphImplFibo graph, long limit, int endBegin) {
+        StringBuilder builder = new StringBuilder();
         DijkstraImplFibo algo = new DijkstraImplFibo();
-        long limit = 1000L;
-        for (int i = 0; i < limit - 2; i++) {
-            int id = 2 + i;
-            Graph<Entry<Element>> fibo = importer.importEntryGraph(limit);
-            List<Integer> path = algo.shortestPath(fibo, fibo.getElement(GraphHelper.FIRST),
-                    fibo.getElement(id));
+        for (int i = 0; i < limit - endBegin; i++) {
+            int id = endBegin + i;
+            Graph<Entry<Element>> fibo = GraphHelper.refreshGraph(graph);
+            Stopwatch stopwatch = Stopwatch.createStarted();
+            List<Integer> path = algo.shortestPath(fibo, fibo.getElement(GraphHelper.FIRST), fibo.getElement(id));
+            stopwatch.stop();
+
+            System.out.println(stopwatch.elapsed(TimeUnit.NANOSECONDS));
             System.out.println(path + " Last: " + id);
+            builder.append(path).append(" Last: ").append(id);
         }
+        return builder.toString();
+    }
+
+    private static <G extends Graph<T>, T extends Element>
+    List<Integer> calcShortestPathAndPrintTime(G graph, Dijkstra<T> algo, int id) {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        List<Integer> path = algo.shortestPath(graph, graph.getElement(GraphHelper.FIRST), graph.getElement(id));
+        stopwatch.stop();
+
+        System.out.println(stopwatch.elapsed(TimeUnit.NANOSECONDS));
+        return path;
     }
 }

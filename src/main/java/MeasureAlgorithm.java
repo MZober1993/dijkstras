@@ -19,6 +19,7 @@ public class MeasureAlgorithm<G extends Graph<T>, A extends Dijkstra<T>, T exten
     public static final int REPUTATIONS = 40;
     public final GraphImporter<T> NY_IMPORTER = new GraphImporter<>(ImportFile.NY);
     public final GraphImporter<T> CREATED_IMPORTER = new GraphImporter<>(ImportFile.CREATED);
+    public final GraphImporter<T> COMPLETE_IMPORTER = new GraphImporter<>(ImportFile.COMPLETE);
 
     public MeasureAlgorithm() {
     }

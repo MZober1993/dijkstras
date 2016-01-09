@@ -49,7 +49,7 @@ public class GraphImporter<T extends Element> {
             e.printStackTrace();
         }
         GraphFileCreator fileCreator = new GraphFileCreator(GraphFileCreator.DEFAULT_PATH);
-        fileCreator.createSampleGraphFile();
+        fileCreator.createSampleGraphFile(13000);
     }
 
 
