@@ -1,10 +1,22 @@
 package util;
 
+import algorithm.Dijkstra;
+import algorithm.fibo.DijkstraImplFibo;
+import algorithm.standard.DijkstraImpl;
+import datastructure.Element;
+import datastructure.Graph;
+import datastructure.GraphHelper;
+import datastructure.fibo.GraphImplFibo;
+import datastructure.standard.GraphImpl;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
+import java.util.stream.Stream;
+
+import static util.MathHelper.A_MILLION;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
@@ -99,6 +111,45 @@ public class FileWriter {
             writeDouble(numberOfEdges);
             writeComma();
         }
+    }
+
+    protected void tNWriteOfBoth(Integer times, boolean scaledN, Stream.Builder<Long> stdBuilder
+            , Stream.Builder<Long> fiboBuilder, GraphImpl graph, int n, int m) throws IOException {
+        GraphImplFibo fiboGraph = GraphHelper.transformGraphToEntryGraph(graph);
+        DijkstraImpl stdAlgo = new DijkstraImpl();
+        DijkstraImplFibo fiboAlgo = new DijkstraImplFibo();
+
+        for (int i = 0; i < times - 1; i++) {
+            writeGraphNumbers(n, m, scaledN);
+
+            writingAndSaveTime(stdAlgo, stdBuilder, graph);
+            writeComma();
+
+            writingAndSaveTime(fiboAlgo, fiboBuilder, fiboGraph.refreshGraph());
+            emptyEnd();
+        }
+
+        writeGraphNumbers(n, m, scaledN);
+
+        writingAndSaveTime(stdAlgo, stdBuilder, graph);
+        writeComma();
+
+        writingAndSaveTime(fiboAlgo, fiboBuilder, fiboGraph.refreshGraph());
+        writeComma();
+    }
+
+    protected void emptyEnd() throws IOException {
+        writeComma();
+        writeComma();
+        writeComma();
+        writeNewLine();
+    }
+
+    protected <T extends Element> void writingAndSaveTime(Dijkstra<T> algo, Stream.Builder<Long> builder
+            , Graph<T> graph) throws IOException {
+        long stdTime = GraphHelper.calculateTimeWithLastRandom(graph, algo);
+        builder.add(stdTime);
+        writeTimeWithScale(stdTime, A_MILLION);
     }
 
     protected void writeScaledGraphHeaderWithRest(boolean scaledN, String rest) throws IOException {

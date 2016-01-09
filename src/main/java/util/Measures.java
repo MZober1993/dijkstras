@@ -13,7 +13,6 @@ import datastructure.fibo.GraphImplFibo;
 import datastructure.standard.GraphImpl;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -36,13 +35,9 @@ public enum Measures {
         DijkstraImpl algo = new DijkstraImpl();
         for (int i = 0; i < limit - endBegin; i++) {
             int id = endBegin + i;
-            Stopwatch stopwatch = Stopwatch.createStarted();
-            List<Integer> path = algo.shortestPath(graph, graph.getElement(GraphHelper.FIRST), graph.getElement(id));
-            stopwatch.stop();
+            List<Integer> path = calcShortestPathAndPrintTime(graph, algo, id);
 
-            System.out.println(stopwatch.elapsed(TimeUnit.NANOSECONDS));
-            System.out.println(path + " Last: " + id);
-            builder.append(path).append(" Last: ").append(id);
+            builder.append(path).append(" Last: ").append(id).append("\n");
         }
         return builder.toString();
     }
@@ -52,14 +47,10 @@ public enum Measures {
         DijkstraImplFibo algo = new DijkstraImplFibo();
         for (int i = 0; i < limit - endBegin; i++) {
             int id = endBegin + i;
-            Graph<Entry<Element>> fibo = GraphHelper.refreshGraph(graph);
-            Stopwatch stopwatch = Stopwatch.createStarted();
-            List<Integer> path = algo.shortestPath(fibo, fibo.getElement(GraphHelper.FIRST), fibo.getElement(id));
-            stopwatch.stop();
+            Graph<Entry<Element>> fibo = graph.refreshGraph();
+            List<Integer> path = calcShortestPathAndPrintTime(fibo, algo, id);
 
-            System.out.println(stopwatch.elapsed(TimeUnit.NANOSECONDS));
-            System.out.println(path + " Last: " + id);
-            builder.append(path).append(" Last: ").append(id);
+            builder.append(path).append(" Last: ").append(id).append("\n");
         }
         return builder.toString();
     }
@@ -70,7 +61,7 @@ public enum Measures {
         List<Integer> path = algo.shortestPath(graph, graph.getElement(GraphHelper.FIRST), graph.getElement(id));
         stopwatch.stop();
 
-        System.out.println(stopwatch.elapsed(TimeUnit.NANOSECONDS));
+        //System.out.println(stopwatch.elapsed(TimeUnit.NANOSECONDS));
         return path;
     }
 }

@@ -1,8 +1,6 @@
 package util;
 
-import algorithm.standard.DijkstraImpl;
 import datastructure.Element;
-import datastructure.GraphHelper;
 import datastructure.standard.GraphImpl;
 
 import java.io.IOException;
@@ -32,40 +30,42 @@ public class MeasureFileWriter extends FileWriter {
     }
 
     public void writeRoutine(List<Long> limits, Integer times, GraphImporter<Element> graphImporter, boolean scaledN) {
-        DijkstraImpl algorithm = new DijkstraImpl();
-        long time;
 
         try {
             writeHeader(scaledN);
+            boolean limitReached = false;
             for (Long limit : limits) {
-                Stream.Builder<Long> builder = Stream.builder();
+                if (limitReached) {
+                    break;
+                }
+                Stream.Builder<Long> stdBuilder = Stream.builder();
+                Stream.Builder<Long> fiboBuilder = Stream.builder();
                 GraphImpl graph = graphImporter.importElementGraph(limit);
                 int n = graph.getElements().size();
                 int m = graph.getEdges().size();
-
-                for (int i = 0; i < times - 1; i++) {
-                    writeGraphNumbers(n, m, scaledN);
-                    time = GraphHelper.calculateTimeWithLastRandom(graph, algorithm);
-                    builder.add(time);
-                    writeTimeWithScale(time, A_MILLION);
-                    emptyEnd();
+                if (n < limit) {
+                    limitReached = true;
                 }
+                tNWriteOfBoth(times, scaledN, stdBuilder, fiboBuilder, graph, n, m);
 
-                writeGraphNumbers(n, m, scaledN);
-                time = GraphHelper.calculateTimeWithLastRandom(graph, algorithm);
-                builder.add(time);
-                writeTimeWithScale(time, A_MILLION);
-                writeComma();
+                List<Long> stdMeasureList = stdBuilder.build().collect(Collectors.toList());
+                double stdExp = calculateExpectancyValue(stdMeasureList, times);
+                double stdStError = calculateStandardError(stdExp, expectancyWithXInPow(stdMeasureList, times));
 
-                List<Long> measureList = builder.build().collect(Collectors.toList());
-                double expectancy = calculateExpectancyValue(measureList, times);
-                double standardError = calculateStandardError(expectancy, expectancyWithXInPow(measureList, times));
+                List<Long> fiboMeasureList = fiboBuilder.build().collect(Collectors.toList());
+                double fiboExp = calculateExpectancyValue(fiboMeasureList, times);
+                double fiboStError = calculateStandardError(stdExp, expectancyWithXInPow(fiboMeasureList, times));
+
                 writeList(
                         scaleTimeValuesForPlot(
-                                Stream.of(expectancy
-                                        , standardError
-                                        , expectancy - standardError
-                                        , expectancy + standardError
+                                Stream.of(stdExp
+                                        , stdStError
+                                        , stdExp - stdStError
+                                        , stdExp + stdStError
+                                        , fiboExp
+                                        , fiboStError
+                                        , fiboExp - fiboStError
+                                        , fiboExp + fiboStError
                                         , 2 * n + 2 * n * Math.log(n) + m + m * n * Math.log(n) * 2
                                 ))
                                 .collect(Collectors.toList()));
@@ -77,19 +77,16 @@ public class MeasureFileWriter extends FileWriter {
         }
     }
 
-    private void emptyEnd() throws IOException {
-        writeComma();
-        writeComma();
-        writeComma();
-        writeNewLine();
-    }
-
     protected void writeHeader(boolean scaledN) throws IOException {
-        String rest = ",T(n)" +
-                ",Erwartungswert" +
-                ",Standardabweichung" +
-                ",Erw.-StdAbw." +
-                ",Erw.+StdAbw." +
+        String rest = ",T(n) std, T(n) fibo" +
+                ",Erwartungswert std" +
+                ",Standardabweichung std" +
+                ",Erw.-StdAbw. std" +
+                ",Erw.+StdAbw. std" +
+                ",Erwartungswert fibo" +
+                ",Standardabweichung fibo" +
+                ",Erw.-StdAbw. fibo" +
+                ",Erw.+StdAbw. fibo" +
                 ",theo. T(n)\n";
         writeScaledGraphHeaderWithRest(scaledN, rest);
     }

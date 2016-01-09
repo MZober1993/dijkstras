@@ -34,7 +34,7 @@ public class GraphFileCreator extends FileWriter {
             Files.write(COMPLETE_PATH, "".getBytes());
             for (int i = begin; i <= limit; i++) {
                 for (int j = begin; j <= limit; j++) {
-                    if (i != j) {
+                    if (i != j && i < j) {
                         int r = MathHelper.calculateRandomDistance();
                         writeConnectionInOneDirection(i, j, r);
                     }

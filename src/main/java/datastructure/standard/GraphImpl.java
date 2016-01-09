@@ -96,6 +96,11 @@ public class GraphImpl implements Graph<Element> {
     }
 
     @Override
+    public Graph<Element> refreshGraph() {
+        return this;
+    }
+
+    @Override
     public Map<Integer, Element> getElements() {
         return vertices;
     }

@@ -1,6 +1,4 @@
-import algorithm.Dijkstra;
 import datastructure.Element;
-import datastructure.Graph;
 import util.*;
 
 import java.nio.file.Path;
@@ -14,53 +12,55 @@ import static util.MeasureFileWriter.PLAIN_FILE_NAME;
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
  *         16.11.15 - 23:53
  */
-public class MeasureAlgorithm<G extends Graph<T>, A extends Dijkstra<T>, T extends Element> {
+public class MeasureAlgorithm {
 
     public static final int REPUTATIONS = 40;
-    public final GraphImporter<T> NY_IMPORTER = new GraphImporter<>(ImportFile.NY);
-    public final GraphImporter<T> CREATED_IMPORTER = new GraphImporter<>(ImportFile.CREATED);
-    public final GraphImporter<T> COMPLETE_IMPORTER = new GraphImporter<>(ImportFile.COMPLETE);
+    public final GraphImporter<Element> NY_IMPORTER = new GraphImporter<>(ImportFile.NY);
+    public final GraphImporter<Element> CREATED_IMPORTER = new GraphImporter<>(ImportFile.CREATED);
+    public final GraphImporter<Element> COMPLETE_IMPORTER = new GraphImporter<>(ImportFile.COMPLETE);
 
     public MeasureAlgorithm() {
     }
 
     public MeasureAlgorithm(Long limit) {
+        NY_IMPORTER.setLimit(limit);
         CREATED_IMPORTER.setLimit(limit);
+        COMPLETE_IMPORTER.setLimit(limit);
     }
 
-    private void measuresForNY() {
-        //todo:fix me
-        //Measures.prepareFibo(NY_IMPORTER, new DijkstraImpl());
-        expectStdErrorForNReputationsWithScaledN(NY_IMPORTER, 10L, 100L, 1000L);
-        boxPlotForNReputationsWithScaledN(NY_IMPORTER, 10L, 100L, 1000L);
+    public void record(GraphImporter<Element> importer) {
+        //expectStdErrorForNReputationsWithScaledN(importer, 10L, 100L);
+        boxPlotForNReputationsWithScaledN(importer, 1L, 10L, 100L, 100L);
     }
 
-    private static void boxPlotForNReputationsWithScaledN(GraphImporter importer, Long... scales) {
+    private static void boxPlotForNReputationsWithScaledN(GraphImporter<Element> importer, Long... scales) {
         Arrays.asList(scales).stream().forEach(scale -> boxPlot(Measures.scaleMeasureSample(scale)
                 , importer, calcScaledPath(BoxPlotFileWriter.PLAIN_FILE_NAME, scale), true));
     }
 
-    private static void boxPlotForNReputationsWithoutScaledN(GraphImporter importer, Long... scales) {
+    private static void boxPlotForNReputationsWithoutScaledN(GraphImporter<Element> importer, Long... scales) {
         Arrays.asList(scales).stream().forEach(scale -> boxPlot(Measures.scaleMeasureSample(scale)
                 , importer, calcScaledPath(BoxPlotFileWriter.PLAIN_FILE_NAME, scale), false));
     }
 
-    private static void boxPlot(List<Long> listOfN, GraphImporter importer, Path path, boolean scaledN) {
+    private static void boxPlot(List<Long> listOfN, GraphImporter<Element> importer
+            , Path path, boolean scaledN) {
         BoxPlotFileWriter boxPlotFileWriter = new BoxPlotFileWriter(path);
         boxPlotFileWriter.writeRoutine(listOfN, REPUTATIONS, importer, scaledN);
     }
 
-    private static void expectStdError(List<Long> listOfN, GraphImporter importer, Path path, boolean scaledN) {
+    private static void expectStdError(List<Long> listOfN, GraphImporter<Element> importer, Path path, boolean scaledN) {
         MeasureFileWriter measureFileWriter = new MeasureFileWriter(path);
         measureFileWriter.writeRoutine(listOfN, REPUTATIONS, importer, scaledN);
     }
 
-    private static void expectStdErrorForNReputationsWithScaledN(GraphImporter importer, Long... scales) {
+    private static void expectStdErrorForNReputationsWithScaledN(GraphImporter<Element> importer, Long... scales) {
+        //Arrays.asList(scales).stream().forEach(scale -> System.out.println(Measures.scaleMeasureSample(scale)));
         Arrays.asList(scales).stream().forEach(scale -> expectStdError(Measures.scaleMeasureSample(scale)
                 , importer, calcScaledPath(PLAIN_FILE_NAME, scale), true));
     }
 
-    private static void expectStdErrorForNReputationsWithoutScaledN(GraphImporter importer, Long... scales) {
+    private static void expectStdErrorForNReputationsWithoutScaledN(GraphImporter<Element> importer, Long... scales) {
         Arrays.asList(scales).stream().forEach(scale -> expectStdError(Measures.scaleMeasureSample(scale)
                 , importer, calcScaledPath(PLAIN_FILE_NAME, scale), false));
     }

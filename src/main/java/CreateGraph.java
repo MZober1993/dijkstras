@@ -8,7 +8,7 @@ public class CreateGraph {
 
     public static void main(String[] args) {
         GraphFileCreator graphFileCreator = new GraphFileCreator(GraphFileCreator.DEFAULT_PATH);
-        graphFileCreator.createSampleGraphFile(13000);
-        graphFileCreator.createCompleteConnectedGraphFile(100, 1);
+        graphFileCreator.createSampleGraphFile(13100);
+        graphFileCreator.createCompleteConnectedGraphFile(500, 1);
     }
 }

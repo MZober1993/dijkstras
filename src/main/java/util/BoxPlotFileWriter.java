@@ -1,8 +1,6 @@
 package util;
 
-import algorithm.standard.DijkstraImpl;
 import datastructure.Element;
-import datastructure.GraphHelper;
 import datastructure.standard.GraphImpl;
 
 import java.io.IOException;
@@ -13,7 +11,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static util.GraphImporter.PATH_TO_RESOURCE;
-import static util.MathHelper.A_MILLION;
 import static util.MathHelper.scaleTimeValuesForPlot;
 import static util.Measures.BOXPLOT;
 
@@ -33,77 +30,91 @@ public class BoxPlotFileWriter extends FileWriter {
     }
 
     public void writeRoutine(List<Long> limits, Integer times, GraphImporter<Element> graphImporter, boolean scaledN) {
-        DijkstraImpl algorithm = new DijkstraImpl();
-        long time;
         int aQuarter = (int) Math.ceil(times / 4.0);
         int aHalf = (int) Math.ceil(times / 2.0);
         int aThreeQuarter = aQuarter * 3;
 
         try {
             writeHeader(scaledN);
+            boolean limitReached = false;
+
             for (Long limit : limits) {
-                Double quartile0_25;
-                Double median;
-                Double quartile0_75;
-
-                Stream.Builder<Long> builder = Stream.builder();
-                GraphImpl graph = graphImporter.importElementGraph(limit);
-                int numberOfVertices = graph.getElements().size();
-                int numberOfEdges = graph.getEdges().size();
-
-                for (int i = 0; i < times - 1; i++) {
-                    writeGraphNumbers(numberOfVertices, numberOfEdges, scaledN);
-                    time = GraphHelper.calculateTimeWithLastRandom(graph, algorithm);
-                    builder.add(time);
-                    writeTimeWithScale(time, A_MILLION);
-                    emptyEnd();
+                if (limitReached) {
+                    break;
                 }
+                Double stdQuartile0_25;
+                Double stdMedian;
+                Double stdQuartile0_75;
 
-                writeGraphNumbers(numberOfVertices, numberOfEdges, scaledN);
-                time = GraphHelper.calculateTimeWithLastRandom(graph, algorithm);
-                builder.add(time);
-                writeTimeWithScale(time, A_MILLION);
-                writeComma();
+                Double fiboQuartile0_25;
+                Double fiboMedian;
+                Double fiboQuartile0_75;
 
-                List<Long> measureList = builder.build().sorted().collect(Collectors.toList());
+                Stream.Builder<Long> stdBuilder = Stream.builder();
+                Stream.Builder<Long> fiboBuilder = Stream.builder();
+                GraphImpl graph = graphImporter.importElementGraph(limit);
+                int n = graph.getElements().size();
+                int m = graph.getEdges().size();
+                if (n < limit) {
+                    limitReached = true;
+                }
+                tNWriteOfBoth(times, scaledN, stdBuilder, fiboBuilder, graph, n, m);
+
+                List<Long> stdMeasureList = stdBuilder.build().sorted().collect(Collectors.toList());
+                List<Long> fiboMeasureList = fiboBuilder.build().sorted().collect(Collectors.toList());
                 if (limit % 2 == 0) {
-                    quartile0_25 = valueForStraights(measureList, aQuarter);
-                    median = valueForStraights(measureList, aHalf);
-                    quartile0_75 = valueForStraights(measureList, aThreeQuarter);
+                    stdQuartile0_25 = valueForStraights(stdMeasureList, aQuarter);
+                    stdMedian = valueForStraights(stdMeasureList, aHalf);
+                    stdQuartile0_75 = valueForStraights(stdMeasureList, aThreeQuarter);
+
+                    fiboQuartile0_25 = valueForStraights(fiboMeasureList, aQuarter);
+                    fiboMedian = valueForStraights(fiboMeasureList, aHalf);
+                    fiboQuartile0_75 = valueForStraights(fiboMeasureList, aThreeQuarter);
 
                 } else {
-                    quartile0_25 = valueForOdds(measureList, aQuarter);
-                    median = valueForOdds(measureList, aHalf);
-                    quartile0_75 = valueForOdds(measureList, aThreeQuarter);
+                    stdQuartile0_25 = valueForOdds(stdMeasureList, aQuarter);
+                    stdMedian = valueForOdds(stdMeasureList, aHalf);
+                    stdQuartile0_75 = valueForOdds(stdMeasureList, aThreeQuarter);
+
+                    fiboQuartile0_25 = valueForOdds(fiboMeasureList, aQuarter);
+                    fiboMedian = valueForOdds(fiboMeasureList, aHalf);
+                    fiboQuartile0_75 = valueForOdds(fiboMeasureList, aThreeQuarter);
                 }
 
-                double a = quartile0_25 - 1.5 * (quartile0_75 - quartile0_25);
-                double b = quartile0_75 + 1.5 * (quartile0_75 - quartile0_25);
-                double countBetween0_25And0_75 = measureList.stream()
-                        .filter(elem -> quartile0_25 <= elem && elem <= quartile0_75).count();
-                double countBetweenAAndB = measureList.stream()
-                        .filter(elem -> a <= elem && elem <= b).count();
-
-                writeList(
-                        scaleTimeValuesForPlot(
-                                Stream.of(quartile0_25
-                                        , median
-                                        , quartile0_75
-                                        , Math.max(measureList.get(0), a)
-                                        , Math.min(measureList.get(measureList.size() - 1), b)
-                                ))
-                                .collect(Collectors.toList()));
+                writeBoxPlot(stdQuartile0_25, stdMedian, stdQuartile0_75, stdMeasureList);
                 writeComma();
-                writeList(
-                        Stream.<Double>of(countBetween0_25And0_75
-                                , countBetweenAAndB
-                        ).collect(Collectors.toList()));
+                writeBoxPlot(fiboQuartile0_25, fiboMedian, fiboQuartile0_75, fiboMeasureList);
                 writeNewLine();
             }
 
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void writeBoxPlot(Double quartile0_25, Double median, Double quartile0_75, List<Long> measureList) throws IOException {
+        double a = quartile0_25 - 1.5 * (quartile0_75 - quartile0_25);
+        double b = quartile0_25 + 1.5 * (quartile0_75 - quartile0_25);
+        double countBetween0_25And0_75 = measureList.stream()
+                .filter(elem -> quartile0_25 <= elem && elem <= quartile0_75).count();
+        double countBetweenAAndB = measureList.stream()
+                .filter(elem -> a <= elem && elem <= b).count();
+
+        writeList(
+                scaleTimeValuesForPlot(
+                        Stream.of(
+                                quartile0_25
+                                , median
+                                , quartile0_75
+                                , Math.max(measureList.get(0), a)
+                                , Math.min(measureList.get(measureList.size() - 1), b)
+                        ))
+                        .collect(Collectors.toList()));
+        writeComma();
+        writeList(
+                Stream.<Double>of(countBetween0_25And0_75
+                        , countBetweenAAndB
+                ).collect(Collectors.toList()));
     }
 
     private double valueForOdds(List<Long> measureList, int aQuarter) {
@@ -116,22 +127,23 @@ public class BoxPlotFileWriter extends FileWriter {
         return (under + upper) / 2.0;
     }
 
-    private void emptyEnd() throws IOException {
-        writeComma();
-        writeComma();
-        writeComma();
-        writeNewLine();
-    }
-
     protected void writeHeader(boolean scaledN) throws IOException {
-        String rest = ",T(n)" +
-                ",Q_.25" +
-                ",Q_.5" +
-                ",Q_.75" +
-                ",a" +
-                ",b" +
-                ",|[Q_.25 Q_.75]|" +
-                ",|[a b]|\n";
+        String rest = ",T(n) std,T(n) fibo" +
+                ",std Q_.25" +
+                ",std Q_.5" +
+                ",std Q_.75" +
+                ",std a" +
+                ",std b" +
+                ",std |[Q_.25 Q_.75]|" +
+                ",std |[a b]|" +
+                ",fibo Q_.25" +
+                ",fibo Q_.5" +
+                ",fibo Q_.75" +
+                ",fibo a" +
+                ",fibo b" +
+                ",fibo |[Q_.25 Q_.75]|" +
+                ",fibo |[a b]|" +
+                "\n";
         writeScaledGraphHeaderWithRest(scaledN, rest);
     }
 }

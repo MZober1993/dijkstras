@@ -37,14 +37,6 @@ public interface Graph<T> {
 
     void addConnection(Integer signOne, Integer signTwo, Double distance);
 
-    default T getElementWithIndex(int index) {
-        T element = (T) getElements().values().toArray()[index];
-        if (element == null) {
-            throw new RuntimeException("Element with index: " + index + " does not exist.");
-        }
-        return element;
-    }
-
     default T getLastRandomElement() {
         int size = getElements().size();
         return getElement(MathHelper.calculateRandomNodeId((size * 3) / 4, size));
@@ -55,4 +47,6 @@ public interface Graph<T> {
     default boolean isEmpty() {
         return getElements().size() == 0;
     }
+
+    Graph<T> refreshGraph();
 }

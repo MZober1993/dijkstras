@@ -97,6 +97,23 @@ public class GraphImplFibo implements Graph<Entry<Element>> {
         return allEdges;
     }
 
+    @Override
+    public Graph<Entry<Element>> refreshGraph() {
+        entryVertices.forEach((Integer id, Entry<Element> entry) -> {
+            entry.setClosed(false);
+            entry.setDeg(0);
+            entry.setParent(null);
+            entry.setChild(null);
+            entry.setNext(entry);
+            entry.setPrevious(entry);
+            entry.setMarked(false);
+            entry.setKey(Double.MAX_VALUE);
+            entry.setAnchor(null);
+            entry.setG(Double.MAX_VALUE);
+        });
+        return this;
+    }
+
     public Map<Integer, Element> getVertices() {
         return vertices;
     }
