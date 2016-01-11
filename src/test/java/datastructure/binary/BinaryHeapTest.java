@@ -1,5 +1,6 @@
 package datastructure.binary;
 
+import com.google.common.truth.Truth;
 import datastructure.Element;
 import datastructure.VertexImpl;
 import org.junit.Before;
@@ -7,6 +8,8 @@ import org.junit.Test;
 
 import java.util.function.Consumer;
 import java.util.stream.Stream;
+
+import static datastructure.binary.BinaryHeapHelper.structureIsAlright;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
@@ -45,13 +48,13 @@ public class BinaryHeapTest {
     @Test
     public void testInsertOrdered() {
         all().forEach(insert);
-        assert (heap.structureIsAlright());
+        assert (structureIsAlright(heap));
     }
 
     @Test
     public void testInsertMixedOrdered() {
         allMixedOrdered().forEach(insert);
-        assert (heap.structureIsAlright());
+        assert (structureIsAlright(heap));
     }
 
     @Test
@@ -69,14 +72,25 @@ public class BinaryHeapTest {
         extractAndAssertEquality(nine);
     }
 
+    @Test
+    public void testDecreaseKey() {
+        allWithoutZeroOneAndTwo().forEach(insert);
+        heap.decreaseKey(nine, 0.0);
+        extractAndAssertEquality(nine);
+    }
+
     private void extractAndAssertEquality(BEntry<Element> zero) {
         BEntry<Element> min = heap.extractMin();
-        assert (min.equals(zero));
-        assert (heap.structureIsAlright());
+        Truth.assertThat(min).isEqualTo(zero);
+        assert (structureIsAlright(heap));
     }
 
     private Stream<BEntry<Element>> all() {
         return Stream.of(zero, one, two, three, four, five, six, seven, eight, nine);
+    }
+
+    private Stream<BEntry<Element>> allWithoutZeroOneAndTwo() {
+        return Stream.of(three, four, five, six, seven, eight, nine);
     }
 
     private Stream<BEntry<Element>> allMixedOrdered() {
