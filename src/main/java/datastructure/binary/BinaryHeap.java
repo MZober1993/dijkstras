@@ -19,7 +19,6 @@ public class BinaryHeap<T extends Element> {
         elements.add(entry);
         heapify(size);
 
-        entry.setPosition(size);
         size++;
         return entry;
     }
@@ -77,35 +76,36 @@ public class BinaryHeap<T extends Element> {
                 swapBEntry(position, positionParent);
                 position = positionParent;
             } else {
+                lazySetOfPosition(position);
+                lazySetOfPosition(positionParent);
                 break;
             }
         }
     }
 
-    private void swapBEntry(Integer position, Integer positionParent) {
-        BEntry<T> swap = elements.get(position);
+    private void lazySetOfPosition(Integer position) {
+        if (elements.get(position).getPosition() == null) {
+            elements.get(position).setPosition(position);
+        }
+    }
 
+    private void swapBEntry(Integer position, Integer positionParent) {
+        elements.get(position).setPosition(positionParent);
+        elements.get(positionParent).setPosition(position);
+
+        BEntry<T> swap = elements.get(position);
         elements.set(position, elements.get(positionParent));
         elements.set(positionParent, swap);
 
-        elements.get(position).setPosition(positionParent);
-        elements.get(positionParent).setPosition(position);
     }
 
     public boolean structureIsAlright() {
         boolean check = true;
         for (int i = 0; i < size; i++) {
-            if (i % 2 == 0) {
-                int second = 2 * i + 2;
-                int first = 2 * i + 1;
-                int parent = (int) Math.floor((i - 1) / 2);
-                check = calculateCheck(check, i, second, first, parent);
-            } else {
-                int parent = (int) Math.floor((i / 2));
-                int first = 2 * i;
-                int second = 2 * i + 1;
-                check = calculateCheck(check, i, second, first, parent);
-            }
+            int second = 2 * i + 2;
+            int first = 2 * i + 1;
+            int parent = (int) Math.floor((i - 1) / 2);
+            check = calculateCheck(check, i, second, first, parent);
         }
         return check;
     }

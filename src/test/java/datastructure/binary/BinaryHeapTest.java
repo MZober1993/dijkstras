@@ -5,6 +5,9 @@ import datastructure.VertexImpl;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.function.Consumer;
+import java.util.stream.Stream;
+
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
  *         On 11.01.16 - 12:10
@@ -22,6 +25,7 @@ public class BinaryHeapTest {
     BEntry<Element> seven;
     BEntry<Element> eight;
     BEntry<Element> nine;
+    private Consumer<BEntry<Element>> insert = x -> heap.insert(x);
 
     @Before
     public void setUp() {
@@ -39,15 +43,43 @@ public class BinaryHeapTest {
     }
 
     @Test
-    public void testInsert() {
-        heap.insert(nine);
-        heap.insert(eight);
-        heap.insert(seven);
-        heap.insert(zero);
-        heap.insert(one);
-        heap.insert(five);
-        heap.extractMin();
-        System.out.println(heap.toString());
+    public void testInsertOrdered() {
+        all().forEach(insert);
         assert (heap.structureIsAlright());
+    }
+
+    @Test
+    public void testInsertMixedOrdered() {
+        allMixedOrdered().forEach(insert);
+        assert (heap.structureIsAlright());
+    }
+
+    @Test
+    public void testExtractMin() {
+        allMixedOrdered().forEach(insert);
+        extractAndAssertEquality(zero);
+        extractAndAssertEquality(one);
+        extractAndAssertEquality(two);
+        extractAndAssertEquality(three);
+        extractAndAssertEquality(four);
+        extractAndAssertEquality(five);
+        extractAndAssertEquality(six);
+        extractAndAssertEquality(seven);
+        extractAndAssertEquality(eight);
+        extractAndAssertEquality(nine);
+    }
+
+    private void extractAndAssertEquality(BEntry<Element> zero) {
+        BEntry<Element> min = heap.extractMin();
+        assert (min.equals(zero));
+        assert (heap.structureIsAlright());
+    }
+
+    private Stream<BEntry<Element>> all() {
+        return Stream.of(zero, one, two, three, four, five, six, seven, eight, nine);
+    }
+
+    private Stream<BEntry<Element>> allMixedOrdered() {
+        return Stream.of(nine, eight, seven, zero, one, five, six, two, three, four);
     }
 }
