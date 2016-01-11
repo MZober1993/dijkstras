@@ -1,11 +1,13 @@
 package util;
 
 import algorithm.Dijkstra;
+import algorithm.binary.DijkstraImplBinary;
 import algorithm.fibo.DijkstraImplFibo;
 import algorithm.standard.DijkstraImpl;
 import datastructure.Element;
 import datastructure.Graph;
 import datastructure.GraphHelper;
+import datastructure.binary.GraphImplBinary;
 import datastructure.fibo.GraphImplFibo;
 import datastructure.standard.GraphImpl;
 
@@ -25,9 +27,13 @@ import static util.MathHelper.A_MILLION;
 public class FileWriter {
 
     private Path path;
+    protected Stream.Builder<Long> stdBuilder;
+    protected Stream.Builder<Long> fiboBuilder;
+    protected Stream.Builder<Long> binaryBuilder;
 
     FileWriter(Path path) {
         this.path = path;
+        refreshMeasureBuilder();
     }
 
     public void writeNewLine() throws IOException {
@@ -39,7 +45,7 @@ public class FileWriter {
     }
 
     public void writeString(String string) throws IOException {
-        Files.write(path, String.format(string).getBytes(), StandardOpenOption.APPEND);
+        Files.write(path, string.getBytes(), StandardOpenOption.APPEND);
     }
 
     public void writeTimeWithScale(long time, Double timeScale) throws IOException {
@@ -113,19 +119,24 @@ public class FileWriter {
         }
     }
 
-    protected void tNWriteOfBoth(Integer times, boolean scaledN, Stream.Builder<Long> stdBuilder
-            , Stream.Builder<Long> fiboBuilder, GraphImpl graph, int n, int m) throws IOException {
+    protected void tNWriteOfBoth(Integer times, boolean scaledN, GraphImpl graph, int n, int m)
+            throws IOException {
         GraphImplFibo fiboGraph = GraphHelper.transformGraphToEntryGraph(graph);
+        GraphImplBinary binaryGraph = GraphHelper.transformGraphToBinaryGraph(graph);
         DijkstraImpl stdAlgo = new DijkstraImpl();
         DijkstraImplFibo fiboAlgo = new DijkstraImplFibo();
+        DijkstraImplBinary binAlgo = new DijkstraImplBinary();
 
         for (int i = 0; i < times - 1; i++) {
             writeGraphNumbers(n, m, scaledN);
 
-            writingAndSaveTime(stdAlgo, stdBuilder, graph);
+            writingAndSaveTime(stdAlgo, stdBuilder, graph.refreshGraph());
             writeComma();
 
             writingAndSaveTime(fiboAlgo, fiboBuilder, fiboGraph.refreshGraph());
+            writeComma();
+
+            writingAndSaveTime(binAlgo, binaryBuilder, binaryGraph.refreshGraph());
             emptyEnd();
         }
 
@@ -135,6 +146,9 @@ public class FileWriter {
         writeComma();
 
         writingAndSaveTime(fiboAlgo, fiboBuilder, fiboGraph.refreshGraph());
+        writeComma();
+
+        writingAndSaveTime(binAlgo, binaryBuilder, binaryGraph.refreshGraph());
         writeComma();
     }
 
@@ -164,5 +178,11 @@ public class FileWriter {
                     rest)
                     .getBytes());
         }
+    }
+
+    protected void refreshMeasureBuilder() {
+        stdBuilder = Stream.builder();
+        fiboBuilder = Stream.builder();
+        binaryBuilder = Stream.builder();
     }
 }

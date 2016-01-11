@@ -97,6 +97,12 @@ public class GraphImpl implements Graph<Element> {
 
     @Override
     public Graph<Element> refreshGraph() {
+        vertices.forEach((Integer id, Element entry) -> {
+            entry.setClosed(false);
+            entry.setAnchor(null);
+            entry.setG(Double.MAX_VALUE);
+        });
+
         return this;
     }
 

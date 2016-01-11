@@ -2,6 +2,7 @@ package datastructure;
 
 import algorithm.Dijkstra;
 import com.google.common.base.Stopwatch;
+import datastructure.binary.GraphImplBinary;
 import datastructure.fibo.Entry;
 import datastructure.fibo.GraphImplFibo;
 import datastructure.standard.GraphImpl;
@@ -82,14 +83,24 @@ public class GraphHelper {
         return entryGraph;
     }
 
-    private static Consumer<Edge<Element>> edgeMapper(GraphImplFibo entryGraph) {
-        return edge -> entryGraph.addConnection(edge.getFirst().getId(), edge.getSecond().getId(), edge.getDistance());
+    public static GraphImplBinary transformGraphToBinaryGraph(Graph<Element> graph) {
+        GraphImplBinary binaryGraph = new GraphImplBinary(elementsToIdList(graph));
+        graph.getEdges().stream().forEach(edgeMapper(binaryGraph));
+        return binaryGraph;
     }
 
     public static GraphImpl transformGraphToElementGraph(Graph<Entry<Element>> entryGraph) {
         GraphImpl graph = new GraphImpl(elementsToIdList(entryGraph));
         entryGraph.getEdges().stream().forEach(edgeMapper(graph));
         return graph;
+    }
+
+    private static Consumer<Edge<Element>> edgeMapper(GraphImplFibo entryGraph) {
+        return edge -> entryGraph.addConnection(edge.getFirst().getId(), edge.getSecond().getId(), edge.getDistance());
+    }
+
+    private static Consumer<Edge<Element>> edgeMapper(GraphImplBinary graph) {
+        return edge -> graph.addConnection(edge.getFirst().getId(), edge.getSecond().getId(), edge.getDistance());
     }
 
     private static Consumer<Edge<Entry<Element>>> edgeMapper(GraphImpl graph) {

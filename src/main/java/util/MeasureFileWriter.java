@@ -38,15 +38,14 @@ public class MeasureFileWriter extends FileWriter {
                 if (limitReached) {
                     break;
                 }
-                Stream.Builder<Long> stdBuilder = Stream.builder();
-                Stream.Builder<Long> fiboBuilder = Stream.builder();
                 GraphImpl graph = graphImporter.importElementGraph(limit);
                 int n = graph.getElements().size();
                 int m = graph.getEdges().size();
                 if (n < limit) {
                     limitReached = true;
                 }
-                tNWriteOfBoth(times, scaledN, stdBuilder, fiboBuilder, graph, n, m);
+                refreshMeasureBuilder();
+                tNWriteOfBoth(times, scaledN, graph, n, m);
 
                 List<Long> stdMeasureList = stdBuilder.build().collect(Collectors.toList());
                 double stdExp = calculateExpectancyValue(stdMeasureList, times);
@@ -54,20 +53,22 @@ public class MeasureFileWriter extends FileWriter {
 
                 List<Long> fiboMeasureList = fiboBuilder.build().collect(Collectors.toList());
                 double fiboExp = calculateExpectancyValue(fiboMeasureList, times);
-                double fiboStError = calculateStandardError(stdExp, expectancyWithXInPow(fiboMeasureList, times));
+                double fiboStError = calculateStandardError(fiboExp, expectancyWithXInPow(fiboMeasureList, times));
+
+                List<Long> binMeasureList = binaryBuilder.build().collect(Collectors.toList());
+                double binExp = calculateExpectancyValue(binMeasureList, times);
+                double binStError = calculateStandardError(binExp, expectancyWithXInPow(binMeasureList, times));
+
 
                 writeList(
                         scaleTimeValuesForPlot(
-                                Stream.of(stdExp
-                                        , stdStError
-                                        , stdExp - stdStError
-                                        , stdExp + stdStError
-                                        , fiboExp
-                                        , fiboStError
-                                        , fiboExp - fiboStError
-                                        , fiboExp + fiboStError
-                                        , 2 * n + 2 * n * Math.log(n) + m + m * n * Math.log(n) * 2
-                                ))
+                                Stream.concat(
+                                        Stream.concat(
+                                                stdExpWithErrorStream(stdExp, stdStError)
+                                                , stdExpWithErrorStream(fiboExp, fiboStError))
+                                        , Stream.concat(
+                                                stdExpWithErrorStream(binExp, binStError)
+                                                , Stream.of(2 * n + 2 * n * Math.log(n) + m + m * n * Math.log(n) * 2))))
                                 .collect(Collectors.toList()));
                 writeNewLine();
             }
@@ -77,8 +78,12 @@ public class MeasureFileWriter extends FileWriter {
         }
     }
 
+    private Stream<Double> stdExpWithErrorStream(double exp, double stError) {
+        return Stream.of(exp, stError, exp - stError, exp + stError);
+    }
+
     protected void writeHeader(boolean scaledN) throws IOException {
-        String rest = ",T(n) std, T(n) fibo" +
+        String rest = ",T(n) std, T(n) fibo, T(n) binary" +
                 ",Erwartungswert std" +
                 ",Standardabweichung std" +
                 ",Erw.-StdAbw. std" +
@@ -87,6 +92,10 @@ public class MeasureFileWriter extends FileWriter {
                 ",Standardabweichung fibo" +
                 ",Erw.-StdAbw. fibo" +
                 ",Erw.+StdAbw. fibo" +
+                ",Erwartungswert binary" +
+                ",Standardabweichung binary" +
+                ",Erw.-StdAbw. binary" +
+                ",Erw.+StdAbw. binary" +
                 ",theo. T(n)\n";
         writeScaledGraphHeaderWithRest(scaledN, rest);
     }

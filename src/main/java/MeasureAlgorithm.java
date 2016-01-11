@@ -29,7 +29,7 @@ public class MeasureAlgorithm {
     }
 
     public void record(GraphImporter<Element> importer) {
-        //expectStdErrorForNReputationsWithScaledN(importer, 10L, 100L);
+        expectStdErrorForNReputationsWithScaledN(importer, 10L, 100L);
         boxPlotForNReputationsWithScaledN(importer, 1L, 10L, 100L, 100L);
     }
 

@@ -24,15 +24,18 @@ public class BoxPlotFileWriter extends FileWriter {
     public static final String PLAIN_FILE_NAME = DIR + BOXPLOT.name().toLowerCase();
     public static final String DEFAULT_FILE_NAME = PLAIN_FILE_NAME + ".csv";
     public static final Path DEFAULT_PATH = Paths.get(DEFAULT_FILE_NAME);
+    private int aQuarter;
+    private int aHalf;
+    private int aThreeQuarter;
 
     public BoxPlotFileWriter(Path path) {
         super(path);
     }
 
     public void writeRoutine(List<Long> limits, Integer times, GraphImporter<Element> graphImporter, boolean scaledN) {
-        int aQuarter = (int) Math.ceil(times / 4.0);
-        int aHalf = (int) Math.ceil(times / 2.0);
-        int aThreeQuarter = aQuarter * 3;
+        aQuarter = (int) Math.ceil(times / 4.0);
+        aHalf = (int) Math.ceil(times / 2.0);
+        aThreeQuarter = aQuarter * 3;
 
         try {
             writeHeader(scaledN);
@@ -42,48 +45,39 @@ public class BoxPlotFileWriter extends FileWriter {
                 if (limitReached) {
                     break;
                 }
-                Double stdQuartile0_25;
-                Double stdMedian;
-                Double stdQuartile0_75;
 
-                Double fiboQuartile0_25;
-                Double fiboMedian;
-                Double fiboQuartile0_75;
-
-                Stream.Builder<Long> stdBuilder = Stream.builder();
-                Stream.Builder<Long> fiboBuilder = Stream.builder();
+                refreshMeasureBuilder();
                 GraphImpl graph = graphImporter.importElementGraph(limit);
                 int n = graph.getElements().size();
                 int m = graph.getEdges().size();
                 if (n < limit) {
                     limitReached = true;
                 }
-                tNWriteOfBoth(times, scaledN, stdBuilder, fiboBuilder, graph, n, m);
+                tNWriteOfBoth(times, scaledN, graph, n, m);
 
                 List<Long> stdMeasureList = stdBuilder.build().sorted().collect(Collectors.toList());
                 List<Long> fiboMeasureList = fiboBuilder.build().sorted().collect(Collectors.toList());
+                List<Long> binMeasureList = binaryBuilder.build().sorted().collect(Collectors.toList());
+
+                BoxPlotMeasure binMeasure;
+                BoxPlotMeasure fiboMeasure;
+                BoxPlotMeasure stdMeasure;
+
                 if (limit % 2 == 0) {
-                    stdQuartile0_25 = valueForStraights(stdMeasureList, aQuarter);
-                    stdMedian = valueForStraights(stdMeasureList, aHalf);
-                    stdQuartile0_75 = valueForStraights(stdMeasureList, aThreeQuarter);
-
-                    fiboQuartile0_25 = valueForStraights(fiboMeasureList, aQuarter);
-                    fiboMedian = valueForStraights(fiboMeasureList, aHalf);
-                    fiboQuartile0_75 = valueForStraights(fiboMeasureList, aThreeQuarter);
-
+                    stdMeasure = newStraightBoxPlotMeasure(stdMeasureList);
+                    fiboMeasure = newStraightBoxPlotMeasure(fiboMeasureList);
+                    binMeasure = newStraightBoxPlotMeasure(binMeasureList);
                 } else {
-                    stdQuartile0_25 = valueForOdds(stdMeasureList, aQuarter);
-                    stdMedian = valueForOdds(stdMeasureList, aHalf);
-                    stdQuartile0_75 = valueForOdds(stdMeasureList, aThreeQuarter);
-
-                    fiboQuartile0_25 = valueForOdds(fiboMeasureList, aQuarter);
-                    fiboMedian = valueForOdds(fiboMeasureList, aHalf);
-                    fiboQuartile0_75 = valueForOdds(fiboMeasureList, aThreeQuarter);
+                    stdMeasure = newOddBoxPlotMeasure(stdMeasureList);
+                    fiboMeasure = newOddBoxPlotMeasure(fiboMeasureList);
+                    binMeasure = newOddBoxPlotMeasure(binMeasureList);
                 }
 
-                writeBoxPlot(stdQuartile0_25, stdMedian, stdQuartile0_75, stdMeasureList);
+                writeBoxPlot(stdMeasure, stdMeasureList);
                 writeComma();
-                writeBoxPlot(fiboQuartile0_25, fiboMedian, fiboQuartile0_75, fiboMeasureList);
+                writeBoxPlot(fiboMeasure, fiboMeasureList);
+                writeComma();
+                writeBoxPlot(binMeasure, fiboMeasureList);
                 writeNewLine();
             }
 
@@ -92,20 +86,32 @@ public class BoxPlotFileWriter extends FileWriter {
         }
     }
 
-    private void writeBoxPlot(Double quartile0_25, Double median, Double quartile0_75, List<Long> measureList) throws IOException {
-        double a = quartile0_25 - 1.5 * (quartile0_75 - quartile0_25);
-        double b = quartile0_25 + 1.5 * (quartile0_75 - quartile0_25);
+    private BoxPlotMeasure newStraightBoxPlotMeasure(List<Long> stdMeasureList) {
+        return new BoxPlotMeasure(valueForStraights(stdMeasureList, aQuarter),
+                valueForStraights(stdMeasureList, aHalf),
+                valueForStraights(stdMeasureList, aThreeQuarter));
+    }
+
+    private BoxPlotMeasure newOddBoxPlotMeasure(List<Long> stdMeasureList) {
+        return new BoxPlotMeasure(valueForOdds(stdMeasureList, aQuarter),
+                valueForOdds(stdMeasureList, aHalf),
+                valueForOdds(stdMeasureList, aThreeQuarter));
+    }
+
+    private void writeBoxPlot(BoxPlotMeasure measure, List<Long> measureList) throws IOException {
+        double a = measure.getQuartile0_25() - 1.5 * (measure.getQuartile0_75() - measure.getQuartile0_25());
+        double b = measure.getQuartile0_25() + 1.5 * (measure.getQuartile0_75() - measure.getQuartile0_25());
         double countBetween0_25And0_75 = measureList.stream()
-                .filter(elem -> quartile0_25 <= elem && elem <= quartile0_75).count();
+                .filter(elem -> measure.getQuartile0_25() <= elem && elem <= measure.getQuartile0_75()).count();
         double countBetweenAAndB = measureList.stream()
                 .filter(elem -> a <= elem && elem <= b).count();
 
         writeList(
                 scaleTimeValuesForPlot(
                         Stream.of(
-                                quartile0_25
-                                , median
-                                , quartile0_75
+                                measure.getQuartile0_25()
+                                , measure.getMedian()
+                                , measure.getQuartile0_75()
                                 , Math.max(measureList.get(0), a)
                                 , Math.min(measureList.get(measureList.size() - 1), b)
                         ))
@@ -128,22 +134,21 @@ public class BoxPlotFileWriter extends FileWriter {
     }
 
     protected void writeHeader(boolean scaledN) throws IOException {
-        String rest = ",T(n) std,T(n) fibo" +
-                ",std Q_.25" +
-                ",std Q_.5" +
-                ",std Q_.75" +
-                ",std a" +
-                ",std b" +
-                ",std |[Q_.25 Q_.75]|" +
-                ",std |[a b]|" +
-                ",fibo Q_.25" +
-                ",fibo Q_.5" +
-                ",fibo Q_.75" +
-                ",fibo a" +
-                ",fibo b" +
-                ",fibo |[Q_.25 Q_.75]|" +
-                ",fibo |[a b]|" +
+        String rest = ",T(n) std,T(n) fibo,T(n) binary" +
+                headerString("std") +
+                headerString("fibo") +
+                headerString("binary") +
                 "\n";
         writeScaledGraphHeaderWithRest(scaledN, rest);
+    }
+
+    private String headerString(String newImplName) {
+        return "," + newImplName + " Q_.25" +
+                "," + newImplName + " Q_.5" +
+                "," + newImplName + " Q_.75" +
+                "," + newImplName + " a" +
+                "," + newImplName + " b" +
+                "," + newImplName + " |[Q_.25 Q_.75]|" +
+                "," + newImplName + " |[a b]|";
     }
 }
