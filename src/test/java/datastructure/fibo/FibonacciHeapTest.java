@@ -1,9 +1,8 @@
-package datastructure;
+package datastructure.fibo;
 
 import com.google.common.truth.Truth;
-import datastructure.fibo.Entry;
-import datastructure.fibo.FiboHelper;
-import datastructure.fibo.FibonacciHeap;
+import datastructure.Element;
+import datastructure.VertexImpl;
 import org.junit.Before;
 import org.junit.Test;
 
