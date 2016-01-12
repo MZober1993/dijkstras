@@ -31,7 +31,7 @@ public class MeasureAlgorithm {
 
     public void completeRecordInOneFile() {
         measure(Measures.measureLimits(GraphFileCreator.COMPLETE_LIMIT, 10, 2)
-                , COMPLETE_IMPORTER, calcPath(MeasureFileWriter.PLAIN_FILE_NAME, "complete"), true);
+                , COMPLETE_IMPORTER, calcPath(MeasureFileWriter.PLAIN_FILE_NAME, "complete"), false);
     }
 
     private static void measure(List<Long> listOfN, GraphImporter<Element> importer, Path path, boolean scaledN) {

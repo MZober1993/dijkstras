@@ -126,9 +126,9 @@ public class MeasureFileWriter extends FileWriter {
                 "," + newImplName + "Standardabweichung" +
                 "," + newImplName + "Erw.-StdAbw." +
                 "," + newImplName + "Erw.+StdAbw." +
-                "," + newImplName + " Q_.25" +
-                "," + newImplName + " Q_.5" +
-                "," + newImplName + " Q_.75" +
+                "," + newImplName + " Q_25" +
+                "," + newImplName + " Q_5" +
+                "," + newImplName + " Q_75" +
                 "," + newImplName + " a" +
                 "," + newImplName + " b" +
                 "," + newImplName + " |[Q_.25 Q_.75]|" +
