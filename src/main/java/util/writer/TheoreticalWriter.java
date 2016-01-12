@@ -1,7 +1,9 @@
-package util;
+package util.writer;
 
 import datastructure.Element;
 import datastructure.standard.GraphImpl;
+import util.GraphImporter;
+import util.ImportFile;
 
 import java.io.IOException;
 import java.nio.file.Files;

@@ -1,4 +1,4 @@
-package util;
+package util.writer;
 
 import algorithm.Dijkstra;
 import algorithm.binary.DijkstraImplBinary;
@@ -10,99 +10,32 @@ import datastructure.GraphHelper;
 import datastructure.binary.GraphImplBinary;
 import datastructure.fibo.GraphImplFibo;
 import datastructure.standard.GraphImpl;
+import util.MathHelper;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static util.MathHelper.A_MILLION;
+import static util.MathHelper.scaleTimeValuesForPlot;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
  *         19.11.15 - 15:07
  */
-public class FileWriter {
+public class FileWriter extends BasicFileWriter {
 
-    private Path path;
+
     protected Stream.Builder<Long> stdBuilder;
     protected Stream.Builder<Long> fiboBuilder;
     protected Stream.Builder<Long> binaryBuilder;
 
-    FileWriter(Path path) {
-        this.path = path;
+    public FileWriter(Path path) {
+        super(path);
         refreshMeasureBuilder();
-    }
-
-    public void writeNewLine() throws IOException {
-        writeString("\n");
-    }
-
-    public void writeComma() throws IOException {
-        writeString(", ");
-    }
-
-    public void writeString(String string) throws IOException {
-        Files.write(path, string.getBytes(), StandardOpenOption.APPEND);
-    }
-
-    public void writeTimeWithScale(long time, Double timeScale) throws IOException {
-        if (timeScale >= 1) {
-            writeDouble(time / timeScale);
-        } else {
-            throw new RuntimeException("Error by scaling Time with timeScale:" + timeScale +
-                    ", by using writeTimeWithLastRandomAndGetTime()");
-        }
-    }
-
-    public <T> void tryToWrite(T value) throws IOException {
-        if (value instanceof Double) {
-            writeDouble((Double) value);
-        } else if (value instanceof Integer) {
-            writeInteger((Integer) value);
-        } else if (value instanceof Long) {
-            writeLong((Long) value);
-        } else if (value instanceof String) {
-            writeString((String) value);
-        } else {
-            writeString(value.toString());
-        }
-    }
-
-    public void writeLong(long longValue) throws IOException {
-        Files.write(path, ("" + longValue).getBytes(), StandardOpenOption.APPEND);
-    }
-
-    public void writeDouble(double doubleValue) throws IOException {
-        Files.write(path, ("" + doubleValue).getBytes(), StandardOpenOption.APPEND);
-    }
-
-    public void writeInteger(Integer times) throws IOException {
-        Files.write(path, ("" + times).getBytes(), StandardOpenOption.APPEND);
-    }
-
-    public <T> void writeList(List<T> list) throws IOException {
-        list.stream().forEach(element -> {
-            try {
-                tryToWrite(element);
-                boolean isLastElement = list.get(list.size() - 1) != element;
-                if (isLastElement) {
-                    writeComma();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-    }
-
-    public Path getPath() {
-        return path;
-    }
-
-    public void setPath(Path path) {
-        this.path = path;
     }
 
     protected void writeGraphNumbers(int numberOfVertices, int numberOfEdges, boolean scaledN) throws IOException {
@@ -119,7 +52,7 @@ public class FileWriter {
         }
     }
 
-    protected void tNWriteOfBoth(Integer times, boolean scaledN, GraphImpl graph, int n, int m)
+    protected void tNWriteOfAll(Integer times, boolean scaledN, GraphImpl graph, int n, int m)
             throws IOException {
         GraphImplFibo fiboGraph = GraphHelper.transformGraphToEntryGraph(graph);
         GraphImplBinary binaryGraph = GraphHelper.transformGraphToBinaryGraph(graph);
@@ -150,6 +83,54 @@ public class FileWriter {
 
         writingAndSaveTime(binAlgo, binaryBuilder, binaryGraph.refreshGraph());
         writeComma();
+    }
+
+    protected void writeBoxPlot(BoxPlotMeasure measure, List<Long> measureList) throws IOException {
+        writeList(
+                scaleTimeValuesForPlot(
+                        Stream.of(
+                                measure.getAQuarter()
+                                , measure.getMedian()
+                                , measure.getAThreeQuarter()
+                                , Math.max(measureList.get(0), measure.getA())
+                                , Math.min(measureList.get(measureList.size() - 1), measure.getB())
+                        ))
+                        .collect(Collectors.toList()));
+        writeComma();
+        writeList(
+                Stream.<Double>of(measure.getCountBetween0_25And0_75(measureList)
+                        , measure.getCountBetweenAAndB(measureList)
+                ).collect(Collectors.toList()));
+    }
+
+    protected BoxPlotMeasure createBoxPlotBasicLimit(Integer times) {
+        return new BoxPlotMeasure(Math.ceil(times / 4.0), Math.ceil(times / 2.0), Math.ceil(times / 4.0) * 3);
+    }
+
+    protected BoxPlotMeasure newStraightBoxPlotMeasure(List<Long> measureList, BoxPlotMeasure basic) {
+        return new BoxPlotMeasure(valueForStraights(measureList, basic.getAQuarter()),
+                valueForStraights(measureList, basic.getMedian()),
+                valueForStraights(measureList, basic.getAThreeQuarter()));
+    }
+
+    protected BoxPlotMeasure newOddBoxPlotMeasure(List<Long> measureList, BoxPlotMeasure basic) {
+        return new BoxPlotMeasure(valueForOdds(measureList, basic.getAQuarter()),
+                valueForOdds(measureList, basic.getMedian()),
+                valueForOdds(measureList, basic.getAThreeQuarter()));
+    }
+
+    private double valueForOdds(List<Long> measureList, double aQuarter) {
+        return (double) measureList.get((int) (aQuarter - 1.0));
+    }
+
+    private double valueForStraights(List<Long> measureList, double aQuarter) {
+        Double under = Double.valueOf(measureList.get((int) (aQuarter - 1)));
+        Double upper = Double.valueOf(measureList.get((int) aQuarter));
+        return (under + upper) / 2.0;
+    }
+
+    protected Stream<Double> stdExpWithErrorStream(double exp, double stError) {
+        return Stream.of(exp, stError, exp - stError, exp + stError);
     }
 
     protected void emptyEnd() throws IOException {

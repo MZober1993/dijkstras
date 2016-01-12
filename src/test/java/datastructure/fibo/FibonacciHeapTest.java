@@ -82,7 +82,8 @@ public class FibonacciHeapTest {
         Set<Entry<Element>> nextMemberSet = buildNextMemberSet(4);
         Set<Entry<Element>> previousMemberSet = buildPreviousMemberSet(4);
         Entry<Element> tmpNext = one.getNext();
-        FiboHelper.cutConnection(tmpNext);
+        tmpNext.getNext().setPrevious(tmpNext.getPrevious());
+        tmpNext.getPrevious().setNext(tmpNext.getNext());
 
         Truth.assertThat(buildNextMemberSet(4)).isNotEqualTo(nextMemberSet);
         Truth.assertThat(buildPreviousMemberSet(4)).isNotEqualTo(previousMemberSet);

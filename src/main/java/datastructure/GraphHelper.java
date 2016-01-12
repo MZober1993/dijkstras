@@ -56,6 +56,22 @@ public class GraphHelper {
         return calculateTime(graph, algorithm, start, end);
     }
 
+    public static <G extends Graph<T>, T extends Element> Pair<Long, List<Integer>>
+    calculateTimeAndPathWithLastRandom(G graph, Dijkstra<T> algo) {
+        T end = graph.getLastRandomElement();
+        return calculateTimeAndPath(graph, algo, end);
+    }
+
+    public static <G extends Graph<T>, T extends Element> Pair<Long, List<Integer>>
+    calculateTimeAndPath(G graph, Dijkstra<T> algo, T end) {
+        T start = graph.getElement(FIRST);
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        List<Integer> path = algo.shortestPath(graph, start, end);
+        stopwatch.stop();
+
+        return new Pair<>(stopwatch.elapsed(TimeUnit.NANOSECONDS), path);
+    }
+
     private static <G extends Graph<T>, T extends Element> long calculateTime(G graph, Dijkstra<T> algorithm, T start,
                                                                               T end) {
         Stopwatch stopwatch = Stopwatch.createStarted();

@@ -1,5 +1,7 @@
 package util;
 
+import util.writer.FileWriter;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -11,6 +13,8 @@ import java.util.stream.IntStream;
  *         25.11.15 - 13:04
  */
 public class GraphFileCreator extends FileWriter {
+
+    public static final int COMPLETE_LIMIT = 1000;
 
     public static final Path DEFAULT_PATH = Paths.get(GraphImporter.PATH_TO_IMPORT_FILES +
             ImportFile.CREATED.name().toLowerCase());

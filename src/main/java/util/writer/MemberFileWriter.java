@@ -1,7 +1,9 @@
-package util;
+package util.writer;
 
 import algorithm.standard.DijkstraImpl;
 import datastructure.Graph;
+import util.GraphImporter;
+import util.ImportFile;
 
 import java.io.IOException;
 import java.nio.file.Files;

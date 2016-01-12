@@ -1,4 +1,4 @@
-package util;
+package util.writer;
 
 import algorithm.Dijkstra;
 import com.google.common.collect.ImmutableList;

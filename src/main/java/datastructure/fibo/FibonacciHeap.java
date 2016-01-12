@@ -5,7 +5,6 @@ import datastructure.PrintHelper;
 import util.MathHelper;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static datastructure.fibo.FiboHelper.*;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
@@ -24,10 +23,15 @@ public final class FibonacciHeap<T extends Element> {
 
     public void listConcat(Entry<T> element) {
         if (min == null) {
-            selfLink(element);
+            element.setNext(element);
+            element.setPrevious(element);
             min = element;
         } else {
-            addElementLeftToEntry(element, min);
+            Entry<T> endHeap = min.getPrevious();
+            min.setPrevious(element);
+            element.setPrevious(endHeap);
+            endHeap.setNext(element);
+            element.setNext(min);
 
             if (min.getKey() > element.getKey()) {
                 min = element;
@@ -40,7 +44,8 @@ public final class FibonacciHeap<T extends Element> {
         if (entry != null) {
             moveChildsToRootList(entry);
 
-            cutConnection(entry);
+            entry.getNext().setPrevious(entry.getPrevious());
+            entry.getPrevious().setNext(entry.getNext());
             if (entry == entry.getNext()) {
                 min = null;
             } else {
@@ -86,8 +91,10 @@ public final class FibonacciHeap<T extends Element> {
                     next = element.getNext();
                 }
 
-                cutConnection(element);
-                selfLink(element);
+                element.getNext().setPrevious(element.getPrevious());
+                element.getPrevious().setNext(element.getNext());
+                element.setNext(element);
+                element.setPrevious(element);
                 int currentDegree = element.getDeg();
                 while (degree[currentDegree] != null) {
                     if (element.getKey() > degree[currentDegree].getKey()) {
@@ -97,7 +104,16 @@ public final class FibonacciHeap<T extends Element> {
                         element = tmp;
                     }
                     degree[currentDegree].setMarked(false);
-                    becomesChildOfEntry(degree[currentDegree], element);
+                    if (element.getChild() == null) {
+                        element.setChild(degree[currentDegree]);
+                        degree[currentDegree].setParent(element);
+                    } else {
+                        degree[currentDegree].setParent(element);
+                        degree[currentDegree].setNext(element.getChild());
+                        degree[currentDegree].setPrevious(element.getChild().getPrevious());
+                        degree[currentDegree].getNext().setPrevious(degree[currentDegree]);
+                        degree[currentDegree].getPrevious().setNext(degree[currentDegree]);
+                    }
                     element.setDeg(element.getDeg() + 1);
                     degree[currentDegree] = null;
                     currentDegree++;
@@ -120,6 +136,22 @@ public final class FibonacciHeap<T extends Element> {
                 min = element;
             }
         }
+    }
+
+    private static <T extends Element> void removeChildFromChildListOfParent(Entry<T> child
+            , Entry<T> parent) {
+        checkNotNull(child);
+        checkNotNull(parent);
+        if (child.getNext() == child) {
+            parent.setChild(null);
+        } else {
+            child.getNext().setPrevious(child.getPrevious());
+            child.getPrevious().setNext(child.getNext());
+            if (parent.getChild() == child) {
+                parent.setChild(child.getNext());
+            }
+        }
+        parent.setDeg(parent.getDeg() - 1);
     }
 
     private void cut(Entry<T> child, Entry<T> parent) {
@@ -146,6 +178,27 @@ public final class FibonacciHeap<T extends Element> {
         return getSize() == 0;
     }
 
+    private static <T extends Element> void moveChildsToRootList(Entry<T> entry) {
+        for (int i = 0; i < entry.getDeg(); i++) {
+            Entry<T> child = entry.getChild();
+            if (child != null) {
+                if (child == child.getNext()) {
+                    entry.setChild(null);
+                } else {
+                    entry.setChild(child.getNext());
+                    child.getNext().setPrevious(child.getPrevious());
+                    child.getPrevious().setNext(child.getNext());
+                }
+                child.setParent(null);
+                child.setNext(entry);
+                child.setPrevious(entry.getPrevious());
+                entry.getPrevious().setNext(child);
+                entry.setPrevious(child);
+            }
+        }
+        entry.setDeg(0);
+    }
+
     public Entry<T> getMin() {
         return min;
     }
@@ -156,7 +209,6 @@ public final class FibonacciHeap<T extends Element> {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
         return "FibonacciHeap{" +
                 "\nmin=\n" + min +
                 "\n, size=" + size +

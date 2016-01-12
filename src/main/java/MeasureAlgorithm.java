@@ -1,12 +1,13 @@
 import datastructure.Element;
-import util.*;
+import util.GraphFileCreator;
+import util.GraphImporter;
+import util.ImportFile;
+import util.Measures;
+import util.writer.MeasureFileWriter;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.List;
-
-import static util.MeasureFileWriter.PLAIN_FILE_NAME;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
@@ -28,44 +29,17 @@ public class MeasureAlgorithm {
         COMPLETE_IMPORTER.setLimit(limit);
     }
 
-    public void record(GraphImporter<Element> importer) {
-        expectStdErrorForNReputationsWithScaledN(importer, 10L, 100L);
-        boxPlotForNReputationsWithScaledN(importer, 1L, 10L, 100L, 100L);
+    public void completeRecordInOneFile() {
+        measure(Measures.measureLimits(GraphFileCreator.COMPLETE_LIMIT, 10, 2)
+                , COMPLETE_IMPORTER, calcPath(MeasureFileWriter.PLAIN_FILE_NAME, "complete"), true);
     }
 
-    private static void boxPlotForNReputationsWithScaledN(GraphImporter<Element> importer, Long... scales) {
-        Arrays.asList(scales).stream().forEach(scale -> boxPlot(Measures.scaleMeasureSample(scale)
-                , importer, calcScaledPath(BoxPlotFileWriter.PLAIN_FILE_NAME, scale), true));
-    }
-
-    private static void boxPlotForNReputationsWithoutScaledN(GraphImporter<Element> importer, Long... scales) {
-        Arrays.asList(scales).stream().forEach(scale -> boxPlot(Measures.scaleMeasureSample(scale)
-                , importer, calcScaledPath(BoxPlotFileWriter.PLAIN_FILE_NAME, scale), false));
-    }
-
-    private static void boxPlot(List<Long> listOfN, GraphImporter<Element> importer
-            , Path path, boolean scaledN) {
-        BoxPlotFileWriter boxPlotFileWriter = new BoxPlotFileWriter(path);
-        boxPlotFileWriter.writeRoutine(listOfN, REPUTATIONS, importer, scaledN);
-    }
-
-    private static void expectStdError(List<Long> listOfN, GraphImporter<Element> importer, Path path, boolean scaledN) {
+    private static void measure(List<Long> listOfN, GraphImporter<Element> importer, Path path, boolean scaledN) {
         MeasureFileWriter measureFileWriter = new MeasureFileWriter(path);
         measureFileWriter.writeRoutine(listOfN, REPUTATIONS, importer, scaledN);
     }
 
-    private static void expectStdErrorForNReputationsWithScaledN(GraphImporter<Element> importer, Long... scales) {
-        //Arrays.asList(scales).stream().forEach(scale -> System.out.println(Measures.scaleMeasureSample(scale)));
-        Arrays.asList(scales).stream().forEach(scale -> expectStdError(Measures.scaleMeasureSample(scale)
-                , importer, calcScaledPath(PLAIN_FILE_NAME, scale), true));
-    }
-
-    private static void expectStdErrorForNReputationsWithoutScaledN(GraphImporter<Element> importer, Long... scales) {
-        Arrays.asList(scales).stream().forEach(scale -> expectStdError(Measures.scaleMeasureSample(scale)
-                , importer, calcScaledPath(PLAIN_FILE_NAME, scale), false));
-    }
-
-    private static Path calcScaledPath(String plain, Long scale) {
-        return Paths.get(plain + "_" + scale + ".csv");
+    private static Path calcPath(String plain, String mode) {
+        return Paths.get(plain + "_" + mode + "_all.csv");
     }
 }

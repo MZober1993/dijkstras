@@ -13,7 +13,9 @@ import datastructure.fibo.GraphImplFibo;
 import datastructure.standard.GraphImpl;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.stream.LongStream;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
@@ -28,6 +30,11 @@ public enum Measures {
     public static List<Long> scaleMeasureSample(long i) {
         return SAMPLE_FOR_MEASURE.stream().map((Integer x) -> x * i)
                 .collect(Collectors.toList());
+    }
+
+    public static List<Long> measureLimits(int limitOfGraph, int multiplier, int start) {
+        return LongStream.range(0, limitOfGraph / multiplier).map(x -> x * multiplier + start)
+                .boxed().collect(Collectors.toList());
     }
 
     public static String prepareStd(GraphImpl graph, long limit, int endBegin) {
@@ -61,7 +68,7 @@ public enum Measures {
         List<Integer> path = algo.shortestPath(graph, graph.getElement(GraphHelper.FIRST), graph.getElement(id));
         stopwatch.stop();
 
-        //System.out.println(stopwatch.elapsed(TimeUnit.NANOSECONDS));
+        System.out.println(stopwatch.elapsed(TimeUnit.NANOSECONDS));
         return path;
     }
 }

@@ -1,8 +1,8 @@
 import datastructure.standard.GraphImpl;
-import util.MemberFileWriter;
+import util.writer.MemberFileWriter;
 
 import static util.ImportFile.NY;
-import static util.MemberFileWriter.MEMBER_FILE_PATH;
+import static util.writer.MemberFileWriter.MEMBER_FILE_PATH;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>

@@ -1,6 +1,6 @@
-import util.TheoreticalWriter;
+import util.writer.TheoreticalWriter;
 
-import static util.TheoreticalWriter.DEFAULT_PATH;
+import static util.writer.TheoreticalWriter.DEFAULT_PATH;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>

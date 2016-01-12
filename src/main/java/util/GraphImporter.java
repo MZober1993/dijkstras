@@ -3,6 +3,7 @@ package util;
 
 import datastructure.Element;
 import datastructure.GraphHelper;
+import datastructure.binary.GraphImplBinary;
 import datastructure.fibo.GraphImplFibo;
 import datastructure.standard.GraphImpl;
 
@@ -77,6 +78,10 @@ public class GraphImporter<T extends Element> {
 
     public GraphImplFibo importEntryGraph(Long n) {
         return GraphHelper.transformGraphToEntryGraph(importElementGraph(n));
+    }
+
+    public GraphImplBinary importBinaryGraph(Long n) {
+        return GraphHelper.transformGraphToBinaryGraph(importElementGraph(n));
     }
 
     public Long getLimit() {

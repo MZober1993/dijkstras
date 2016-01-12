@@ -6,6 +6,7 @@ import datastructure.Element;
 import datastructure.standard.GraphImpl;
 import org.junit.Before;
 import org.junit.Test;
+import util.writer.MemberFinder;
 
 import java.util.List;
 

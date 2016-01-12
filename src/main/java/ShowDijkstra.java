@@ -1,7 +1,15 @@
 import algorithm.Dijkstra;
+import algorithm.binary.DijkstraImplBinary;
+import algorithm.fibo.DijkstraImplFibo;
+import algorithm.standard.DijkstraImpl;
 import datastructure.Element;
 import datastructure.Graph;
 import datastructure.GraphHelper;
+import datastructure.Pair;
+import util.GraphImporter;
+import util.ImportFile;
+
+import java.util.List;
 
 import static util.MathHelper.A_MILLION;
 
@@ -14,19 +22,22 @@ public class ShowDijkstra {
     public static final int FIRST = 1;
 
     public static void main(String[] args) {
-        //todo: show dijkstra
+        GraphImporter<Element> importer = new GraphImporter<>(ImportFile.CREATED);
+        long limit = 10000L;
+        testDijkstras(new DijkstraImpl(), importer.importElementGraph(limit), limit);
+        testDijkstras(new DijkstraImplFibo(), importer.importEntryGraph(limit), limit);
+        testDijkstras(new DijkstraImplBinary(), importer.importBinaryGraph(limit), limit);
     }
 
-    private static <G extends Graph<T>, T extends Element> void testDijkstras(Dijkstra<T> dijkstra, G graph) {
+    private static <G extends Graph<T>, T extends Element> void testDijkstras(Dijkstra<T> dijkstra,
+                                                                              G graph, Long limit) {
         int size = graph.getElements().size();
-        T start = graph.getElement(FIRST);
         for (int i = 0; i < 100; i++) {
             int id = size * (1 + i) / (800 + i);
-            T end = graph.getElement(id);
-
-            System.out.println("id: " + id + ",T(10000):" +
-                    GraphHelper.calculateTimeWithLastRandom(graph, dijkstra) / A_MILLION + " ms");
-            System.out.println("id: " + id + ",Path:" + dijkstra.shortestPath(graph, start, end));
+            graph.refreshGraph();
+            Pair<Long, List<Integer>> pair = GraphHelper.calculateTimeAndPath(graph, dijkstra, graph.getElement(id));
+            System.out.println("id: " + id + ",T(" + limit + "):" + pair.getFirst() / A_MILLION + " ms\n" +
+                    ",Path:" + pair.getSecond());
         }
     }
 }

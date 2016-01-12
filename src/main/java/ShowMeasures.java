@@ -10,11 +10,11 @@ public class ShowMeasures {
     public static void main(String[] args) {
         MeasureAlgorithm measure = new MeasureAlgorithm();
         long limit = 500L;
-        int endBegin = 400;
-        GraphImporter<Element> importer = measure.CREATED_IMPORTER;
-        //GraphImporter<Element> importer = measure.COMPLETE_IMPORTER;
+        int endBegin = 450;
+        //GraphImporter<Element> importer = measure.CREATED_IMPORTER;
+        GraphImporter<Element> importer = measure.COMPLETE_IMPORTER;
 
         Measures.prepareStd(importer.importElementGraph(limit), limit, endBegin);
-        measure.record(importer);
+        measure.completeRecordInOneFile();
     }
 }
