@@ -114,19 +114,25 @@ public class MeasureFileWriter extends FileWriter {
     protected void writeHeader(boolean scaledN) throws IOException {
         String rest = ",T(n) std,T(n) fibo,T(n) binary" +
                 ",Theo. T(n)" +
-                headerString("std") +
-                headerString("fibo") +
-                headerString("binary") +
+                headerStringExpStdErr("std") +
+                headerStringExpStdErr("fibo") +
+                headerStringExpStdErr("binary") +
+                headerStringBoxPlot("std") +
+                headerStringBoxPlot("fibo") +
+                headerStringBoxPlot("binary") +
                 "\n";
         writeScaledGraphHeaderWithRest(scaledN, rest);
     }
 
-    private String headerString(String newImplName) {
+    private String headerStringExpStdErr(String newImplName) {
         return "," + newImplName + "Erwartungswert" +
                 "," + newImplName + "Standardabweichung" +
                 "," + newImplName + "Erw.-StdAbw." +
-                "," + newImplName + "Erw.+StdAbw." +
-                "," + newImplName + " Q_25" +
+                "," + newImplName + "Erw.+StdAbw.";
+    }
+
+    private String headerStringBoxPlot(String newImplName) {
+        return "," + newImplName + " Q_25" +
                 "," + newImplName + " Q_5" +
                 "," + newImplName + " Q_75" +
                 "," + newImplName + " a" +
