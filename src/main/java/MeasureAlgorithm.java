@@ -4,10 +4,13 @@ import util.GraphImporter;
 import util.ImportFile;
 import util.Measures;
 import util.writer.MeasureFileWriter;
+import util.writer.T_N_Writer;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+
+import static util.writer.MeasureFileWriter.PLAIN_FILE_NAME;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
@@ -16,6 +19,7 @@ import java.util.List;
 public class MeasureAlgorithm {
 
     public static final int REPUTATIONS = 40;
+    public static final List<Long> MEASURE_CONFIG = Measures.measureLimits(GraphFileCreator.COMPLETE_LIMIT, 10, 2);
     public final GraphImporter<Element> NY_IMPORTER = new GraphImporter<>(ImportFile.NY);
     public final GraphImporter<Element> CREATED_IMPORTER = new GraphImporter<>(ImportFile.CREATED);
     public final GraphImporter<Element> COMPLETE_IMPORTER = new GraphImporter<>(ImportFile.COMPLETE);
@@ -29,14 +33,14 @@ public class MeasureAlgorithm {
         COMPLETE_IMPORTER.setLimit(limit);
     }
 
-    public void completeRecordInOneFile() {
-        measure(Measures.measureLimits(GraphFileCreator.COMPLETE_LIMIT, 10, 2)
-                , COMPLETE_IMPORTER, calcPath(MeasureFileWriter.PLAIN_FILE_NAME, "complete"), false);
+    public void recordInOneFile() {
+        MeasureFileWriter measureFileWriter = new MeasureFileWriter(calcPath(PLAIN_FILE_NAME, "complete"));
+        measureFileWriter.writeRoutine(MEASURE_CONFIG, REPUTATIONS, COMPLETE_IMPORTER, false);
     }
 
-    private static void measure(List<Long> listOfN, GraphImporter<Element> importer, Path path, boolean scaledN) {
-        MeasureFileWriter measureFileWriter = new MeasureFileWriter(path);
-        measureFileWriter.writeRoutine(listOfN, REPUTATIONS, importer, scaledN);
+    public void tNRecordInOneFile() {
+        T_N_Writer t_n_writer = new T_N_Writer(calcPath(T_N_Writer.PLAIN_FILE_NAME, "complete"));
+        t_n_writer.writeRoutine(MEASURE_CONFIG, REPUTATIONS, COMPLETE_IMPORTER, false);
     }
 
     private static Path calcPath(String plain, String mode) {

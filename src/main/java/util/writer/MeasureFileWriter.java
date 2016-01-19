@@ -47,7 +47,8 @@ public class MeasureFileWriter extends FileWriter {
                     limitReached = true;
                 }
                 refreshMeasureBuilder();
-                tNWriteOfAll(times, scaledN, graph, n, m);
+                tNWriteOfAll(times, scaledN, graph, n, m, 33);
+                writeComma();
                 writeDouble(scaleTimeValuesForPlot(2 * n + 2 * n * Math.log(n) + m + m * n * Math.log(n) * 2));
                 writeComma();
 
@@ -125,10 +126,10 @@ public class MeasureFileWriter extends FileWriter {
     }
 
     private String headerStringExpStdErr(String newImplName) {
-        return "," + newImplName + "Erwartungswert" +
-                "," + newImplName + "Standardabweichung" +
-                "," + newImplName + "Erw.-StdAbw." +
-                "," + newImplName + "Erw.+StdAbw.";
+        return "," + newImplName + " Erwartungswert" +
+                "," + newImplName + " Standardabweichung" +
+                "," + newImplName + " Erw.-StdAbw." +
+                "," + newImplName + " Erw.+StdAbw.";
     }
 
     private String headerStringBoxPlot(String newImplName) {

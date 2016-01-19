@@ -17,6 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static util.MathHelper.A_MILLION;
@@ -52,7 +53,7 @@ public class FileWriter extends BasicFileWriter {
         }
     }
 
-    protected void tNWriteOfAll(Integer times, boolean scaledN, GraphImpl graph, int n, int m)
+    protected void tNWriteOfAll(Integer times, boolean scaledN, GraphImpl graph, int n, int m, int emptySpace)
             throws IOException {
         GraphImplFibo fiboGraph = GraphHelper.transformGraphToEntryGraph(graph);
         GraphImplBinary binaryGraph = GraphHelper.transformGraphToBinaryGraph(graph);
@@ -70,7 +71,7 @@ public class FileWriter extends BasicFileWriter {
             writeComma();
 
             writingAndSaveTime(binAlgo, binaryBuilder, binaryGraph.refreshGraph());
-            emptyEnd();
+            emptyEnd(emptySpace);
         }
 
         writeGraphNumbers(n, m, scaledN);
@@ -82,7 +83,6 @@ public class FileWriter extends BasicFileWriter {
         writeComma();
 
         writingAndSaveTime(binAlgo, binaryBuilder, binaryGraph.refreshGraph());
-        writeComma();
     }
 
     protected void writeBoxPlot(BoxPlotMeasure measure, List<Long> measureList) throws IOException {
@@ -133,11 +133,19 @@ public class FileWriter extends BasicFileWriter {
         return Stream.of(exp, stError, exp - stError, exp + stError);
     }
 
-    protected void emptyEnd() throws IOException {
-        writeComma();
-        writeComma();
-        writeComma();
+    protected void emptyEnd(int emptySpace) throws IOException {
+        writeCommasNTimes(emptySpace);
         writeNewLine();
+    }
+
+    private void writeCommasNTimes(Integer n) {
+        IntStream.range(0, n).forEach(x -> {
+            try {
+                writeComma();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     protected <T extends Element> void writingAndSaveTime(Dijkstra<T> algo, Stream.Builder<Long> builder
@@ -149,13 +157,13 @@ public class FileWriter extends BasicFileWriter {
 
     protected void writeScaledGraphHeaderWithRest(boolean scaledN, String rest) throws IOException {
         if (scaledN) {
-            Files.write(getPath(), ("|V|*[1000]" +
-                    ",|E|*[1000]" +
+            Files.write(getPath(), ("V*[1000]" +
+                    ",E*[1000]" +
                     rest)
                     .getBytes());
         } else {
-            Files.write(getPath(), ("|V|" +
-                    ",|E|" +
+            Files.write(getPath(), ("V" +
+                    ",E" +
                     rest)
                     .getBytes());
         }

@@ -16,12 +16,14 @@ public final class FibonacciHeap<T extends Element> {
     private Integer size = 0;
 
     public Entry<T> insert(Entry<T> entry) {
+        checkNotNull(entry);
         listConcat(entry);
         size++;
         return entry;
     }
 
     public void listConcat(Entry<T> element) {
+        checkNotNull(element);
         if (min == null) {
             element.setNext(element);
             element.setPrevious(element);
