@@ -1,8 +1,7 @@
 package datastructure.fibo;
 
 import com.google.common.truth.Truth;
-import datastructure.Element;
-import datastructure.VertexImpl;
+import datastructure.standard.Vertex;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -17,71 +16,71 @@ import java.util.stream.Stream;
  */
 public class FibonacciHeapTest {
 
-    private Entry<Element> one;
-    private Entry<Element> two;
-    private Entry<Element> three;
-    private Entry<Element> six;
-    private Entry<Element> seven;
-    private Entry<Element> four;
-    private Entry<Element> five;
-    private Entry<Element> eight;
-    private Entry<Element> nine;
-    private FibonacciHeap<Element> heap;
-    private Consumer<? super Entry<Element>> insert = x -> heap.insert(x);
+    private VertexFibo one;
+    private VertexFibo two;
+    private VertexFibo three;
+    private VertexFibo six;
+    private VertexFibo seven;
+    private VertexFibo four;
+    private VertexFibo five;
+    private VertexFibo eight;
+    private VertexFibo nine;
+    private FibonacciHeap heap;
+    private Consumer<? super VertexFibo> insert = x -> heap.insert(x);
 
     @Before
     public void setUp() {
-        one = new Entry<>(new VertexImpl(1), 1.0);
-        two = new Entry<>(new VertexImpl(2), 2.0);
-        three = new Entry<>(new VertexImpl(3), 3.0);
-        six = new Entry<>(new VertexImpl(6), 6.0);
-        seven = new Entry<>(new VertexImpl(7), 7.0);
-        four = new Entry<>(new VertexImpl(4), 4.0);
-        five = new Entry<>(new VertexImpl(5), 5.0);
-        eight = new Entry<>(new VertexImpl(8), 8.0);
-        nine = new Entry<>(new VertexImpl(9), 9.0);
-        heap = new FibonacciHeap<>();
+        one = new VertexFibo(new Vertex(1), 1.0);
+        two = new VertexFibo(new Vertex(2), 2.0);
+        three = new VertexFibo(new Vertex(3), 3.0);
+        six = new VertexFibo(new Vertex(6), 6.0);
+        seven = new VertexFibo(new Vertex(7), 7.0);
+        four = new VertexFibo(new Vertex(4), 4.0);
+        five = new VertexFibo(new Vertex(5), 5.0);
+        eight = new VertexFibo(new Vertex(8), 8.0);
+        nine = new VertexFibo(new Vertex(9), 9.0);
+        heap = new FibonacciHeap();
     }
 
     @Test
     public void testInsert() {
         miniSample();
-        Truth.assertThat(heap.getMin().getValue()).isEqualTo(new VertexImpl(1));
+        Truth.assertThat(heap.getMin().getValue()).isEqualTo(new Vertex(1));
         Truth.assertThat(heap.getSize()).isEqualTo(3);
     }
 
     @Test
     public void testNextPointer() {
         miniSample();
-        Stream.Builder<Entry<Element>> builder = Stream.builder();
-        Entry<Element> tmp = heap.getMin();
+        Stream.Builder<VertexFibo> builder = Stream.builder();
+        VertexFibo tmp = heap.getMin();
         for (int i = 0; i < 4; i++) {
             tmp = tmp.getNext();
             builder.add(tmp);
         }
-        Truth.assertThat(builder.build().map(Entry::getKey).collect(Collectors.toList()))
+        Truth.assertThat(builder.build().map(VertexFibo::getKey).collect(Collectors.toList()))
                 .containsExactly(2.0, 3.0, 1.0, 2.0);
     }
 
     @Test
     public void testPreviousPointer() {
         miniSample();
-        Stream.Builder<Entry<Element>> builder = Stream.builder();
-        Entry<Element> tmp = heap.getMin();
+        Stream.Builder<VertexFibo> builder = Stream.builder();
+        VertexFibo tmp = heap.getMin();
         for (int i = 0; i < 4; i++) {
             tmp = tmp.getPrevious();
             builder.add(tmp);
         }
-        Truth.assertThat(builder.build().map(Entry::getKey).collect(Collectors.toList()))
+        Truth.assertThat(builder.build().map(VertexFibo::getKey).collect(Collectors.toList()))
                 .containsExactly(3.0, 2.0, 1.0, 3.0);
     }
 
     @Test
     public void testCutConnection() {
         miniSample();
-        Set<Entry<Element>> nextMemberSet = buildNextMemberSet(4);
-        Set<Entry<Element>> previousMemberSet = buildPreviousMemberSet(4);
-        Entry<Element> tmpNext = one.getNext();
+        Set<VertexFibo> nextMemberSet = buildNextMemberSet(4);
+        Set<VertexFibo> previousMemberSet = buildPreviousMemberSet(4);
+        VertexFibo tmpNext = one.getNext();
         tmpNext.getNext().setPrevious(tmpNext.getPrevious());
         tmpNext.getPrevious().setNext(tmpNext.getNext());
 
@@ -94,7 +93,7 @@ public class FibonacciHeapTest {
     public void testExtractMinimumWithDegTwo() {
         degTwoSample();
 
-        Entry<Element> actualMin = heap.extractMin();
+        VertexFibo actualMin = heap.extractMin();
 
         Truth.assertThat(actualMin).isEqualTo(one);
         Truth.assertThat(heap.getMin()).isEqualTo(two);
@@ -116,11 +115,11 @@ public class FibonacciHeapTest {
 
     @Test
     public void testExtractMinWithMaxValues() {
-        Entry<Element> min = new Entry<>(new VertexImpl(1), 0.0);
-        Entry<Element> entry1 = new Entry<>(new VertexImpl(2), Double.MAX_VALUE);
-        Entry<Element> entry2 = new Entry<>(new VertexImpl(3), Double.MAX_VALUE);
-        Entry<Element> entry3 = new Entry<>(new VertexImpl(4), Double.MAX_VALUE);
-        Entry<Element> entry4 = new Entry<>(new VertexImpl(5), Double.MAX_VALUE);
+        VertexFibo min = new VertexFibo(new Vertex(1), 0.0);
+        VertexFibo entry1 = new VertexFibo(new Vertex(2), Double.MAX_VALUE);
+        VertexFibo entry2 = new VertexFibo(new Vertex(3), Double.MAX_VALUE);
+        VertexFibo entry3 = new VertexFibo(new Vertex(4), Double.MAX_VALUE);
+        VertexFibo entry4 = new VertexFibo(new Vertex(5), Double.MAX_VALUE);
         Stream.of(min
                 , entry1
                 , entry2
@@ -128,25 +127,25 @@ public class FibonacciHeapTest {
                 , entry4)
                 .forEach(insert);
 
-        Entry<Element> entry = heap.extractMin();
+        VertexFibo entry = heap.extractMin();
         Truth.assertThat(entry).isEqualTo(min);
 
         heap.decreaseKey(entry1, 0.0);
 
-        Entry<Element> newMin = heap.extractMin();
+        VertexFibo newMin = heap.extractMin();
         Truth.assertThat(newMin).isEqualTo(entry1);
 
         heap.decreaseKey(entry3, 0.0);
     }
 
-    private void checkSizeOfEntriesWithDeg(Stream<Entry<Element>> stream, Integer deg, Long countOfEntries) {
+    private void checkSizeOfEntriesWithDeg(Stream<VertexFibo> stream, Integer deg, Long countOfEntries) {
         Truth.assertThat(stream.filter(x -> x.getDeg() == deg).count()).isEqualTo(countOfEntries);
     }
 
     @Test
     public void testExtractMinimumWithDegThree() {
         degThreeSample();
-        Entry<Element> actualMin = heap.extractMin();
+        VertexFibo actualMin = heap.extractMin();
 
         Truth.assertThat(actualMin).isEqualTo(one);
         Truth.assertThat(heap.getMin()).isEqualTo(two);
@@ -280,25 +279,25 @@ public class FibonacciHeapTest {
         heap.extractMin();
     }
 
-    private void parentAssert(Stream<Entry<Element>> childs, Entry<Element> parent) {
+    private void parentAssert(Stream<VertexFibo> childs, VertexFibo parent) {
         childs.forEach(x -> Truth.assertThat(x.getParent()).isEqualTo(parent));
     }
 
-    private void childAssert(Entry<Element> parent, Entry<Element> child) {
+    private void childAssert(VertexFibo parent, VertexFibo child) {
         Truth.assertThat(parent.getChild()).isEqualTo(child);
     }
 
-    private void notAParentAssert(Stream<Entry<Element>> childs, Entry<Element> parent) {
+    private void notAParentAssert(Stream<VertexFibo> childs, VertexFibo parent) {
         childs.forEach(x -> Truth.assertThat(x.getParent()).isNotEqualTo(parent));
     }
 
-    private void notAChildAssert(Entry<Element> parent, Entry<Element> child) {
+    private void notAChildAssert(VertexFibo parent, VertexFibo child) {
         Truth.assertThat(parent.getChild()).isNotEqualTo(child);
     }
 
-    private Set<Entry<Element>> buildNextMemberSet(Integer lengthsOfNext) {
-        Stream.Builder<Entry<Element>> builder = Stream.builder();
-        Entry<Element> tmp = heap.getMin();
+    private Set<VertexFibo> buildNextMemberSet(Integer lengthsOfNext) {
+        Stream.Builder<VertexFibo> builder = Stream.builder();
+        VertexFibo tmp = heap.getMin();
         for (int i = 0; i < lengthsOfNext; i++) {
             builder.add(tmp);
             tmp = tmp.getNext();
@@ -306,9 +305,9 @@ public class FibonacciHeapTest {
         return builder.build().collect(Collectors.toSet());
     }
 
-    private Set<Entry<Element>> buildPreviousMemberSet(Integer lengthsOfPrevious) {
-        Stream.Builder<Entry<Element>> builder = Stream.builder();
-        Entry<Element> tmp = heap.getMin();
+    private Set<VertexFibo> buildPreviousMemberSet(Integer lengthsOfPrevious) {
+        Stream.Builder<VertexFibo> builder = Stream.builder();
+        VertexFibo tmp = heap.getMin();
         for (int i = 0; i < lengthsOfPrevious; i++) {
             builder.add(tmp);
             tmp = tmp.getPrevious();
@@ -324,7 +323,7 @@ public class FibonacciHeapTest {
         Stream.of(one, two, three, four, five).forEach(insert);
     }
 
-    private Stream<Entry<Element>> degTwoAsStreamWithOutMin() {
+    private Stream<VertexFibo> degTwoAsStreamWithOutMin() {
         return Stream.of(two, three, four, five);
     }
 
@@ -332,19 +331,19 @@ public class FibonacciHeapTest {
         Stream.of(one, two, three, four, five, six, seven, eight, nine).forEach(insert);
     }
 
-    private Stream<Entry<Element>> degThreeAsStreamWithOutMin() {
+    private Stream<VertexFibo> degThreeAsStreamWithOutMin() {
         return Stream.of(two, four, three, five
                 , six, eight, seven, nine);
     }
 
-    private void printAll(Stream<Entry<Element>> stream) {
+    private void printAll(Stream<VertexFibo> stream) {
         stream.forEach(System.out::println);
     }
 
-    private static void checkRootList(Entry<Element> begin) {
+    private static void checkRootList(VertexFibo begin) {
         if (begin != null) {
-            Entry<Element> element = begin;
-            Entry<Element> next;
+            VertexFibo element = begin;
+            VertexFibo next;
             do {
                 if (element == element.getNext()) {
                     throw new RuntimeException("No rootList for checkRootList!");

@@ -3,9 +3,9 @@ package algorithm.binary;
 import com.google.common.truth.Truth;
 import datastructure.Element;
 import datastructure.GraphHelper;
-import datastructure.binary.BEntry;
-import datastructure.binary.EdgeImplBinary;
-import datastructure.binary.GraphImplBinary;
+import datastructure.binary.EdgeBinary;
+import datastructure.binary.GraphBinary;
+import datastructure.binary.VertexBinary;
 import datastructure.standard.EdgeImpl;
 import datastructure.standard.GraphImpl;
 import org.junit.Before;
@@ -19,14 +19,14 @@ import java.util.List;
  */
 public class DijkstraImplBinaryTest {
 
-    GraphImplBinary graph;
+    GraphBinary graph;
     GraphImpl graphStd;
     DijkstraImplBinary dijkstra;
 
     @Before
     public void setUp() {
-        graph = GraphHelper.<GraphImplBinary, EdgeImplBinary, BEntry<Element>>buildSampleGraph(
-                new GraphImplBinary(0, 1, 2, 3, 4, 5, 6, 7));
+        graph = GraphHelper.<GraphBinary, EdgeBinary, VertexBinary>buildSampleGraph(
+                new GraphBinary(0, 1, 2, 3, 4, 5, 6, 7));
         graphStd = GraphHelper.<GraphImpl, EdgeImpl, Element>buildSampleGraph(
                 new GraphImpl(0, 1, 2, 3, 4, 5, 6, 7));
         dijkstra = new DijkstraImplBinary();
@@ -34,8 +34,8 @@ public class DijkstraImplBinaryTest {
 
     @Test
     public void testMinimumShortestPath() throws Exception {
-        BEntry<Element> start = graph.getElement(0);
-        BEntry<Element> end = graph.getElement(7);
+        VertexBinary start = graph.getElement(0);
+        VertexBinary end = graph.getElement(7);
         List<Integer> actual = dijkstra.shortestPath(graph, start, end);
 
         Truth.assertThat(actual).containsAllOf(0, 1, 5, 7).inOrder();

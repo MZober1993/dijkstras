@@ -1,7 +1,6 @@
 package datastructure.binary;
 
 import datastructure.Edge;
-import datastructure.Element;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -9,28 +8,28 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
  *         04.11.15 - 11:55
  */
-public class EdgeImplBinary implements Edge<BEntry<Element>> {
+public class EdgeBinary implements Edge<VertexBinary> {
 
-    private BEntry<Element> first;
-    private BEntry<Element> second;
+    private VertexBinary first;
+    private VertexBinary second;
     private Double distance;
 
-    public EdgeImplBinary(BEntry<Element> first, BEntry<Element> second, Double distance) {
+    public EdgeBinary(VertexBinary first, VertexBinary second, Double distance) {
         initEdge(first, second, distance);
     }
 
     @Override
-    public boolean contains(BEntry<Element> entry) {
+    public boolean contains(VertexBinary entry) {
         return first.equals(entry) || second.equals(entry);
     }
 
     @Override
-    public BEntry<Element> getFirst() {
+    public VertexBinary getFirst() {
         return first;
     }
 
     @Override
-    public BEntry<Element> getSecond() {
+    public VertexBinary getSecond() {
         return second;
     }
 
@@ -40,7 +39,7 @@ public class EdgeImplBinary implements Edge<BEntry<Element>> {
     }
 
     @Override
-    public void initEdge(BEntry<Element> first, BEntry<Element> second, Double distance) {
+    public void initEdge(VertexBinary first, VertexBinary second, Double distance) {
         checkNotNull(first);
         checkNotNull(second);
         checkNotNull(distance);

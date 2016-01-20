@@ -1,4 +1,7 @@
-package datastructure;
+package datastructure.standard;
+
+import datastructure.Element;
+import datastructure.PrintHelper;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -6,14 +9,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
  *         01.11.15 - 18:40
  */
-public class VertexImpl implements Element {
+public class Vertex implements Element {
 
     private Integer id;
     private Double g;
     private Element anchor;
     private boolean closed;
 
-    public VertexImpl(Integer id) {
+    public Vertex(Integer id) {
         super();
         checkNotNull(id);
         this.id = id;
@@ -58,9 +61,9 @@ public class VertexImpl implements Element {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof VertexImpl)) return false;
+        if (!(o instanceof Vertex)) return false;
 
-        VertexImpl vertex = (VertexImpl) o;
+        Vertex vertex = (Vertex) o;
 
         return !(id != null ? !id.equals(vertex.id) : vertex.id != null);
     }

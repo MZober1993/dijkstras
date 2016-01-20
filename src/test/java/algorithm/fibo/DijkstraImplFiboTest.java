@@ -3,9 +3,9 @@ package algorithm.fibo;
 import com.google.common.truth.Truth;
 import datastructure.Element;
 import datastructure.GraphHelper;
-import datastructure.fibo.EdgeImplFibo;
-import datastructure.fibo.Entry;
-import datastructure.fibo.GraphImplFibo;
+import datastructure.fibo.EdgeFibo;
+import datastructure.fibo.GraphFibo;
+import datastructure.fibo.VertexFibo;
 import datastructure.standard.EdgeImpl;
 import datastructure.standard.GraphImpl;
 import org.junit.Before;
@@ -19,14 +19,14 @@ import java.util.List;
  */
 public class DijkstraImplFiboTest {
 
-    GraphImplFibo graph;
+    GraphFibo graph;
     GraphImpl graphStd;
     DijkstraImplFibo dijkstra;
 
     @Before
     public void setUp() {
-        graph = GraphHelper.<GraphImplFibo, EdgeImplFibo, Entry<Element>>buildSampleGraph(
-                new GraphImplFibo(0, 1, 2, 3, 4, 5, 6, 7));
+        graph = GraphHelper.<GraphFibo, EdgeFibo, VertexFibo>buildSampleGraph(
+                new GraphFibo(0, 1, 2, 3, 4, 5, 6, 7));
         graphStd = GraphHelper.<GraphImpl, EdgeImpl, Element>buildSampleGraph(
                 new GraphImpl(0, 1, 2, 3, 4, 5, 6, 7));
         dijkstra = new DijkstraImplFibo();
@@ -34,8 +34,8 @@ public class DijkstraImplFiboTest {
 
     @Test
     public void testMinimumShortestPath() throws Exception {
-        Entry<Element> start = graph.getElement(0);
-        Entry<Element> end = graph.getElement(7);
+        VertexFibo start = graph.getElement(0);
+        VertexFibo end = graph.getElement(7);
         List<Integer> actual = dijkstra.shortestPath(graph, start, end);
 
         Truth.assertThat(actual).containsAllOf(0, 1, 5, 7).inOrder();

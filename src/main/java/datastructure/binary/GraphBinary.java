@@ -1,10 +1,10 @@
-package datastructure.fibo;
+package datastructure.binary;
 
 import com.google.common.collect.ImmutableList;
 import datastructure.Edge;
 import datastructure.Element;
 import datastructure.Graph;
-import datastructure.VertexImpl;
+import datastructure.standard.Vertex;
 
 import java.util.*;
 
@@ -14,34 +14,30 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
  *         01.11.15 - 18:40
  */
-public class GraphImplFibo implements Graph<Entry<Element>> {
+public class GraphBinary implements Graph<VertexBinary> {
 
-    private Map<Integer, List<Edge<Entry<Element>>>> outgoingEdges;
-    private List<Edge<Entry<Element>>> allEdges;
+    private Map<Integer, List<Edge<VertexBinary>>> outgoingEdges;
+    private List<Edge<VertexBinary>> allEdges;
     private Map<Integer, Element> vertices;
-    private Map<Integer, Entry<Element>> entryVertices;
+    private Map<Integer, VertexBinary> entryVertices;
 
-    public GraphImplFibo() {
-        init();
-    }
-
-    public GraphImplFibo(Integer... identifier) {
+    public GraphBinary(Integer... identifier) {
         checkNotNull(identifier);
         init();
         for (Integer id : identifier) {
-            VertexImpl v = new VertexImpl(id);
+            Vertex v = new Vertex(id);
             this.vertices.put(id, v);
-            this.entryVertices.put(id, new Entry<>(v, Double.MAX_VALUE));
+            this.entryVertices.put(id, new VertexBinary(v, Double.MAX_VALUE));
         }
     }
 
-    public GraphImplFibo(List<Integer> identifiers) {
+    public GraphBinary(List<Integer> identifiers) {
         checkNotNull(identifiers);
         init();
         for (Integer id : identifiers) {
-            VertexImpl v = new VertexImpl(id);
+            Vertex v = new Vertex(id);
             this.vertices.put(id, v);
-            this.entryVertices.put(id, new Entry<>(v, Double.MAX_VALUE));
+            this.entryVertices.put(id, new VertexBinary(v, Double.MAX_VALUE));
         }
     }
 
@@ -54,18 +50,18 @@ public class GraphImplFibo implements Graph<Entry<Element>> {
 
     @Override
     public void addConnection(Integer signOne, Integer signTwo, Double distance) {
-        Entry<Element> one = getElementOrCreateOne(signOne);
-        Entry<Element> two = getElementOrCreateOne(signTwo);
-        EdgeImplFibo edge = new EdgeImplFibo(one, two, distance);
+        VertexBinary one = getElementOrCreateOne(signOne);
+        VertexBinary two = getElementOrCreateOne(signTwo);
+        EdgeBinary edge = new EdgeBinary(one, two, distance);
         if (!allEdges.contains(edge)) {
             allEdges.add(edge);
         }
-        Optional<List<Edge<Entry<Element>>>> edges = Optional.ofNullable(outgoingEdges.get(
+        Optional<List<Edge<VertexBinary>>> edges = Optional.ofNullable(outgoingEdges.get(
                 one.getValue().getId()));
         if (edges.isPresent()) {
-            List<Edge<Entry<Element>>> value = edges.get();
+            List<Edge<VertexBinary>> value = edges.get();
             if (!value.contains(edge)) {
-                outgoingEdges.put(one.getValue().getId(), ImmutableList.<Edge<Entry<Element>>>builder()
+                outgoingEdges.put(one.getValue().getId(), ImmutableList.<Edge<VertexBinary>>builder()
                         .addAll(value).add(edge).build());
             }
         } else {
@@ -74,42 +70,37 @@ public class GraphImplFibo implements Graph<Entry<Element>> {
     }
 
     @Override
-    public List<Edge<Entry<Element>>> getEdgesFromNode(Integer identifier) {
+    public List<Edge<VertexBinary>> getEdgesFromNode(Integer identifier) {
         checkNotNull(identifier);
         return edgesFromNode(entryVertices.get(identifier));
     }
 
     @Override
-    public List<Edge<Entry<Element>>> getEdgesFromNode(Entry<Element> entry) {
+    public List<Edge<VertexBinary>> getEdgesFromNode(VertexBinary entry) {
         checkNotNull(entry);
         return edgesFromNode(entry);
     }
 
-    private List<Edge<Entry<Element>>> edgesFromNode(Entry<Element> element) {
-        ImmutableList.Builder<Edge<Entry<Element>>> edgesFromNodeBuilder = new ImmutableList.Builder<>();
-        for (List<Edge<Entry<Element>>> edges : outgoingEdges.values()) {
+    private List<Edge<VertexBinary>> edgesFromNode(VertexBinary element) {
+        ImmutableList.Builder<Edge<VertexBinary>> edgesFromNodeBuilder = new ImmutableList.Builder<>();
+        for (List<Edge<VertexBinary>> edges : outgoingEdges.values()) {
             edges.stream().filter(currentEdge -> currentEdge.contains(element)).forEach(edgesFromNodeBuilder::add);
         }
         return edgesFromNodeBuilder.build();
     }
 
-    public List<Edge<Entry<Element>>> getEdges() {
+    public List<Edge<VertexBinary>> getEdges() {
         return allEdges;
     }
 
     @Override
-    public Graph<Entry<Element>> refreshGraph() {
-        entryVertices.forEach((Integer id, Entry<Element> entry) -> {
+    public Graph<VertexBinary> refreshGraph() {
+        entryVertices.forEach((Integer id, VertexBinary entry) -> {
             entry.setClosed(false);
-            entry.setDeg(0);
-            entry.setParent(null);
-            entry.setChild(null);
-            entry.setNext(entry);
-            entry.setPrevious(entry);
-            entry.setMarked(false);
             entry.setKey(Double.MAX_VALUE);
             entry.setAnchor(null);
             entry.setG(Double.MAX_VALUE);
+            entry.setPosition(null);
         });
         return this;
     }
@@ -119,18 +110,18 @@ public class GraphImplFibo implements Graph<Entry<Element>> {
     }
 
     @Override
-    public Entry<Element> getElementOrCreateOne(int id) {
+    public VertexBinary getElementOrCreateOne(int id) {
         if (getElements().containsKey(id)) {
             return getElements().get(id);
         } else {
-            Entry<Element> value = new Entry<>(new VertexImpl(id), Double.MAX_VALUE);
+            VertexBinary value = new VertexBinary(new Vertex(id), Double.MAX_VALUE);
             getElements().put(id, value);
             return value;
         }
     }
 
     @Override
-    public Map<Integer, Entry<Element>> getElements() {
+    public Map<Integer, VertexBinary> getElements() {
         return entryVertices;
     }
 

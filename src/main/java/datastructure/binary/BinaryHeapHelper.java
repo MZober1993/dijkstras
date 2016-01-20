@@ -1,7 +1,5 @@
 package datastructure.binary;
 
-import datastructure.Element;
-
 import java.util.List;
 
 /**
@@ -10,8 +8,7 @@ import java.util.List;
  */
 public class BinaryHeapHelper {
 
-
-    public static <T extends Element> boolean structureIsAlright(BinaryHeap<T> heap) {
+    public static boolean structureIsAlright(BinaryHeap heap) {
         boolean check = true;
         for (int i = 0; i < heap.getSize(); i++) {
             int second = 2 * i + 2;
@@ -28,7 +25,7 @@ public class BinaryHeapHelper {
         return check;
     }
 
-    private static <T extends Element> boolean checkStructure(BinaryHeap<T> heap
+    private static boolean checkStructure(BinaryHeap heap
             , Integer index, Integer childIndexOne, Integer childIndexTwo, Integer parentIndex) {
         Double key = heap.getElements().get(index).getKey();
         if (checkChild(heap.getElements(), childIndexOne, key)
@@ -44,8 +41,8 @@ public class BinaryHeapHelper {
         }
     }
 
-    private static <T extends Element> boolean checkStructure(BinaryHeap<T> heap, Integer index,
-                                                              Integer childIndexOne, Integer parentIndex) {
+    private static boolean checkStructure(BinaryHeap heap, Integer index,
+                                          Integer childIndexOne, Integer parentIndex) {
         Double key = heap.getElements().get(index).getKey();
         if (checkChild(heap.getElements(), childIndexOne, key)
                 && (index.equals(parentIndex) || checkParent(heap.getElements(), parentIndex, key))) {
@@ -58,17 +55,17 @@ public class BinaryHeapHelper {
         }
     }
 
-    private static <T extends Element> boolean checkParent(List<BEntry<T>> elements,
-                                                           Integer parentIndex, Double key) {
+    private static boolean checkParent(List<VertexBinary> elements,
+                                       Integer parentIndex, Double key) {
         return key > elements.get(parentIndex).getKey();
     }
 
-    private static <T extends Element> boolean checkChild(List<BEntry<T>> elements,
-                                                          Integer childIndexOne, Double key) {
+    private static boolean checkChild(List<VertexBinary> elements,
+                                      Integer childIndexOne, Double key) {
         return key < elements.get(childIndexOne).getKey();
     }
 
-    private static <T extends Element> String indexKeyPair(List<BEntry<T>> elements, Integer index) {
+    private static String indexKeyPair(List<VertexBinary> elements, Integer index) {
         return "(" + index + "," + elements.get(index).getKey() + ")";
     }
 }

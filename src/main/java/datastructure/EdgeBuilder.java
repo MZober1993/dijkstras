@@ -29,8 +29,4 @@ public class EdgeBuilder<G extends Graph<T>, E extends Edge<T>, T extends Elemen
             throw new RuntimeException("Unknown pair of identifiers:" + currentId + "," + id);
         }
     }
-
-    public Integer getCurrentId() {
-        return currentId;
-    }
 }

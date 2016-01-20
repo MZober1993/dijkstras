@@ -3,8 +3,8 @@ package util;
 
 import datastructure.Element;
 import datastructure.GraphHelper;
-import datastructure.binary.GraphImplBinary;
-import datastructure.fibo.GraphImplFibo;
+import datastructure.binary.GraphBinary;
+import datastructure.fibo.GraphFibo;
 import datastructure.standard.GraphImpl;
 
 import java.io.IOException;
@@ -76,11 +76,11 @@ public class GraphImporter<T extends Element> {
         return graph;
     }
 
-    public GraphImplFibo importEntryGraph(Long n) {
+    public GraphFibo importEntryGraph(Long n) {
         return GraphHelper.transformGraphToEntryGraph(importElementGraph(n));
     }
 
-    public GraphImplBinary importBinaryGraph(Long n) {
+    public GraphBinary importBinaryGraph(Long n) {
         return GraphHelper.transformGraphToBinaryGraph(importElementGraph(n));
     }
 

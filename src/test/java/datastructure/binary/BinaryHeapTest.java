@@ -1,8 +1,7 @@
 package datastructure.binary;
 
 import com.google.common.truth.Truth;
-import datastructure.Element;
-import datastructure.VertexImpl;
+import datastructure.standard.Vertex;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -17,32 +16,32 @@ import static datastructure.binary.BinaryHeapHelper.structureIsAlright;
  */
 public class BinaryHeapTest {
 
-    BinaryHeap<Element> heap;
-    BEntry<Element> zero;
-    BEntry<Element> one;
-    BEntry<Element> two;
-    BEntry<Element> three;
-    BEntry<Element> four;
-    BEntry<Element> five;
-    BEntry<Element> six;
-    BEntry<Element> seven;
-    BEntry<Element> eight;
-    BEntry<Element> nine;
-    private Consumer<BEntry<Element>> insert = x -> heap.insert(x);
+    BinaryHeap heap;
+    VertexBinary zero;
+    VertexBinary one;
+    VertexBinary two;
+    VertexBinary three;
+    VertexBinary four;
+    VertexBinary five;
+    VertexBinary six;
+    VertexBinary seven;
+    VertexBinary eight;
+    VertexBinary nine;
+    private Consumer<VertexBinary> insert = x -> heap.insert(x);
 
     @Before
     public void setUp() {
-        heap = new BinaryHeap<>();
-        zero = new BEntry<>(new VertexImpl(0), 0.0);
-        one = new BEntry<>(new VertexImpl(1), 1.0);
-        two = new BEntry<>(new VertexImpl(2), 2.0);
-        three = new BEntry<>(new VertexImpl(3), 3.0);
-        four = new BEntry<>(new VertexImpl(4), 4.0);
-        five = new BEntry<>(new VertexImpl(5), 5.0);
-        six = new BEntry<>(new VertexImpl(6), 6.0);
-        seven = new BEntry<>(new VertexImpl(7), 7.0);
-        eight = new BEntry<>(new VertexImpl(8), 8.0);
-        nine = new BEntry<>(new VertexImpl(9), 9.0);
+        heap = new BinaryHeap();
+        zero = new VertexBinary(new Vertex(0), 0.0);
+        one = new VertexBinary(new Vertex(1), 1.0);
+        two = new VertexBinary(new Vertex(2), 2.0);
+        three = new VertexBinary(new Vertex(3), 3.0);
+        four = new VertexBinary(new Vertex(4), 4.0);
+        five = new VertexBinary(new Vertex(5), 5.0);
+        six = new VertexBinary(new Vertex(6), 6.0);
+        seven = new VertexBinary(new Vertex(7), 7.0);
+        eight = new VertexBinary(new Vertex(8), 8.0);
+        nine = new VertexBinary(new Vertex(9), 9.0);
     }
 
     @Test
@@ -79,21 +78,21 @@ public class BinaryHeapTest {
         extractAndAssertEquality(nine);
     }
 
-    private void extractAndAssertEquality(BEntry<Element> zero) {
-        BEntry<Element> min = heap.extractMin();
+    private void extractAndAssertEquality(VertexBinary zero) {
+        VertexBinary min = heap.extractMin();
         Truth.assertThat(min).isEqualTo(zero);
         assert (structureIsAlright(heap));
     }
 
-    private Stream<BEntry<Element>> all() {
+    private Stream<VertexBinary> all() {
         return Stream.of(zero, one, two, three, four, five, six, seven, eight, nine);
     }
 
-    private Stream<BEntry<Element>> allWithoutZeroOneAndTwo() {
+    private Stream<VertexBinary> allWithoutZeroOneAndTwo() {
         return Stream.of(three, four, five, six, seven, eight, nine);
     }
 
-    private Stream<BEntry<Element>> allMixedOrdered() {
+    private Stream<VertexBinary> allMixedOrdered() {
         return Stream.of(nine, eight, seven, zero, one, five, six, two, three, four);
     }
 }

@@ -10,26 +10,26 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
  *         On 20.12.15 - 17:03
  */
-public final class FibonacciHeap<T extends Element> {
+public final class FibonacciHeap {
 
-    private Entry<T> min = null;
+    private VertexFibo min = null;
     private Integer size = 0;
 
-    public Entry<T> insert(Entry<T> entry) {
+    public VertexFibo insert(VertexFibo entry) {
         checkNotNull(entry);
         listConcat(entry);
         size++;
         return entry;
     }
 
-    public void listConcat(Entry<T> element) {
+    public void listConcat(VertexFibo element) {
         checkNotNull(element);
         if (min == null) {
             element.setNext(element);
             element.setPrevious(element);
             min = element;
         } else {
-            Entry<T> endHeap = min.getPrevious();
+            VertexFibo endHeap = min.getPrevious();
             min.setPrevious(element);
             element.setPrevious(endHeap);
             endHeap.setNext(element);
@@ -41,8 +41,8 @@ public final class FibonacciHeap<T extends Element> {
         }
     }
 
-    public Entry<T> extractMin() {
-        Entry<T> entry = min;
+    public VertexFibo extractMin() {
+        VertexFibo entry = min;
         if (entry != null) {
             moveChildsToRootList(entry);
 
@@ -63,7 +63,7 @@ public final class FibonacciHeap<T extends Element> {
 
     private void consolidate() {
         int degreeSize = MathHelper.log2(size) + 1;
-        Entry<T>[] degree = new Entry[degreeSize];
+        VertexFibo[] degree = new VertexFibo[degreeSize];
         for (int i = 0; i < degreeSize; i++) {
             degree[i] = null;
         }
@@ -73,7 +73,7 @@ public final class FibonacciHeap<T extends Element> {
         updateMin(degreeSize, degree);
     }
 
-    private void updateMin(int degreeSize, Entry<T>[] degree) {
+    private void updateMin(int degreeSize, VertexFibo[] degree) {
         min = null;
         for (int i = 0; i < degreeSize; i++) {
             if (degree[i] != null) {
@@ -82,10 +82,10 @@ public final class FibonacciHeap<T extends Element> {
         }
     }
 
-    private void cutAndSummarize(Entry<T>[] degree) {
+    private void cutAndSummarize(VertexFibo[] degree) {
         if (min != null) {
-            Entry<T> element = min;
-            Entry<T> next;
+            VertexFibo element = min;
+            VertexFibo next;
             do {
                 if (element == element.getNext()) {
                     next = null;
@@ -101,7 +101,7 @@ public final class FibonacciHeap<T extends Element> {
                 while (degree[currentDegree] != null) {
                     if (element.getKey() > degree[currentDegree].getKey()) {
                         //swap
-                        Entry<T> tmp = degree[currentDegree];
+                        VertexFibo tmp = degree[currentDegree];
                         degree[currentDegree] = element;
                         element = tmp;
                     }
@@ -127,10 +127,10 @@ public final class FibonacciHeap<T extends Element> {
         }
     }
 
-    public void decreaseKey(Entry<T> element, Double key) {
+    public void decreaseKey(VertexFibo element, Double key) {
         if (element != null && element.getKey() > key) {
             element.setKey(key);
-            Entry<T> parent = element.getParent();
+            VertexFibo parent = element.getParent();
             if (parent != null && element.getKey() < parent.getKey()) {
                 cut(element, parent);
                 cascadingCut(parent);
@@ -140,8 +140,8 @@ public final class FibonacciHeap<T extends Element> {
         }
     }
 
-    private static <T extends Element> void removeChildFromChildListOfParent(Entry<T> child
-            , Entry<T> parent) {
+    private static <T extends Element> void removeChildFromChildListOfParent(VertexFibo child
+            , VertexFibo parent) {
         checkNotNull(child);
         checkNotNull(parent);
         if (child.getNext() == child) {
@@ -156,16 +156,16 @@ public final class FibonacciHeap<T extends Element> {
         parent.setDeg(parent.getDeg() - 1);
     }
 
-    private void cut(Entry<T> child, Entry<T> parent) {
+    private void cut(VertexFibo child, VertexFibo parent) {
         removeChildFromChildListOfParent(child, parent);
         listConcat(child);
         child.setParent(null);
         child.setMarked(false);
     }
 
-    private void cascadingCut(Entry<T> k) {
+    private void cascadingCut(VertexFibo k) {
         checkNotNull(k);
-        Entry<T> parent = k.getParent();
+        VertexFibo parent = k.getParent();
         if (parent != null) {
             if (!k.isMarked()) {
                 k.setMarked(true);
@@ -180,9 +180,9 @@ public final class FibonacciHeap<T extends Element> {
         return getSize() == 0;
     }
 
-    private static <T extends Element> void moveChildsToRootList(Entry<T> entry) {
+    private static <T extends Element> void moveChildsToRootList(VertexFibo entry) {
         for (int i = 0; i < entry.getDeg(); i++) {
-            Entry<T> child = entry.getChild();
+            VertexFibo child = entry.getChild();
             if (child != null) {
                 if (child == child.getNext()) {
                     entry.setChild(null);
@@ -201,7 +201,7 @@ public final class FibonacciHeap<T extends Element> {
         entry.setDeg(0);
     }
 
-    public Entry<T> getMin() {
+    public VertexFibo getMin() {
         return min;
     }
 

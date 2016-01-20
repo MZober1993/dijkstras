@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import datastructure.Edge;
 import datastructure.Element;
 import datastructure.Graph;
-import datastructure.VertexImpl;
 
 import java.util.*;
 
@@ -28,7 +27,7 @@ public class GraphImpl implements Graph<Element> {
         checkNotNull(identifier);
         init();
         for (Integer id : identifier) {
-            this.vertices.put(id, new VertexImpl(id));
+            this.vertices.put(id, new Vertex(id));
         }
     }
 
@@ -36,7 +35,7 @@ public class GraphImpl implements Graph<Element> {
         checkNotNull(identifiers);
         init();
         for (Integer id : identifiers) {
-            this.vertices.put(id, new VertexImpl(id));
+            this.vertices.put(id, new Vertex(id));
         }
     }
 
@@ -86,10 +85,6 @@ public class GraphImpl implements Graph<Element> {
         return edgesFromNodeBuilder.build();
     }
 
-    public Map<Integer, List<Edge<Element>>> getOutgoingEdges() {
-        return outgoingEdges;
-    }
-
     @Override
     public List<Edge<Element>> getEdges() {
         return allEdges;
@@ -116,7 +111,7 @@ public class GraphImpl implements Graph<Element> {
         if (getElements().containsKey(id)) {
             return getElements().get(id);
         } else {
-            Element value = new VertexImpl(id);
+            Element value = new Vertex(id);
             getElements().put(id, value);
             return value;
         }

@@ -1,7 +1,7 @@
 package datastructure;
 
-import datastructure.fibo.Entry;
 import datastructure.fibo.FibonacciHeap;
+import datastructure.fibo.VertexFibo;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
@@ -12,7 +12,7 @@ public class PrintHelper {
         return String.valueOf((number == Double.MAX_VALUE) ? "MAX" : number);
     }
 
-    public static <T extends Element> String elemString(Entry<T> currentElement) {
+    public static String elemString(VertexFibo currentElement) {
         if (currentElement == null) {
             return "       null        ";
         } else {
@@ -21,7 +21,7 @@ public class PrintHelper {
         }
     }
 
-    public static <T extends Element> String currentElemString(Entry<T> currentElement) {
+    public static String currentElemString(VertexFibo currentElement) {
         if (currentElement == null) {
             return "       null        ";
         } else {
@@ -30,14 +30,14 @@ public class PrintHelper {
         }
     }
 
-    private static <T extends Element> String transformToFlatElement(Entry<T> currentElement) {
+    private static String transformToFlatElement(VertexFibo currentElement) {
         return "[id:" + currentElement.getId() + "]";
     }
 
-    public static <T extends Element> String printFibonacciHeap(FibonacciHeap<T> heap, Entry<T> startElement) {
+    public static String printFibonacciHeap(FibonacciHeap heap, VertexFibo startElement) {
         StringBuilder builder = new StringBuilder();
         if (heap.getSize() > 0) {
-            Entry<T> currentElement = startElement;
+            VertexFibo currentElement = startElement;
             builder.append("[").append(startElement.getValue()).append("]:").append("\n");
             do {
                 builder.append(entryWithoutParentsAndChildren(currentElement));
@@ -58,7 +58,7 @@ public class PrintHelper {
         return builder.toString();
     }
 
-    private static <T extends Element> String entryWithoutParentsAndChildren(Entry<T> currentElement) {
+    private static String entryWithoutParentsAndChildren(VertexFibo currentElement) {
         return "(" +
                 transformDouble(currentElement.getKey()) + "," +
                 currentElement.isMarked() + "," +
@@ -68,7 +68,7 @@ public class PrintHelper {
                 "r=" + elemString(currentElement.getNext());
     }
 
-    public static <T extends Element> String transformEntry(Entry<T> currentElement) {
+    public static String transformEntry(VertexFibo currentElement) {
         return elemString(currentElement.getPrevious()) + "<-" +
                 currentElemString(currentElement) + "->" +
                 elemString(currentElement.getNext()) + "|" +

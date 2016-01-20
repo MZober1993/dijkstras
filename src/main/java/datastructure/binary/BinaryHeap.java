@@ -1,7 +1,5 @@
 package datastructure.binary;
 
-import datastructure.Element;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,12 +7,12 @@ import java.util.List;
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
  *         On 11.01.16 - 11:34
  */
-public class BinaryHeap<T extends Element> {
+public class BinaryHeap {
 
     private Integer size = 0;
-    private List<BEntry<T>> elements = new ArrayList<>();
+    private List<VertexBinary> elements = new ArrayList<>();
 
-    public BEntry<T> insert(BEntry<T> entry) {
+    public VertexBinary insert(VertexBinary entry) {
         elements.add(entry);
         heapify(size);
 
@@ -22,8 +20,8 @@ public class BinaryHeap<T extends Element> {
         return entry;
     }
 
-    public BEntry<T> extractMin() {
-        BEntry<T> entry = elements.get(0);
+    public VertexBinary extractMin() {
+        VertexBinary entry = elements.get(0);
         entry.setPosition(null);
         elements.set(0, elements.get(size - 1));
 
@@ -32,7 +30,7 @@ public class BinaryHeap<T extends Element> {
         return entry;
     }
 
-    public void decreaseKey(BEntry<T> entry, Double key) {
+    public void decreaseKey(VertexBinary entry, Double key) {
         if (elements.get(entry.getPosition()).getKey() > key) {
             entry.setKey(key);
             heapify(entry.getPosition());
@@ -92,7 +90,7 @@ public class BinaryHeap<T extends Element> {
         elements.get(position).setPosition(positionParent);
         elements.get(positionParent).setPosition(position);
 
-        BEntry<T> swap = elements.get(position);
+        VertexBinary swap = elements.get(position);
         elements.set(position, elements.get(positionParent));
         elements.set(positionParent, swap);
     }
@@ -101,7 +99,7 @@ public class BinaryHeap<T extends Element> {
         return size;
     }
 
-    public List<BEntry<T>> getElements() {
+    public List<VertexBinary> getElements() {
         return elements;
     }
 

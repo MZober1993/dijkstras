@@ -8,8 +8,8 @@ import com.google.common.collect.ImmutableList;
 import datastructure.Element;
 import datastructure.Graph;
 import datastructure.GraphHelper;
-import datastructure.fibo.Entry;
-import datastructure.fibo.GraphImplFibo;
+import datastructure.fibo.GraphFibo;
+import datastructure.fibo.VertexFibo;
 import datastructure.standard.GraphImpl;
 
 import java.util.List;
@@ -49,12 +49,12 @@ public enum Measures {
         return builder.toString();
     }
 
-    public static String prepareFibo(GraphImplFibo graph, long limit, int endBegin) {
+    public static String prepareFibo(GraphFibo graph, long limit, int endBegin) {
         StringBuilder builder = new StringBuilder();
         DijkstraImplFibo algo = new DijkstraImplFibo();
         for (int i = 0; i < limit - endBegin; i++) {
             int id = endBegin + i;
-            Graph<Entry<Element>> fibo = graph.refreshGraph();
+            Graph<VertexFibo> fibo = graph.refreshGraph();
             List<Integer> path = calcShortestPathAndPrintTime(fibo, algo, id);
 
             builder.append(path).append(" Last: ").append(id).append("\n");

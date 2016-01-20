@@ -7,8 +7,8 @@ import algorithm.standard.DijkstraImpl;
 import datastructure.Element;
 import datastructure.Graph;
 import datastructure.GraphHelper;
-import datastructure.binary.GraphImplBinary;
-import datastructure.fibo.GraphImplFibo;
+import datastructure.binary.GraphBinary;
+import datastructure.fibo.GraphFibo;
 import datastructure.standard.GraphImpl;
 import util.MathHelper;
 
@@ -55,8 +55,8 @@ public class FileWriter extends BasicFileWriter {
 
     protected void tNWriteOfAll(Integer times, boolean scaledN, GraphImpl graph, int n, int m, int emptySpace)
             throws IOException {
-        GraphImplFibo fiboGraph = GraphHelper.transformGraphToEntryGraph(graph);
-        GraphImplBinary binaryGraph = GraphHelper.transformGraphToBinaryGraph(graph);
+        GraphFibo fiboGraph = GraphHelper.transformGraphToEntryGraph(graph);
+        GraphBinary binaryGraph = GraphHelper.transformGraphToBinaryGraph(graph);
         DijkstraImpl stdAlgo = new DijkstraImpl();
         DijkstraImplFibo fiboAlgo = new DijkstraImplFibo();
         DijkstraImplBinary binAlgo = new DijkstraImplBinary();

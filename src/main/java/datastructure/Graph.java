@@ -9,7 +9,7 @@ import java.util.Map;
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
  *         On 16.12.15 - 20:09
  */
-public interface Graph<T> {
+public interface Graph<T extends Element> {
 
     T getElementOrCreateOne(int id);
 
@@ -31,9 +31,9 @@ public interface Graph<T> {
         return getElements().entrySet().stream().findAny().get().getValue();
     }
 
-    List<Edge<T>> getEdgesFromNode(Integer identifier);
+    List<? extends Edge<T>> getEdgesFromNode(Integer identifier);
 
-    List<Edge<T>> getEdgesFromNode(T element);
+    List<? extends Edge<T>> getEdgesFromNode(T element);
 
     void addConnection(Integer signOne, Integer signTwo, Double distance);
 
@@ -42,7 +42,7 @@ public interface Graph<T> {
         return getElement(MathHelper.calculateRandomNodeId((size * 3) / 4, size));
     }
 
-    List<Edge<T>> getEdges();
+    List<? extends Edge<T>> getEdges();
 
     default boolean isEmpty() {
         return getElements().size() == 0;

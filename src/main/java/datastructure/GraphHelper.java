@@ -2,9 +2,9 @@ package datastructure;
 
 import algorithm.Dijkstra;
 import com.google.common.base.Stopwatch;
-import datastructure.binary.GraphImplBinary;
-import datastructure.fibo.Entry;
-import datastructure.fibo.GraphImplFibo;
+import datastructure.binary.GraphBinary;
+import datastructure.fibo.GraphFibo;
+import datastructure.fibo.VertexFibo;
 import datastructure.standard.GraphImpl;
 
 import java.util.ArrayList;
@@ -93,33 +93,33 @@ public class GraphHelper {
     }
 
 
-    public static GraphImplFibo transformGraphToEntryGraph(Graph<Element> graph) {
-        GraphImplFibo entryGraph = new GraphImplFibo(elementsToIdList(graph));
+    public static GraphFibo transformGraphToEntryGraph(Graph<Element> graph) {
+        GraphFibo entryGraph = new GraphFibo(elementsToIdList(graph));
         graph.getEdges().stream().forEach(edgeMapper(entryGraph));
         return entryGraph;
     }
 
-    public static GraphImplBinary transformGraphToBinaryGraph(Graph<Element> graph) {
-        GraphImplBinary binaryGraph = new GraphImplBinary(elementsToIdList(graph));
+    public static GraphBinary transformGraphToBinaryGraph(Graph<Element> graph) {
+        GraphBinary binaryGraph = new GraphBinary(elementsToIdList(graph));
         graph.getEdges().stream().forEach(edgeMapper(binaryGraph));
         return binaryGraph;
     }
 
-    public static GraphImpl transformGraphToElementGraph(Graph<Entry<Element>> entryGraph) {
+    public static GraphImpl transformGraphToElementGraph(Graph<VertexFibo> entryGraph) {
         GraphImpl graph = new GraphImpl(elementsToIdList(entryGraph));
         entryGraph.getEdges().stream().forEach(edgeMapper(graph));
         return graph;
     }
 
-    private static Consumer<Edge<Element>> edgeMapper(GraphImplFibo entryGraph) {
+    private static Consumer<Edge<Element>> edgeMapper(GraphFibo entryGraph) {
         return edge -> entryGraph.addConnection(edge.getFirst().getId(), edge.getSecond().getId(), edge.getDistance());
     }
 
-    private static Consumer<Edge<Element>> edgeMapper(GraphImplBinary graph) {
+    private static Consumer<Edge<Element>> edgeMapper(GraphBinary graph) {
         return edge -> graph.addConnection(edge.getFirst().getId(), edge.getSecond().getId(), edge.getDistance());
     }
 
-    private static Consumer<Edge<Entry<Element>>> edgeMapper(GraphImpl graph) {
+    private static Consumer<Edge<VertexFibo>> edgeMapper(GraphImpl graph) {
         return edge -> graph.addConnection(edge.getFirst().getId(), edge.getSecond().getId(), edge.getDistance());
     }
 
