@@ -1,15 +1,14 @@
-package datastructure.standard;
+package datastructure.binary;
 
 import datastructure.AbstractEdge;
-import datastructure.Element;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
  *         On 20.01.16 - 20:17
  */
-public class EdgeImpl extends AbstractEdge<Element> {
+public class EdgeImplBinary extends AbstractEdge<VertexBinary> {
 
-    public EdgeImpl(Element connected, Double distance) {
+    public EdgeImplBinary(VertexBinary connected, Double distance) {
         super(connected, distance);
     }
 }

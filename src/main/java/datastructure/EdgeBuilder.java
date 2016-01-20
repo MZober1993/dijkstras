@@ -4,7 +4,7 @@ package datastructure;
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
  *         04.11.15 - 13:39
  */
-public class EdgeBuilder<G extends Graph<T>, E extends Edge<T>, T extends Element> {
+public class EdgeBuilder<G extends Graph<T, H>, H extends Edge<T>, T extends Element> {
 
     private Integer currentId;
     private G graph;
@@ -13,7 +13,7 @@ public class EdgeBuilder<G extends Graph<T>, E extends Edge<T>, T extends Elemen
         this.graph = graph;
     }
 
-    public EdgeBuilder<G, E, T> current(Integer currentId) {
+    public EdgeBuilder<G, H, T> current(Integer currentId) {
         if (!graph.getElements().containsKey(currentId)) {
             throw new RuntimeException("Unknown identifiers:" + currentId);
         }
@@ -21,7 +21,7 @@ public class EdgeBuilder<G extends Graph<T>, E extends Edge<T>, T extends Elemen
         return this;
     }
 
-    public EdgeBuilder<G, E, T> to(Integer id, Double dist) {
+    public EdgeBuilder<G, H, T> to(Integer id, Double dist) {
         if (graph.getElements().containsKey(currentId) && graph.getElements().containsKey(id)) {
             graph.addConnection(currentId, id, dist);
             return this;

@@ -33,7 +33,7 @@ public class TheoreticalWriter extends FileWriter {
             writeHeader();
             scaleMeasureSample(100).forEach(element -> {
                 GraphImpl graph = graphImporter.importElementGraph(element);
-                int m = graph.getEdges().size();
+                int m = graph.getEdgeSize();
                 int n = graph.getElements().size();
                 writeTn(n, (m + n) * Math.log(n) * n, 2 * n + 2 * n * Math.log(n) + m + m * n * Math.log(n) * 2);
             });

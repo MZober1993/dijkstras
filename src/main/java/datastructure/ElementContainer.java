@@ -3,6 +3,7 @@ package datastructure;
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
  *         On 20.01.16 - 19:03
+ *         This class only delegates.
  */
 public class ElementContainer implements Element {
 
@@ -21,6 +22,16 @@ public class ElementContainer implements Element {
     public Element getValue() {
         checkValueNotNull();
         return value;
+    }
+
+    @Override
+    public Boolean hasConnectionTo(Integer id) {
+        return value.hasConnectionTo(id);
+    }
+
+    @Override
+    public void isConnectionTo(Integer id) {
+        value.isConnectionTo(id);
     }
 
     @Override

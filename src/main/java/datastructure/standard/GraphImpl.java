@@ -1,97 +1,51 @@
 package datastructure.standard;
 
-import com.google.common.collect.ImmutableList;
-import datastructure.Edge;
+import datastructure.AbstractGraph;
 import datastructure.Element;
 import datastructure.Graph;
 
-import java.util.*;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import java.util.List;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
  *         01.11.15 - 18:40
  */
-public class GraphImpl implements Graph<Element> {
-
-    private Map<Integer, List<Edge<Element>>> outgoingEdges;
-    private List<Edge<Element>> allEdges;
-    private Map<Integer, Element> vertices;
+public class GraphImpl extends AbstractGraph<Element, EdgeImpl> {
 
     public GraphImpl() {
-        init();
+        super();
     }
 
     public GraphImpl(Integer... identifier) {
-        checkNotNull(identifier);
-        init();
+        super(identifier);
         for (Integer id : identifier) {
             this.vertices.put(id, new Vertex(id));
         }
     }
 
     public GraphImpl(List<Integer> identifiers) {
-        checkNotNull(identifiers);
-        init();
+        super(identifiers);
         for (Integer id : identifiers) {
             this.vertices.put(id, new Vertex(id));
         }
-    }
-
-    private void init() {
-        outgoingEdges = new LinkedHashMap<>();
-        allEdges = new ArrayList<>();
-        vertices = new LinkedHashMap<>();
     }
 
     @Override
     public void addConnection(Integer signOne, Integer signTwo, Double distance) {
         Element one = getElementOrCreateOne(signOne);
         Element two = getElementOrCreateOne(signTwo);
-        EdgeImpl edge = new EdgeImpl(one, two, distance);
-        if (!allEdges.contains(edge)) {
-            allEdges.add(edge);
-        }
-        Optional<List<Edge<Element>>> edges = Optional.ofNullable(outgoingEdges.get(one.getId()));
-        if (edges.isPresent()) {
-            List<Edge<Element>> value = edges.get();
-            if (!value.contains(edge)) {
-                outgoingEdges.put(one.getId(),
-                        ImmutableList.<Edge<Element>>builder().addAll(value).add(edge).build());
-            }
-        } else {
-            outgoingEdges.put(one.getId(), ImmutableList.of(edge));
+
+        if (!one.hasConnectionTo(signTwo)) {
+            adjacencyGraph.get(signOne).add(new EdgeImpl(two, distance));
+            adjacencyGraph.get(signTwo).add(new EdgeImpl(one, distance));
+            one.isConnectionTo(signTwo);
+            two.isConnectionTo(signOne);
+            size++;
         }
     }
 
     @Override
-    public List<Edge<Element>> getEdgesFromNode(Integer identifier) {
-        checkNotNull(identifier);
-        return edgesFromNodes(vertices.get(identifier));
-    }
-
-    @Override
-    public List<Edge<Element>> getEdgesFromNode(Element vertex) {
-        checkNotNull(vertex);
-        return edgesFromNodes(vertex);
-    }
-
-    private List<Edge<Element>> edgesFromNodes(Element element) {
-        ImmutableList.Builder<Edge<Element>> edgesFromNodeBuilder = new ImmutableList.Builder<>();
-        for (List<Edge<Element>> edges : outgoingEdges.values()) {
-            edges.stream().filter(currentEdge -> currentEdge.contains(element)).forEach(edgesFromNodeBuilder::add);
-        }
-        return edgesFromNodeBuilder.build();
-    }
-
-    @Override
-    public List<Edge<Element>> getEdges() {
-        return allEdges;
-    }
-
-    @Override
-    public Graph<Element> refreshGraph() {
+    public Graph<Element, EdgeImpl> refreshGraph() {
         vertices.forEach((Integer id, Element entry) -> {
             entry.setClosed(false);
             entry.setAnchor(null);
@@ -99,11 +53,6 @@ public class GraphImpl implements Graph<Element> {
         });
 
         return this;
-    }
-
-    @Override
-    public Map<Integer, Element> getElements() {
-        return vertices;
     }
 
     @Override
@@ -115,13 +64,5 @@ public class GraphImpl implements Graph<Element> {
             getElements().put(id, value);
             return value;
         }
-    }
-
-    @Override
-    public String toString() {
-        return "StandardGraph{" +
-                "\nvertices=" + vertices +
-                ",\noutgoingEdges=" + outgoingEdges +
-                "\n}";
     }
 }

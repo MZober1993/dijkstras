@@ -17,7 +17,8 @@ import java.util.PriorityQueue;
 public class DijkstraImpl implements Dijkstra<Element> {
 
     @Override
-    public <G extends Graph<Element>> List<Integer> shortestPath(G graph, Element start, Element finish) {
+    public <G extends Graph<Element, ? extends Edge<Element>>> List<Integer>
+    shortestPath(G graph, Element start, Element finish) {
         PriorityQueue<Element> nodes = new PriorityQueue<>();
 
         for (Element vertex : graph.getElements().values()) {
@@ -41,8 +42,8 @@ public class DijkstraImpl implements Dijkstra<Element> {
                 continue;
             }
 
-            for (Edge<Element> edge : graph.<Edge<Element>>getEdgesFromNode(smallest.getId())) {
-                final Element connected = edge.getConnected(smallest);
+            for (Edge<Element> edge : graph.getConnectedElements(smallest)) {
+                final Element connected = edge.getConnected();
                 if (!connected.isClosed()) {
                     final Double alt = smallest.getG() + edge.getDistance();
 

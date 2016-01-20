@@ -5,9 +5,11 @@ import algorithm.fibo.DijkstraImplFibo;
 import algorithm.standard.DijkstraImpl;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.ImmutableList;
+import datastructure.Edge;
 import datastructure.Element;
 import datastructure.Graph;
 import datastructure.GraphHelper;
+import datastructure.fibo.EdgeImplFibo;
 import datastructure.fibo.GraphFibo;
 import datastructure.fibo.VertexFibo;
 import datastructure.standard.GraphImpl;
@@ -54,7 +56,7 @@ public enum Measures {
         DijkstraImplFibo algo = new DijkstraImplFibo();
         for (int i = 0; i < limit - endBegin; i++) {
             int id = endBegin + i;
-            Graph<VertexFibo> fibo = graph.refreshGraph();
+            Graph<VertexFibo, EdgeImplFibo> fibo = graph.refreshGraph();
             List<Integer> path = calcShortestPathAndPrintTime(fibo, algo, id);
 
             builder.append(path).append(" Last: ").append(id).append("\n");
@@ -62,7 +64,7 @@ public enum Measures {
         return builder.toString();
     }
 
-    private static <G extends Graph<T>, T extends Element>
+    private static <G extends Graph<T, ? extends Edge<T>>, T extends Element>
     List<Integer> calcShortestPathAndPrintTime(G graph, Dijkstra<T> algo, int id) {
         Stopwatch stopwatch = Stopwatch.createStarted();
         List<Integer> path = algo.shortestPath(graph, graph.getElement(GraphHelper.FIRST), graph.getElement(id));

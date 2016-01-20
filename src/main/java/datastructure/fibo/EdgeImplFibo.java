@@ -1,15 +1,14 @@
-package datastructure.standard;
+package datastructure.fibo;
 
 import datastructure.AbstractEdge;
-import datastructure.Element;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
  *         On 20.01.16 - 20:17
  */
-public class EdgeImpl extends AbstractEdge<Element> {
+public class EdgeImplFibo extends AbstractEdge<VertexFibo> {
 
-    public EdgeImpl(Element connected, Double distance) {
+    public EdgeImplFibo(VertexFibo connected, Double distance) {
         super(connected, distance);
     }
 }

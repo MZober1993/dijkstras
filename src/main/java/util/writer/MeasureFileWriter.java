@@ -42,7 +42,7 @@ public class MeasureFileWriter extends FileWriter {
                 }
                 GraphImpl graph = graphImporter.importElementGraph(limit);
                 int n = graph.getElements().size();
-                int m = graph.getEdges().size();
+                int m = graph.getEdgeSize();
                 if (n < limit) {
                     limitReached = true;
                 }

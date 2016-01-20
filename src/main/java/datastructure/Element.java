@@ -8,6 +8,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public interface Element extends Comparable<Element> {
 
+    Boolean hasConnectionTo(Integer id);
+
+    void isConnectionTo(Integer id);
+
     Integer getId();
 
     void setG(Double g);

@@ -1,5 +1,6 @@
 package algorithm;
 
+import datastructure.Edge;
 import datastructure.Element;
 import datastructure.Graph;
 
@@ -16,5 +17,5 @@ public interface Dijkstra<T extends Element> {
      * @param finish    The element of the end-point.
      * @return a list of characters, representing a shortestPath in an example
      */
-    <G extends Graph<T>> List<Integer> shortestPath(G graph, T start, T finish);
+    <G extends Graph<T, ? extends Edge<T>>> List<Integer> shortestPath(G graph, T start, T finish);
 }

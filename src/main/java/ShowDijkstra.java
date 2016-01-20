@@ -2,10 +2,7 @@ import algorithm.Dijkstra;
 import algorithm.binary.DijkstraImplBinary;
 import algorithm.fibo.DijkstraImplFibo;
 import algorithm.standard.DijkstraImpl;
-import datastructure.Element;
-import datastructure.Graph;
-import datastructure.GraphHelper;
-import datastructure.Pair;
+import datastructure.*;
 import util.GraphImporter;
 import util.ImportFile;
 
@@ -29,8 +26,8 @@ public class ShowDijkstra {
         testDijkstras(new DijkstraImplBinary(), importer.importBinaryGraph(limit), limit);
     }
 
-    private static <G extends Graph<T>, T extends Element> void testDijkstras(Dijkstra<T> dijkstra,
-                                                                              G graph, Long limit) {
+    private static <G extends Graph<T, ? extends Edge>, T extends Element> void testDijkstras(Dijkstra<T> dijkstra,
+                                                                                              G graph, Long limit) {
         int size = graph.getElements().size();
         for (int i = 0; i < 100; i++) {
             int id = size * (1 + i) / (800 + i);

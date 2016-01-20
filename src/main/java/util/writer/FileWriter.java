@@ -4,6 +4,7 @@ import algorithm.Dijkstra;
 import algorithm.binary.DijkstraImplBinary;
 import algorithm.fibo.DijkstraImplFibo;
 import algorithm.standard.DijkstraImpl;
+import datastructure.Edge;
 import datastructure.Element;
 import datastructure.Graph;
 import datastructure.GraphHelper;
@@ -55,7 +56,7 @@ public class FileWriter extends BasicFileWriter {
 
     protected void tNWriteOfAll(Integer times, boolean scaledN, GraphImpl graph, int n, int m, int emptySpace)
             throws IOException {
-        GraphFibo fiboGraph = GraphHelper.transformGraphToEntryGraph(graph);
+        GraphFibo fiboGraph = GraphHelper.transformGraphToFiboGraph(graph);
         GraphBinary binaryGraph = GraphHelper.transformGraphToBinaryGraph(graph);
         DijkstraImpl stdAlgo = new DijkstraImpl();
         DijkstraImplFibo fiboAlgo = new DijkstraImplFibo();
@@ -149,7 +150,7 @@ public class FileWriter extends BasicFileWriter {
     }
 
     protected <T extends Element> void writingAndSaveTime(Dijkstra<T> algo, Stream.Builder<Long> builder
-            , Graph<T> graph) throws IOException {
+            , Graph<T, ? extends Edge<T>> graph) throws IOException {
         long stdTime = GraphHelper.calculateTimeWithLastRandom(graph, algo);
         builder.add(stdTime);
         writeTimeWithScale(stdTime, A_MILLION);

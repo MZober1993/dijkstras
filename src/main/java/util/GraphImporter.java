@@ -56,6 +56,7 @@ public class GraphImporter<T extends Element> {
 
     public GraphImpl importElementGraph(Long n) {
         GraphImpl graph = new GraphImpl();
+        graph.init(Math.toIntExact(n));
         if (!Files.exists(pathOfGraphFile)) {
             createDirAndPlainImportFile();
         }
@@ -77,7 +78,7 @@ public class GraphImporter<T extends Element> {
     }
 
     public GraphFibo importEntryGraph(Long n) {
-        return GraphHelper.transformGraphToEntryGraph(importElementGraph(n));
+        return GraphHelper.transformGraphToFiboGraph(importElementGraph(n));
     }
 
     public GraphBinary importBinaryGraph(Long n) {

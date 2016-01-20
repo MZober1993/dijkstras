@@ -4,12 +4,13 @@ import util.MathHelper;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
  *         On 16.12.15 - 20:09
  */
-public interface Graph<T extends Element> {
+public interface Graph<T extends Element, H extends Edge<T>> {
 
     T getElementOrCreateOne(int id);
 
@@ -31,9 +32,9 @@ public interface Graph<T extends Element> {
         return getElements().entrySet().stream().findAny().get().getValue();
     }
 
-    List<? extends Edge<T>> getEdgesFromNode(Integer identifier);
+    Set<? extends Edge<T>> getConnectedElements(T vertex);
 
-    List<? extends Edge<T>> getEdgesFromNode(T element);
+    List<Set<H>> getAdjacencyGraph();
 
     void addConnection(Integer signOne, Integer signTwo, Double distance);
 
@@ -42,11 +43,11 @@ public interface Graph<T extends Element> {
         return getElement(MathHelper.calculateRandomNodeId((size * 3) / 4, size));
     }
 
-    List<? extends Edge<T>> getEdges();
+    int getEdgeSize();
 
     default boolean isEmpty() {
         return getElements().size() == 0;
     }
 
-    Graph<T> refreshGraph();
+    Graph<T, H> refreshGraph();
 }

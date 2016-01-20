@@ -1,12 +1,9 @@
 package algorithm.fibo;
 
 import com.google.common.truth.Truth;
-import datastructure.Element;
 import datastructure.GraphHelper;
-import datastructure.fibo.EdgeFibo;
 import datastructure.fibo.GraphFibo;
 import datastructure.fibo.VertexFibo;
-import datastructure.standard.EdgeImpl;
 import datastructure.standard.GraphImpl;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,9 +22,9 @@ public class DijkstraImplFiboTest {
 
     @Before
     public void setUp() {
-        graph = GraphHelper.<GraphFibo, EdgeFibo, VertexFibo>buildSampleGraph(
+        graph = GraphHelper.buildSampleGraph(
                 new GraphFibo(0, 1, 2, 3, 4, 5, 6, 7));
-        graphStd = GraphHelper.<GraphImpl, EdgeImpl, Element>buildSampleGraph(
+        graphStd = GraphHelper.buildSampleGraph(
                 new GraphImpl(0, 1, 2, 3, 4, 5, 6, 7));
         dijkstra = new DijkstraImplFibo();
     }
@@ -39,11 +36,5 @@ public class DijkstraImplFiboTest {
         List<Integer> actual = dijkstra.shortestPath(graph, start, end);
 
         Truth.assertThat(actual).containsAllOf(0, 1, 5, 7).inOrder();
-    }
-
-    @Test
-    public void testSameGraph() throws Exception {
-        Truth.assertThat(graph.getVertices()).isEqualTo(graphStd.getElements());
-        Truth.assertThat(graph.getEdges().toString()).isEqualTo(graphStd.getEdges().toString());
     }
 }

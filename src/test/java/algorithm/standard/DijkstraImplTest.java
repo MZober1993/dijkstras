@@ -3,7 +3,6 @@ package algorithm.standard;
 import com.google.common.truth.Truth;
 import datastructure.Element;
 import datastructure.GraphHelper;
-import datastructure.standard.EdgeImpl;
 import datastructure.standard.GraphImpl;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,7 +20,7 @@ public class DijkstraImplTest {
 
     @Before
     public void setUp() {
-        graph = GraphHelper.<GraphImpl, EdgeImpl, Element>buildSampleGraph(new GraphImpl(0, 1, 2, 3, 4, 5, 6, 7));
+        graph = GraphHelper.buildSampleGraph(new GraphImpl(0, 1, 2, 3, 4, 5, 6, 7));
         dijkstra = new DijkstraImpl();
     }
 

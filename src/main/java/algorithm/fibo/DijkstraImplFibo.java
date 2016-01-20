@@ -17,8 +17,7 @@ import java.util.List;
 public class DijkstraImplFibo implements Dijkstra<VertexFibo> {
 
     @Override
-    public <G extends Graph<VertexFibo>> List<Integer> shortestPath(G graph
-            , VertexFibo start, VertexFibo finish) {
+    public <G extends Graph<VertexFibo, ? extends Edge<VertexFibo>>> List<Integer> shortestPath(G graph, VertexFibo start, VertexFibo finish) {
         FibonacciHeap nodes = new FibonacciHeap();
         for (VertexFibo entry : graph.getElements().values()) {
             entry.setKey(Double.MAX_VALUE);
@@ -38,8 +37,8 @@ public class DijkstraImplFibo implements Dijkstra<VertexFibo> {
                 continue;
             }
 
-            for (Edge<VertexFibo> edge : graph.<Edge<VertexFibo>>getEdgesFromNode(smallest.getId())) {
-                final VertexFibo connected = edge.getConnected(smallest);
+            for (Edge<VertexFibo> edge : graph.<Edge<VertexFibo>>getConnectedElements(smallest)) {
+                final VertexFibo connected = edge.getConnected();
                 if (connected.isClosed()) {
                     continue;
                 }

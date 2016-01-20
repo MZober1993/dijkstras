@@ -4,14 +4,15 @@ import algorithm.Dijkstra;
 import com.google.common.base.Stopwatch;
 import datastructure.binary.GraphBinary;
 import datastructure.fibo.GraphFibo;
-import datastructure.fibo.VertexFibo;
-import datastructure.standard.GraphImpl;
+import datastructure.standard.EdgeImpl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
@@ -21,22 +22,11 @@ public class GraphHelper {
 
     public static final int FIRST = 1;
 
-    public static <G extends Graph<T>, E extends Edge<T>, T extends Element> G buildSampleGraph(G graph) {
-        EdgeBuilder<G, E, T> builder = new EdgeBuilder<>(graph);
+    public static <G extends Graph<T, H>, H extends Edge<T>, T extends Element>
+    G buildSampleGraph(G graph) {
+        EdgeBuilder<G, H, T> builder = new EdgeBuilder<>(graph);
         linkFlatGraphWithSampleDistances(builder);
         return graph;
-    }
-
-    private static void linkGraphWithSampleDistances(EdgeBuilder builder) {
-        builder.current(0).to(1, 7.0).to(2, 8.0);
-        builder.current(1).to(0, 7.0).to(5, 2.0);
-        builder.current(2).to(0, 8.0).to(5, 6.0).to(6, 4.0);
-        builder.current(3).to(5, 8.0);
-        builder.current(4).to(7, 1.0);
-        builder.current(5).to(1, 2.0).to(2, 6.0).to(3, 8.0)
-                .to(6, 9.0).to(7, 3.0);
-        builder.current(6).to(2, 4.0).to(5, 9.0);
-        builder.current(7).to(4, 1.0).to(5, 3.0);
     }
 
     private static void linkFlatGraphWithSampleDistances(EdgeBuilder builder) {
@@ -48,21 +38,21 @@ public class GraphHelper {
         builder.current(5).to(6, 9.0).to(7, 3.0);
     }
 
-    public static <G extends Graph<T>, T extends Element> long calculateTimeWithLastRandom(G graph,
-                                                                                           Dijkstra<T> algorithm) {
+    public static <G extends Graph<T, ? extends Edge<T>>, T extends Element> long calculateTimeWithLastRandom(G graph,
+                                                                                                              Dijkstra<T> algorithm) {
         T start = graph.getElement(FIRST);
         T end = graph.getLastRandomElement();
 
         return calculateTime(graph, algorithm, start, end);
     }
 
-    public static <G extends Graph<T>, T extends Element> Pair<Long, List<Integer>>
+    public static <G extends Graph<T, ? extends Edge<T>>, T extends Element> Pair<Long, List<Integer>>
     calculateTimeAndPathWithLastRandom(G graph, Dijkstra<T> algo) {
         T end = graph.getLastRandomElement();
         return calculateTimeAndPath(graph, algo, end);
     }
 
-    public static <G extends Graph<T>, T extends Element> Pair<Long, List<Integer>>
+    public static <G extends Graph<T, ? extends Edge<T>>, T extends Element> Pair<Long, List<Integer>>
     calculateTimeAndPath(G graph, Dijkstra<T> algo, T end) {
         T start = graph.getElement(FIRST);
         Stopwatch stopwatch = Stopwatch.createStarted();
@@ -72,8 +62,8 @@ public class GraphHelper {
         return new Pair<>(stopwatch.elapsed(TimeUnit.NANOSECONDS), path);
     }
 
-    private static <G extends Graph<T>, T extends Element> long calculateTime(G graph, Dijkstra<T> algorithm, T start,
-                                                                              T end) {
+    private static <G extends Graph<T, ? extends Edge<T>>, T extends Element> long calculateTime(G graph, Dijkstra<T> algorithm, T start,
+                                                                                                 T end) {
         Stopwatch stopwatch = Stopwatch.createStarted();
         algorithm.shortestPath(graph, start, end);
         stopwatch.stop();
@@ -92,38 +82,33 @@ public class GraphHelper {
         return path;
     }
 
-
-    public static GraphFibo transformGraphToEntryGraph(Graph<Element> graph) {
+    public static GraphFibo transformGraphToFiboGraph(Graph<Element, EdgeImpl> graph) {
         GraphFibo entryGraph = new GraphFibo(elementsToIdList(graph));
-        graph.getEdges().stream().forEach(edgeMapper(entryGraph));
+        List<Set<EdgeImpl>> adjacencyGraph = graph.getAdjacencyGraph();
+        IntStream.range(0, adjacencyGraph.size())
+                .forEach(i -> adjacencyGraph.get(i).stream().forEach(edgeMapper(entryGraph, i)));
         return entryGraph;
     }
 
-    public static GraphBinary transformGraphToBinaryGraph(Graph<Element> graph) {
+    private static Consumer<EdgeImpl> edgeMapper(GraphFibo entryGraph, int i) {
+        return halfEdge -> entryGraph.addConnection(i, halfEdge.getConnected().getId()
+                , halfEdge.getDistance());
+    }
+
+    private static Consumer<EdgeImpl> edgeMapper(GraphBinary binaryGraph, int i) {
+        return halfEdge -> binaryGraph.addConnection(i, halfEdge.getConnected().getId()
+                , halfEdge.getDistance());
+    }
+
+    public static GraphBinary transformGraphToBinaryGraph(Graph<Element, EdgeImpl> graph) {
         GraphBinary binaryGraph = new GraphBinary(elementsToIdList(graph));
-        graph.getEdges().stream().forEach(edgeMapper(binaryGraph));
+        List<Set<EdgeImpl>> adjacencyGraph = graph.getAdjacencyGraph();
+        IntStream.range(0, adjacencyGraph.size())
+                .forEach(i -> adjacencyGraph.get(i).stream().forEach(edgeMapper(binaryGraph, i)));
         return binaryGraph;
     }
 
-    public static GraphImpl transformGraphToElementGraph(Graph<VertexFibo> entryGraph) {
-        GraphImpl graph = new GraphImpl(elementsToIdList(entryGraph));
-        entryGraph.getEdges().stream().forEach(edgeMapper(graph));
-        return graph;
-    }
-
-    private static Consumer<Edge<Element>> edgeMapper(GraphFibo entryGraph) {
-        return edge -> entryGraph.addConnection(edge.getFirst().getId(), edge.getSecond().getId(), edge.getDistance());
-    }
-
-    private static Consumer<Edge<Element>> edgeMapper(GraphBinary graph) {
-        return edge -> graph.addConnection(edge.getFirst().getId(), edge.getSecond().getId(), edge.getDistance());
-    }
-
-    private static Consumer<Edge<VertexFibo>> edgeMapper(GraphImpl graph) {
-        return edge -> graph.addConnection(edge.getFirst().getId(), edge.getSecond().getId(), edge.getDistance());
-    }
-
-    private static <T extends Element> List<Integer> elementsToIdList(Graph<T> entryGraph) {
+    private static <T extends Element> List<Integer> elementsToIdList(Graph<T, ? extends Edge<T>> entryGraph) {
         return entryGraph.getElements().values()
                 .stream().map(T::getId).collect(Collectors.toList());
     }

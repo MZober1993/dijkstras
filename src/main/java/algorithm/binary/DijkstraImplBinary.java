@@ -17,7 +17,8 @@ import java.util.List;
 public class DijkstraImplBinary implements Dijkstra<VertexBinary> {
 
     @Override
-    public <G extends Graph<VertexBinary>> List<Integer> shortestPath(G graph, VertexBinary start
+    public <G extends Graph<VertexBinary, ? extends Edge<VertexBinary>>> List<Integer>
+    shortestPath(G graph, VertexBinary start
             , VertexBinary finish) {
         BinaryHeap nodes = new BinaryHeap();
         for (VertexBinary entry : graph.getElements().values()) {
@@ -38,8 +39,8 @@ public class DijkstraImplBinary implements Dijkstra<VertexBinary> {
                 continue;
             }
 
-            for (Edge<VertexBinary> edge : graph.<Edge<VertexBinary>>getEdgesFromNode(smallest.getId())) {
-                final VertexBinary connected = edge.getConnected(smallest);
+            for (Edge<VertexBinary> edge : graph.<Edge<VertexBinary>>getConnectedElements(smallest)) {
+                final VertexBinary connected = edge.getConnected();
                 if (connected.isClosed()) {
                     continue;
                 }

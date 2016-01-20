@@ -7,13 +7,14 @@ import com.google.common.truth.Truth;
 import datastructure.Edge;
 import datastructure.Element;
 import datastructure.Graph;
-import datastructure.fibo.EdgeFibo;
+import datastructure.fibo.EdgeImplFibo;
 import datastructure.fibo.GraphFibo;
 import datastructure.fibo.VertexFibo;
 import datastructure.standard.GraphImpl;
 import org.junit.Test;
 
 import java.util.List;
+import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static junit.framework.Assert.*;
@@ -28,7 +29,7 @@ import static junit.framework.Assert.*;
 public class GraphImporterIT {
 
     public static final long MINIMUM_COUNT = 2;
-    public static final int FIRST = 0;
+    public static final int FIRST = 1;
     public static final long EMPTY = 0;
     public static final long SMALL_LIMIT_NUMBER = 20;
     public static final GraphImporter<Element> IMPORTER = new GraphImporter<>(ImportFile.CREATED);
@@ -55,11 +56,11 @@ public class GraphImporterIT {
     public void testImportFiboGraph() {
         GraphFibo graph = IMPORTER.importEntryGraph(SMALL_LIMIT_NUMBER);
         VertexFibo element = graph.getOne();
-        List<EdgeFibo> edgesFromNode = graph.getEdgesFromNode(element);
-        Edge<VertexFibo> edge = edgesFromNode.get(FIRST);
+        Set<EdgeImplFibo> edgesFromNode = graph.getConnectedElements(element);
+        System.out.println(edgesFromNode);
 
         checkGraphContainsVerticesAndEdges(graph, edgesFromNode);
-        checkEdgeContainsDistanceAndTwoVertices(edge);
+        checkEdgeContainsDistanceAndAVertex(edgesFromNode.stream().findFirst().get());
     }
 
     @Test
@@ -99,24 +100,23 @@ public class GraphImporterIT {
         multipleDijkstra(7L);
     }
 
-    private <T extends Element> void importGraphTest(Graph<T> graph) {
+    private <T extends Element> void importGraphTest(Graph<T, ? extends Edge<T>> graph) {
         T element = graph.getOne();
-        List<? extends Edge<T>> edgesFromNode = graph.getEdgesFromNode(element);
-        Edge<T> edge = edgesFromNode.get(FIRST);
+        Set<? extends Edge<T>> edgesFromNode = graph.getConnectedElements(element);
+        Edge<T> edge = graph.getAdjacencyGraph().get(FIRST).stream().findFirst().get();
 
         checkGraphContainsVerticesAndEdges(graph, edgesFromNode);
-        checkEdgeContainsDistanceAndTwoVertices(edge);
+        checkEdgeContainsDistanceAndAVertex(edge);
     }
 
     private static <T extends Element, E extends Edge<T>> void
-    checkEdgeContainsDistanceAndTwoVertices(E edge) {
+    checkEdgeContainsDistanceAndAVertex(E edge) {
         assertNotNull(edge.getDistance());
-        assertNotNull(edge.getFirst());
-        assertNotNull(edge.getSecond());
+        assertNotNull(edge.getConnected());
     }
 
-    private <T extends Element> void checkGraphContainsVerticesAndEdges(Graph<T> graph
-            , List<? extends Edge<T>> edgesFromNode) {
+    private <T extends Element> void checkGraphContainsVerticesAndEdges(Graph<T, ? extends Edge<T>> graph
+            , Set<? extends Edge<T>> edgesFromNode) {
         Truth.assertThat(graph.getElements().size() > MINIMUM_COUNT);
         Truth.assertThat(edgesFromNode.size() > EMPTY);
     }

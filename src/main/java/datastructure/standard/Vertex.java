@@ -3,6 +3,9 @@ package datastructure.standard;
 import datastructure.Element;
 import datastructure.PrintHelper;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -15,6 +18,7 @@ public class Vertex implements Element {
     private Double g;
     private Element anchor;
     private boolean closed;
+    private Map<Integer, Boolean> connectionTo;
 
     public Vertex(Integer id) {
         super();
@@ -23,6 +27,17 @@ public class Vertex implements Element {
         this.g = 0.0;
         anchor = null;
         closed = false;
+        connectionTo = new HashMap<>();
+    }
+
+    @Override
+    public Boolean hasConnectionTo(Integer id) {
+        return connectionTo.get(id) != null;
+    }
+
+    @Override
+    public void isConnectionTo(Integer id) {
+        connectionTo.put(id, true);
     }
 
     @Override
@@ -50,10 +65,12 @@ public class Vertex implements Element {
         this.anchor = element;
     }
 
+    @Override
     public boolean isClosed() {
         return closed;
     }
 
+    @Override
     public void setClosed(boolean closed) {
         this.closed = closed;
     }
