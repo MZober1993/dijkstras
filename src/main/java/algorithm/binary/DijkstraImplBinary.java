@@ -18,8 +18,7 @@ public class DijkstraImplBinary implements Dijkstra<VertexBinary> {
 
     @Override
     public <G extends Graph<VertexBinary, ? extends Edge<VertexBinary>>> List<Integer>
-    shortestPath(G graph, VertexBinary start
-            , VertexBinary finish) {
+    shortestPath(G graph, VertexBinary start, VertexBinary finish) {
         BinaryHeap nodes = new BinaryHeap();
         for (VertexBinary entry : graph.getElements().values()) {
             entry.setKey(Double.MAX_VALUE);

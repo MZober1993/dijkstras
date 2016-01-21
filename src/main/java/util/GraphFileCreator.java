@@ -14,7 +14,7 @@ import java.util.stream.IntStream;
  */
 public class GraphFileCreator extends FileWriter {
 
-    public static final int COMPLETE_LIMIT = 300;
+    public static final int COMPLETE_LIMIT = 800;
 
     public static final Path DEFAULT_PATH = Paths.get(GraphImporter.PATH_TO_IMPORT_FILES +
             ImportFile.CREATED.name().toLowerCase());

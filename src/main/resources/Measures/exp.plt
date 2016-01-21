@@ -13,4 +13,4 @@ set style line 4 lc rgb '#FFD700' lt 1 lw 2 pt 5 ps 1.5   # --- yellow
 plot 'measure_complete_all.csv' using 1:7 with lines title 'alle Messwerte std' ls 1, \
      '' using 1:11 with lines title 'alle Messwerte fibo' ls 2, \
      '' using 1:15 with lines title 'alle Messwerte binary' ls 3, \
-     '' using 1:6 with lines title 'theoretical T' ls 4, \
+#     '' using 1:6 with lines title 'theoretical T' ls 4, \

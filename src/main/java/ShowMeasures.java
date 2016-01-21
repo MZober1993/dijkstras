@@ -16,6 +16,6 @@ public class ShowMeasures {
         GraphImporter<Element> importer = measure.COMPLETE_IMPORTER;
 
         Measures.prepareStd(importer.importElementGraph(limit), limit, endBegin);
-        measure.tNRecordInOneFile();
+        measure.recordInOneFile();
     }
 }
