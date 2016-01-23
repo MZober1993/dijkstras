@@ -54,7 +54,8 @@ public class FileWriter extends BasicFileWriter {
         }
     }
 
-    protected void tNWriteOfAll(Integer times, boolean scaledN, GraphImpl graph, int n, int m, int emptySpace)
+    protected void tNWriteOfAll(Integer times, boolean scaledN, GraphImpl graph, int n
+            , int m, int emptySpace)
             throws IOException {
         GraphFibo fiboGraph = GraphHelper.transformGraphToFiboGraph(graph);
         GraphBinary binaryGraph = GraphHelper.transformGraphToBinaryGraph(graph);

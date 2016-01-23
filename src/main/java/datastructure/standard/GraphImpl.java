@@ -1,7 +1,6 @@
 package datastructure.standard;
 
 import datastructure.AbstractGraph;
-import datastructure.Element;
 import datastructure.Graph;
 
 import java.util.List;
@@ -10,7 +9,7 @@ import java.util.List;
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
  *         01.11.15 - 18:40
  */
-public class GraphImpl extends AbstractGraph<Element, EdgeImpl> {
+public class GraphImpl extends AbstractGraph<Vertex, EdgeImpl> {
 
     public GraphImpl() {
         super();
@@ -19,34 +18,34 @@ public class GraphImpl extends AbstractGraph<Element, EdgeImpl> {
     public GraphImpl(Integer... identifier) {
         super(identifier);
         for (Integer id : identifier) {
-            this.vertices.put(id, new Vertex(id));
+            this.vertices.put(id, new Vertex(id, Double.MAX_VALUE));
         }
     }
 
     public GraphImpl(List<Integer> identifiers) {
         super(identifiers);
         for (Integer id : identifiers) {
-            this.vertices.put(id, new Vertex(id));
+            this.vertices.put(id, new Vertex(id, Double.MAX_VALUE));
         }
     }
 
     @Override
     public void addConnection(Integer signOne, Integer signTwo, Double distance) {
-        Element one = getElementOrCreateOne(signOne);
-        Element two = getElementOrCreateOne(signTwo);
+        Vertex one = getElementOrCreateOne(signOne);
+        Vertex two = getElementOrCreateOne(signTwo);
 
         if (!one.hasConnectionTo(signTwo)) {
             adjacencyGraph.get(signOne).add(new EdgeImpl(two, distance));
             adjacencyGraph.get(signTwo).add(new EdgeImpl(one, distance));
-            one.isConnectionTo(signTwo);
-            two.isConnectionTo(signOne);
+            one.isConnectedTo(signTwo);
+            two.isConnectedTo(signOne);
             edgeSize++;
         }
     }
 
     @Override
-    public Graph<Element, EdgeImpl> refreshGraph() {
-        vertices.forEach((Integer id, Element entry) -> {
+    public Graph<Vertex, EdgeImpl> refreshGraph() {
+        vertices.forEach((Integer id, Vertex entry) -> {
             entry.setClosed(false);
             entry.setAnchor(null);
             entry.setKey(Double.MAX_VALUE);
@@ -56,11 +55,11 @@ public class GraphImpl extends AbstractGraph<Element, EdgeImpl> {
     }
 
     @Override
-    public Element getElementOrCreateOne(int id) {
+    public Vertex getElementOrCreateOne(int id) {
         if (getVs().containsKey(id)) {
             return getVs().get(id);
         } else {
-            Element value = new Vertex(id);
+            Vertex value = new Vertex(id, Double.MAX_VALUE);
             getVs().put(id, value);
             return value;
         }

@@ -1,6 +1,6 @@
 package datastructure;
 
-import datastructure.fibo.ArrayHolder;
+import datastructure.fibo.FiboArrayHolder;
 import datastructure.fibo.FibonacciHeap;
 import datastructure.fibo.VertexFibo;
 
@@ -13,7 +13,7 @@ public class PrintHelper {
         return String.valueOf((number == Double.MAX_VALUE) ? "MAX" : number);
     }
 
-    public static String elemString(VertexFibo currentElement) {
+    public static String elemString(FibonacciHeap heap, VertexFibo currentElement) {
         if (currentElement == null) {
             return "       null        ";
         } else {
@@ -22,7 +22,7 @@ public class PrintHelper {
         }
     }
 
-    public static String currentElemString(VertexFibo currentElement) {
+    public static String currentElemString(VertexFibo currentElement, FibonacciHeap heap) {
         if (currentElement == null) {
             return "       null        ";
         } else {
@@ -37,19 +37,19 @@ public class PrintHelper {
 
     public static String printFibonacciHeap(FibonacciHeap heap, VertexFibo startElement) {
         StringBuilder builder = new StringBuilder();
-        ArrayHolder holder = new ArrayHolder(heap);
+        FiboArrayHolder holder = new FiboArrayHolder(heap);
         if (heap.getSize() > 0) {
             VertexFibo currentElement = startElement;
-            builder.append("[").append(startElement.getValue()).append("]:").append("\n");
+            builder.append("[").append(startElement).append("]:").append("\n");
             do {
-                builder.append(entryWithoutParentsAndChildren(holder, currentElement));
+                builder.append(entryWithoutParentsAndChildren(holder, heap, currentElement));
                 builder.append("\n");
                 currentElement = holder.getNext(currentElement);
             } while (currentElement != startElement);
             builder.append("\n");
             do {
                 if (holder.getChild(currentElement) != null) {
-                    builder.append("{").append(currentElement.getValue()).append("}").append("\n");
+                    builder.append("{").append(currentElement).append("}").append("\n");
                     builder.append(printFibonacciHeap(heap, holder.getChild(currentElement)));
                 }
                 currentElement = holder.getNext(currentElement);
@@ -60,22 +60,23 @@ public class PrintHelper {
         return builder.toString();
     }
 
-    private static String entryWithoutParentsAndChildren(ArrayHolder holder, VertexFibo currentElement) {
+    private static String entryWithoutParentsAndChildren(FiboArrayHolder holder, FibonacciHeap heap
+            , VertexFibo currentElement) {
         return "(" +
                 transformDouble(currentElement.getKey()) + "," +
                 currentElement.isMarked() + "," +
                 currentElement.getDeg() + ")" +
-                currentElement.getValue() + "|" +
-                "l=" + elemString(holder.getPrevious(currentElement)) + "|" +
-                "r=" + elemString(holder.getNext(currentElement));
+                currentElement + "|" +
+                "l=" + elemString(heap, holder.getPrevious(currentElement)) + "|" +
+                "r=" + elemString(heap, holder.getNext(currentElement));
     }
 
     public static String transformEntry(VertexFibo currentElement, FibonacciHeap heap) {
-        ArrayHolder holder = new ArrayHolder(heap);
-        return elemString(holder.getPrevious(currentElement)) + "<-" +
-                currentElemString(currentElement) + "->" +
-                elemString(holder.getNext(currentElement)) + "|" +
-                "c=" + elemString(holder.getChild(currentElement)) + "|" +
-                "p=" + elemString(holder.getParent(currentElement));
+        FiboArrayHolder holder = new FiboArrayHolder(heap);
+        return elemString(heap, holder.getPrevious(currentElement)) + "<-" +
+                currentElemString(currentElement, heap) + "->" +
+                elemString(heap, holder.getNext(currentElement)) + "|" +
+                "c=" + elemString(heap, holder.getChild(currentElement)) + "|" +
+                "p=" + elemString(heap, holder.getParent(currentElement));
     }
 }

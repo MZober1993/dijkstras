@@ -1,9 +1,9 @@
 package algorithm.standard;
 
 import com.google.common.truth.Truth;
-import datastructure.Element;
 import datastructure.GraphHelper;
 import datastructure.standard.GraphImpl;
+import datastructure.standard.Vertex;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -26,8 +26,8 @@ public class DijkstraImplTest {
 
     @Test
     public void testMinimumShortestPath() throws Exception {
-        Element start = graph.getV(0);
-        Element end = graph.getV(7);
+        Vertex start = graph.getV(0);
+        Vertex end = graph.getV(7);
         List<Integer> actual = dijkstra.shortestPath(graph, start, end);
         Truth.assertThat(actual).containsAllOf(1, 5, 7).inOrder();
     }

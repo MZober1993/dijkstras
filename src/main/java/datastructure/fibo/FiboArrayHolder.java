@@ -4,11 +4,11 @@ package datastructure.fibo;
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
  *         On 23.01.16 - 00:32
  */
-public class ArrayHolder {
+public class FiboArrayHolder {
 
     private FibonacciHeap heap;
 
-    public ArrayHolder(FibonacciHeap heap) {
+    public FiboArrayHolder(FibonacciHeap heap) {
         this.heap = heap;
     }
 
@@ -88,11 +88,11 @@ public class ArrayHolder {
         elemHolder[current.getId()] = next.getId();
     }
 
-    public static void setFollowingId(Integer current, Integer next, Integer[] elemHolder) {
+    public static <T> void setFollowingId(Integer current, T next, T[] elemHolder) {
         elemHolder[current] = next;
     }
 
-    public static Integer getFollowingId(Integer id, Integer[] elemHolder) {
+    public static <T> T getFollowingId(Integer id, T[] elemHolder) {
         return elemHolder[id];
     }
 }

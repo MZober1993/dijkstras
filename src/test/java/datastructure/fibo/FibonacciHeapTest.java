@@ -1,7 +1,6 @@
 package datastructure.fibo;
 
 import com.google.common.truth.Truth;
-import datastructure.standard.Vertex;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -27,29 +26,30 @@ public class FibonacciHeapTest {
     private VertexFibo nine;
     private FibonacciHeap heap;
     private GraphFibo graphFibo;
-    private ArrayHolder holder;
-    private Consumer<? super VertexFibo> insert = x -> heap.insert(x);
+    private FiboArrayHolder holder;
+    private Consumer<? super VertexFibo> insert;
 
     @Before
     public void setUp() {
-        one = new VertexFibo(new Vertex(1), 1.0);
-        two = new VertexFibo(new Vertex(2), 2.0);
-        three = new VertexFibo(new Vertex(3), 3.0);
-        four = new VertexFibo(new Vertex(4), 4.0);
-        five = new VertexFibo(new Vertex(5), 5.0);
-        six = new VertexFibo(new Vertex(6), 6.0);
-        seven = new VertexFibo(new Vertex(7), 7.0);
-        eight = new VertexFibo(new Vertex(8), 8.0);
-        nine = new VertexFibo(new Vertex(9), 9.0);
+        one = new VertexFibo(1, 1.0);
+        two = new VertexFibo(2, 2.0);
+        three = new VertexFibo(3, 3.0);
+        four = new VertexFibo(4, 4.0);
+        five = new VertexFibo(5, 5.0);
+        six = new VertexFibo(6, 6.0);
+        seven = new VertexFibo(7, 7.0);
+        eight = new VertexFibo(8, 8.0);
+        nine = new VertexFibo(9, 9.0);
         graphFibo = new GraphFibo(Stream.of(one, two, three, four, five, six, seven, eight, nine));
         heap = new FibonacciHeap(graphFibo);
-        holder = new ArrayHolder(heap);
+        holder = new FiboArrayHolder(heap);
+        insert = x -> heap.insert(x);
     }
 
     @Test
     public void testInsert() {
         miniSample();
-        Truth.assertThat(heap.getMin().getValue()).isEqualTo(new Vertex(1));
+        Truth.assertThat(heap.getMin()).isEqualTo(new VertexFibo(1, 1.0));
         Truth.assertThat(heap.getSize()).isEqualTo(3);
     }
 
@@ -105,11 +105,11 @@ public class FibonacciHeapTest {
 
     @Test
     public void testExtractMinWithMaxValues() {
-        VertexFibo min = new VertexFibo(new Vertex(1), 0.0);
-        VertexFibo entry1 = new VertexFibo(new Vertex(2), Double.MAX_VALUE);
-        VertexFibo entry2 = new VertexFibo(new Vertex(3), Double.MAX_VALUE);
-        VertexFibo entry3 = new VertexFibo(new Vertex(4), Double.MAX_VALUE);
-        VertexFibo entry4 = new VertexFibo(new Vertex(5), Double.MAX_VALUE);
+        VertexFibo min = new VertexFibo(1, 0.0);
+        VertexFibo entry1 = new VertexFibo(2, Double.MAX_VALUE);
+        VertexFibo entry2 = new VertexFibo(3, Double.MAX_VALUE);
+        VertexFibo entry3 = new VertexFibo(4, Double.MAX_VALUE);
+        VertexFibo entry4 = new VertexFibo(5, Double.MAX_VALUE);
         Stream.of(min
                 , entry1
                 , entry2

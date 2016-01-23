@@ -1,20 +1,28 @@
 package datastructure.binary;
 
-import datastructure.Element;
-import datastructure.ElementContainer;
+import datastructure.AbstractElement;
 
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
  *         On 11.01.16 - 11:43
  */
-public class VertexBinary extends ElementContainer {
+public class VertexBinary extends AbstractElement {
 
     private Integer position;
+    private Double key;
 
-    public VertexBinary(Element value, Double key) {
-        super(value);
-        value.setKey(key);
+    public VertexBinary(Integer id, Double key) {
+        super(id);
+        this.key = key;
+    }
+
+    public void setKey(Double key) {
+        this.key = key;
+    }
+
+    public Double getKey() {
+        return key;
     }
 
     public Integer getPosition() {

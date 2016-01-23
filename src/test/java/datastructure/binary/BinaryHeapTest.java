@@ -1,7 +1,6 @@
 package datastructure.binary;
 
 import com.google.common.truth.Truth;
-import datastructure.standard.Vertex;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -32,16 +31,16 @@ public class BinaryHeapTest {
     @Before
     public void setUp() {
         heap = new BinaryHeap();
-        zero = new VertexBinary(new Vertex(0), 0.0);
-        one = new VertexBinary(new Vertex(1), 1.0);
-        two = new VertexBinary(new Vertex(2), 2.0);
-        three = new VertexBinary(new Vertex(3), 3.0);
-        four = new VertexBinary(new Vertex(4), 4.0);
-        five = new VertexBinary(new Vertex(5), 5.0);
-        six = new VertexBinary(new Vertex(6), 6.0);
-        seven = new VertexBinary(new Vertex(7), 7.0);
-        eight = new VertexBinary(new Vertex(8), 8.0);
-        nine = new VertexBinary(new Vertex(9), 9.0);
+        zero = new VertexBinary(0, 0.0);
+        one = new VertexBinary(1, 1.0);
+        two = new VertexBinary(2, 2.0);
+        three = new VertexBinary(3, 3.0);
+        four = new VertexBinary(4, 4.0);
+        five = new VertexBinary(5, 5.0);
+        six = new VertexBinary(6, 6.0);
+        seven = new VertexBinary(7, 7.0);
+        eight = new VertexBinary(8, 8.0);
+        nine = new VertexBinary(9, 9.0);
     }
 
     @Test

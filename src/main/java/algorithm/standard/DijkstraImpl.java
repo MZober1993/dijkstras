@@ -2,9 +2,9 @@ package algorithm.standard;
 
 import algorithm.Dijkstra;
 import datastructure.Edge;
-import datastructure.Element;
 import datastructure.Graph;
 import datastructure.GraphHelper;
+import datastructure.standard.Vertex;
 
 import java.util.Collections;
 import java.util.List;
@@ -14,14 +14,14 @@ import java.util.PriorityQueue;
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
  *         01.11.15 - 18:40
  */
-public class DijkstraImpl implements Dijkstra<Element> {
+public class DijkstraImpl implements Dijkstra<Vertex> {
 
     @Override
-    public <G extends Graph<Element, ? extends Edge<Element>>> List<Integer>
-    shortestPath(G graph, Element start, Element finish) {
-        PriorityQueue<Element> nodes = new PriorityQueue<>();
+    public <G extends Graph<Vertex, ? extends Edge<Vertex>>> List<Integer>
+    shortestPath(G graph, Vertex start, Vertex finish) {
+        PriorityQueue<Vertex> nodes = new PriorityQueue<>();
 
-        for (Element vertex : graph.getVs().values()) {
+        for (Vertex vertex : graph.getVs().values()) {
             if (vertex.equals(start)) {
                 vertex.setKey(0.0);
             } else {
@@ -31,7 +31,7 @@ public class DijkstraImpl implements Dijkstra<Element> {
         }
 
         while (!nodes.isEmpty()) {
-            final Element smallest = nodes.poll();
+            final Vertex smallest = nodes.poll();
             smallest.setClosed(true);
 
             if (smallest.equals(finish)) {
@@ -42,8 +42,8 @@ public class DijkstraImpl implements Dijkstra<Element> {
                 continue;
             }
 
-            for (Edge<Element> edge : graph.getConnectedElements(smallest)) {
-                final Element connected = edge.getConnected();
+            for (Edge<Vertex> edge : graph.getConnectedElements(smallest)) {
+                final Vertex connected = edge.getConnected();
                 if (!connected.isClosed()) {
                     final Double alt = smallest.getKey() + edge.getDistance();
 

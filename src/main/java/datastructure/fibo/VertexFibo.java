@@ -1,24 +1,38 @@
 package datastructure.fibo;
 
-import datastructure.Element;
-import datastructure.ElementContainer;
+import datastructure.AbstractElement;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
  *         On 25.12.15 - 17:55
  */
-public final class VertexFibo extends ElementContainer implements Element {
+public final class VertexFibo extends AbstractElement {
 
-    private int deg = 0;
+    private Double key;
     private boolean isMarked;
+    private int deg;
 
-    public VertexFibo(Element value, Double key) {
-        super(value);
-        value.setKey(key);
-        deg = 0;
+    public VertexFibo(Integer id, Double key) {
+        super(id);
+        this.key = key;
         isMarked = false;
     }
 
+    public Double getKey() {
+        return key;
+    }
+
+    public void setKey(Double key) {
+        this.key = key;
+    }
+
+    public boolean isMarked() {
+        return isMarked;
+    }
+
+    public void setMarked(boolean marked) {
+        isMarked = marked;
+    }
 
     public int getDeg() {
         return deg;
@@ -36,17 +50,8 @@ public final class VertexFibo extends ElementContainer implements Element {
         this.deg--;
     }
 
-    public boolean isMarked() {
-        return isMarked;
-    }
-
-    public void setMarked(boolean marked) {
-        isMarked = marked;
-    }
-
     @Override
     public String toString() {
-        return "(" + deg +
-                ", " + isMarked + ")" + getValue();
+        return "(" + isMarked + ")" + super.toString();
     }
 }

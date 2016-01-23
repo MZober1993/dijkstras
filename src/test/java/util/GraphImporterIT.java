@@ -11,6 +11,7 @@ import datastructure.fibo.EdgeImplFibo;
 import datastructure.fibo.GraphFibo;
 import datastructure.fibo.VertexFibo;
 import datastructure.standard.GraphImpl;
+import datastructure.standard.Vertex;
 import org.junit.Test;
 
 import java.util.List;
@@ -33,7 +34,7 @@ public class GraphImporterIT {
     public static final long EMPTY = 0;
     public static final long SMALL_LIMIT_NUMBER = 20;
     public static final GraphImporter<Element> IMPORTER = new GraphImporter<>(ImportFile.CREATED);
-    public static final Dijkstra<Element> STD_DIJKSTRA = new DijkstraImpl();
+    public static final Dijkstra<Vertex> STD_DIJKSTRA = new DijkstraImpl();
     public static final Dijkstra<VertexFibo> FIBO_DIJKSTRA = new DijkstraImplFibo();
 
     @Test
@@ -45,8 +46,8 @@ public class GraphImporterIT {
     @Test
     public void testImportStdGraphAndUseDijkstra() {
         GraphImpl graph = IMPORTER.importElementGraph(SMALL_LIMIT_NUMBER);
-        Element start = graph.getV(1);
-        Element end = graph.getV(15);
+        Vertex start = graph.getV(1);
+        Vertex end = graph.getV(15);
         List<Integer> shortestPath = STD_DIJKSTRA.shortestPath(graph, start, end);
 
         checkShortestPath(start.getId(), end.getId(), shortestPath);

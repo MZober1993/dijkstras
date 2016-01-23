@@ -2,7 +2,6 @@ package datastructure.fibo;
 
 import datastructure.AbstractGraph;
 import datastructure.Graph;
-import datastructure.standard.Vertex;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,16 +20,14 @@ public class GraphFibo extends AbstractGraph<VertexFibo, EdgeImplFibo> {
     public GraphFibo(Integer... identifier) {
         super(identifier);
         for (Integer id : identifier) {
-            Vertex v = new Vertex(id);
-            this.vertices.put(id, new VertexFibo(v, Double.MAX_VALUE));
+            this.vertices.put(id, new VertexFibo(id, Double.MAX_VALUE));
         }
     }
 
     public GraphFibo(List<Integer> identifiers) {
         super(identifiers);
         for (Integer id : identifiers) {
-            Vertex v = new Vertex(id);
-            this.vertices.put(id, new VertexFibo(v, Double.MAX_VALUE));
+            this.vertices.put(id, new VertexFibo(id, Double.MAX_VALUE));
         }
     }
 
@@ -48,8 +45,8 @@ public class GraphFibo extends AbstractGraph<VertexFibo, EdgeImplFibo> {
         if (!one.hasConnectionTo(signTwo)) {
             adjacencyGraph.get(signOne).add(new EdgeImplFibo(two, distance));
             adjacencyGraph.get(signTwo).add(new EdgeImplFibo(one, distance));
-            one.isConnectionTo(signTwo);
-            two.isConnectionTo(signOne);
+            one.isConnectedTo(signTwo);
+            two.isConnectedTo(signOne);
             edgeSize++;
         }
     }
@@ -62,7 +59,6 @@ public class GraphFibo extends AbstractGraph<VertexFibo, EdgeImplFibo> {
             entry.setMarked(false);
             entry.setKey(Double.MAX_VALUE);
             entry.setAnchor(null);
-            entry.setKey(Double.MAX_VALUE);
         });
         return this;
     }
@@ -72,7 +68,7 @@ public class GraphFibo extends AbstractGraph<VertexFibo, EdgeImplFibo> {
         if (getVs().containsKey(id)) {
             return getVs().get(id);
         } else {
-            VertexFibo value = new VertexFibo(new Vertex(id), Double.MAX_VALUE);
+            VertexFibo value = new VertexFibo(id, Double.MAX_VALUE);
             getVs().put(id, value);
             return value;
         }

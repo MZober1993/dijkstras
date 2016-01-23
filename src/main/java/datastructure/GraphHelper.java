@@ -6,6 +6,7 @@ import datastructure.binary.GraphBinary;
 import datastructure.fibo.GraphFibo;
 import datastructure.fibo.VertexFibo;
 import datastructure.standard.EdgeImpl;
+import datastructure.standard.Vertex;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,7 +88,7 @@ public class GraphHelper {
         return path;
     }
 
-    public static GraphFibo transformGraphToFiboGraph(Graph<Element, EdgeImpl> graph) {
+    public static GraphFibo transformGraphToFiboGraph(Graph<Vertex, EdgeImpl> graph) {
         GraphFibo entryGraph = new GraphFibo(elementsToIdList(graph));
         List<Set<EdgeImpl>> adjacencyGraph = graph.getAdjacencyGraph();
         IntStream.range(0, adjacencyGraph.size())
@@ -105,7 +106,7 @@ public class GraphHelper {
                 , halfEdge.getDistance());
     }
 
-    public static GraphBinary transformGraphToBinaryGraph(Graph<Element, EdgeImpl> graph) {
+    public static GraphBinary transformGraphToBinaryGraph(Graph<Vertex, EdgeImpl> graph) {
         GraphBinary binaryGraph = new GraphBinary(elementsToIdList(graph));
         List<Set<EdgeImpl>> adjacencyGraph = graph.getAdjacencyGraph();
         IntStream.range(0, adjacencyGraph.size())
