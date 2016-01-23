@@ -17,7 +17,8 @@ import java.util.List;
 public class DijkstraImplFibo implements Dijkstra<VertexFibo> {
 
     @Override
-    public <G extends Graph<VertexFibo, ? extends Edge<VertexFibo>>> List<Integer> shortestPath(G graph, VertexFibo start, VertexFibo finish) {
+    public <G extends Graph<VertexFibo, ? extends Edge<VertexFibo>>> List<Integer> shortestPath(G graph
+            , VertexFibo start, VertexFibo finish) {
         FibonacciHeap nodes = new FibonacciHeap(GraphHelper.box(graph));
         for (VertexFibo entry : graph.getVs().values()) {
             entry.setKey(Double.MAX_VALUE);

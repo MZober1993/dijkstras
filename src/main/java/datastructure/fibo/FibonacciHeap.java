@@ -3,10 +3,6 @@ package datastructure.fibo;
 import datastructure.PrintHelper;
 import util.MathHelper;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.IntStream;
-
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -17,25 +13,19 @@ public final class FibonacciHeap {
 
     private Integer min = null;
     private Integer size = 0;
-    private List<Integer> nexts;
-    private List<Integer> previous;
-    private List<Integer> childs;
-    private List<Integer> parents;
+    private Integer[] nexts;
+    private Integer[] previous;
+    private Integer[] childs;
+    private Integer[] parents;
     private GraphFibo graph;
 
     public FibonacciHeap(GraphFibo graph) {
         this.graph = graph;
         int size = graph.getAdjacencyGraph().size();
-        nexts = new ArrayList<>(size);
-        previous = new ArrayList<>(size);
-        childs = new ArrayList<>(size);
-        parents = new ArrayList<>(size);
-        IntStream.range(0, size + 1).forEach(x -> {
-            nexts.add(null);
-            previous.add(null);
-            childs.add(null);
-            parents.add(null);
-        });
+        nexts = new Integer[size];
+        previous = new Integer[size];
+        childs = new Integer[size];
+        parents = new Integer[size];
     }
 
     public VertexFibo insert(VertexFibo entry) {
@@ -51,11 +41,11 @@ public final class FibonacciHeap {
             selfLink(element);
             min = element;
         } else {
-            Integer endHeap = previous.get(min);
-            previous.set(min, element);
-            previous.set(element, endHeap);
-            nexts.set(endHeap, element);
-            nexts.set(element, min);
+            Integer endHeap = previous[min];
+            previous[min] = element;
+            previous[element] = endHeap;
+            nexts[endHeap] = element;
+            nexts[element] = min;
 
             if (graph.getV(min).getKey() > graph.getV(element).getKey()) {
                 min = element;
@@ -68,10 +58,10 @@ public final class FibonacciHeap {
         if (entry != null) {
             moveChildsToRootList(entry);
             cutConnection(entry);
-            if (entry.equals(nexts.get(entry))) {
+            if (entry.equals(nexts[entry])) {
                 min = null;
             } else {
-                min = nexts.get(entry);
+                min = nexts[entry];
                 consolidate();
             }
             size--;
@@ -107,10 +97,10 @@ public final class FibonacciHeap {
             Integer element = min;
             Integer next;
             do {
-                if (element.equals(nexts.get(element))) {
+                if (element.equals(nexts[element])) {
                     next = null;
                 } else {
-                    next = nexts.get(element);
+                    next = nexts[element];
                 }
 
                 cutConnection(element);
@@ -124,13 +114,13 @@ public final class FibonacciHeap {
                         element = tmp;
                     }
                     graph.getV(degree[currentDegree]).setMarked(false);
-                    if (childs.get(element) == null) {
-                        childs.set(element, degree[currentDegree]);
-                        parents.set(degree[currentDegree], element);
+                    if (childs[element] == null) {
+                        childs[element] = degree[currentDegree];
+                        parents[degree[currentDegree]] = element;
                     } else {
-                        parents.set(degree[currentDegree], element);
-                        nexts.set(degree[currentDegree], childs.get(element));
-                        previous.set(degree[currentDegree], previous.get(childs.get(element)));
+                        parents[degree[currentDegree]] = element;
+                        nexts[degree[currentDegree]] = childs[element];
+                        previous[degree[currentDegree]] = previous[childs[element]];
                         neighborLink(degree[currentDegree]);
                     }
                     graph.getV(element).incrementDeg();
@@ -147,7 +137,7 @@ public final class FibonacciHeap {
     public void decreaseKey(VertexFibo element, Double key) {
         if (element != null && element.getKey() > key) {
             element.setKey(key);
-            Integer parent = parents.get(element.getId());
+            Integer parent = parents[element.getId()];
             if (parent != null && element.getKey() < graph.getV(parent).getKey()) {
                 cut(element.getId(), parent);
                 cascadingCut(parent);
@@ -160,12 +150,12 @@ public final class FibonacciHeap {
     private void removeChildFromChildListOfParent(Integer child, Integer parent) {
         checkNotNull(child);
         checkNotNull(parent);
-        if (nexts.get(child).equals(child)) {
-            childs.set(parent, null);
+        if (nexts[child].equals(child)) {
+            childs[parent] = null;
         } else {
             cutConnection(child);
-            if (childs.get(parent).equals(child)) {
-                childs.set(parent, nexts.get(child));
+            if (childs[parent].equals(child)) {
+                childs[parent] = nexts[child];
             }
         }
         graph.getV(parent).decrementDeg();
@@ -174,13 +164,13 @@ public final class FibonacciHeap {
     private void cut(Integer child, Integer parent) {
         removeChildFromChildListOfParent(child, parent);
         listConcat(child);
-        parents.set(child, null);
+        parents[child] = null;
         graph.getV(child).setMarked(false);
     }
 
     private void cascadingCut(Integer k) {
         checkNotNull(k);
-        Integer parent = parents.get(k);
+        Integer parent = parents[k];
         if (parent != null) {
             VertexFibo vertex = graph.getV(k);
             if (!vertex.isMarked()) {
@@ -194,38 +184,38 @@ public final class FibonacciHeap {
 
     private void moveChildsToRootList(Integer entry) {
         for (int i = 0; i < graph.getV(entry).getDeg(); i++) {
-            Integer child = childs.get(entry);
+            Integer child = childs[entry];
             if (child != null) {
-                if (child.equals(nexts.get(child))) {
-                    childs.set(entry, null);
+                if (child.equals(nexts[child])) {
+                    childs[entry] = null;
                 } else {
-                    childs.set(entry, nexts.get(child));
-                    previous.set(nexts.get(child), previous.get(child));
+                    childs[entry] = nexts[child];
+                    previous[nexts[child]] = previous[child];
                     cutConnection(child);
                 }
-                parents.set(child, null);
-                nexts.set(child, entry);
-                previous.set(child, previous.get(entry));
-                nexts.set(previous.get(entry), child);
-                previous.set(entry, child);
+                parents[child] = null;
+                nexts[child] = entry;
+                previous[child] = previous[entry];
+                nexts[previous[entry]] = child;
+                previous[entry] = child;
             }
         }
         graph.getV(entry).setDeg(0);
     }
 
     private void cutConnection(Integer entry) {
-        previous.set(nexts.get(entry), previous.get(entry));
-        nexts.set(previous.get(entry), nexts.get(entry));
+        previous[nexts[entry]] = previous[entry];
+        nexts[previous[entry]] = nexts[entry];
     }
 
     private void neighborLink(Integer i) {
-        previous.set(nexts.get(i), i);
-        nexts.set(previous.get(i), i);
+        previous[nexts[i]] = i;
+        nexts[previous[i]] = i;
     }
 
     private void selfLink(Integer element) {
-        nexts.set(element, element);
-        previous.set(element, element);
+        nexts[element] = element;
+        previous[element] = element;
     }
 
     public boolean isEmpty() {
@@ -240,19 +230,19 @@ public final class FibonacciHeap {
         return size;
     }
 
-    public List<Integer> getNexts() {
+    public Integer[] getNexts() {
         return nexts;
     }
 
-    public List<Integer> getPrevious() {
+    public Integer[] getPrevious() {
         return previous;
     }
 
-    public List<Integer> getChilds() {
+    public Integer[] getChilds() {
         return childs;
     }
 
-    public List<Integer> getParents() {
+    public Integer[] getParents() {
         return parents;
     }
 

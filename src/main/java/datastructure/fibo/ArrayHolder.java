@@ -1,7 +1,5 @@
 package datastructure.fibo;
 
-import java.util.List;
-
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
  *         On 23.01.16 - 00:32
@@ -78,23 +76,23 @@ public class ArrayHolder {
         setFollowingElem(current, next, heap.getParents());
     }
 
-    public static VertexFibo getFollowingElem(GraphFibo graph, Integer id, List<Integer> elemHolder) {
-        Integer following = elemHolder.get(id);
+    public static VertexFibo getFollowingElem(GraphFibo graph, Integer id, Integer[] elemHolder) {
+        Integer following = elemHolder[id];
         if (following == null) {
             return null;
         }
         return graph.getV(following);
     }
 
-    public static void setFollowingElem(VertexFibo current, VertexFibo next, List<Integer> elemHolder) {
-        elemHolder.set(current.getId(), next.getId());
+    public static void setFollowingElem(VertexFibo current, VertexFibo next, Integer[] elemHolder) {
+        elemHolder[current.getId()] = next.getId();
     }
 
-    public static void setFollowingId(Integer current, Integer next, List<Integer> elemHolder) {
-        elemHolder.set(current, next);
+    public static void setFollowingId(Integer current, Integer next, Integer[] elemHolder) {
+        elemHolder[current] = next;
     }
 
-    public static Integer getFollowingId(Integer id, List<Integer> elemHolder) {
-        return elemHolder.get(id);
+    public static Integer getFollowingId(Integer id, Integer[] elemHolder) {
+        return elemHolder[id];
     }
 }
