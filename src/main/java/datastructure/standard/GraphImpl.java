@@ -40,7 +40,7 @@ public class GraphImpl extends AbstractGraph<Element, EdgeImpl> {
             adjacencyGraph.get(signTwo).add(new EdgeImpl(one, distance));
             one.isConnectionTo(signTwo);
             two.isConnectionTo(signOne);
-            size++;
+            edgeSize++;
         }
     }
 
@@ -49,7 +49,7 @@ public class GraphImpl extends AbstractGraph<Element, EdgeImpl> {
         vertices.forEach((Integer id, Element entry) -> {
             entry.setClosed(false);
             entry.setAnchor(null);
-            entry.setG(Double.MAX_VALUE);
+            entry.setKey(Double.MAX_VALUE);
         });
 
         return this;
@@ -57,11 +57,11 @@ public class GraphImpl extends AbstractGraph<Element, EdgeImpl> {
 
     @Override
     public Element getElementOrCreateOne(int id) {
-        if (getElements().containsKey(id)) {
-            return getElements().get(id);
+        if (getVs().containsKey(id)) {
+            return getVs().get(id);
         } else {
             Element value = new Vertex(id);
-            getElements().put(id, value);
+            getVs().put(id, value);
             return value;
         }
     }

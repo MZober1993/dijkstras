@@ -14,7 +14,7 @@ public class EdgeBuilder<G extends Graph<T, H>, H extends Edge<T>, T extends Ele
     }
 
     public EdgeBuilder<G, H, T> current(Integer currentId) {
-        if (!graph.getElements().containsKey(currentId)) {
+        if (!graph.getVs().containsKey(currentId)) {
             throw new RuntimeException("Unknown identifiers:" + currentId);
         }
         this.currentId = currentId;
@@ -22,7 +22,7 @@ public class EdgeBuilder<G extends Graph<T, H>, H extends Edge<T>, T extends Ele
     }
 
     public EdgeBuilder<G, H, T> to(Integer id, Double dist) {
-        if (graph.getElements().containsKey(currentId) && graph.getElements().containsKey(id)) {
+        if (graph.getVs().containsKey(currentId) && graph.getVs().containsKey(id)) {
             graph.addConnection(currentId, id, dist);
             return this;
         } else {

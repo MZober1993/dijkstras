@@ -1,5 +1,6 @@
 package datastructure;
 
+import datastructure.fibo.ArrayHolder;
 import datastructure.fibo.FibonacciHeap;
 import datastructure.fibo.VertexFibo;
 
@@ -36,21 +37,22 @@ public class PrintHelper {
 
     public static String printFibonacciHeap(FibonacciHeap heap, VertexFibo startElement) {
         StringBuilder builder = new StringBuilder();
+        ArrayHolder holder = new ArrayHolder(heap);
         if (heap.getSize() > 0) {
             VertexFibo currentElement = startElement;
             builder.append("[").append(startElement.getValue()).append("]:").append("\n");
             do {
-                builder.append(entryWithoutParentsAndChildren(currentElement));
+                builder.append(entryWithoutParentsAndChildren(holder, currentElement));
                 builder.append("\n");
-                currentElement = currentElement.getNext();
+                currentElement = holder.getNext(currentElement);
             } while (currentElement != startElement);
             builder.append("\n");
             do {
-                if (currentElement.getChild() != null) {
+                if (holder.getChild(currentElement) != null) {
                     builder.append("{").append(currentElement.getValue()).append("}").append("\n");
-                    builder.append(printFibonacciHeap(heap, currentElement.getChild()));
+                    builder.append(printFibonacciHeap(heap, holder.getChild(currentElement)));
                 }
-                currentElement = currentElement.getNext();
+                currentElement = holder.getNext(currentElement);
             } while (currentElement != startElement);
         } else {
             builder.append("heap is empty!\n");
@@ -58,21 +60,22 @@ public class PrintHelper {
         return builder.toString();
     }
 
-    private static String entryWithoutParentsAndChildren(VertexFibo currentElement) {
+    private static String entryWithoutParentsAndChildren(ArrayHolder holder, VertexFibo currentElement) {
         return "(" +
                 transformDouble(currentElement.getKey()) + "," +
                 currentElement.isMarked() + "," +
                 currentElement.getDeg() + ")" +
                 currentElement.getValue() + "|" +
-                "l=" + elemString(currentElement.getPrevious()) + "|" +
-                "r=" + elemString(currentElement.getNext());
+                "l=" + elemString(holder.getPrevious(currentElement)) + "|" +
+                "r=" + elemString(holder.getNext(currentElement));
     }
 
-    public static String transformEntry(VertexFibo currentElement) {
-        return elemString(currentElement.getPrevious()) + "<-" +
+    public static String transformEntry(VertexFibo currentElement, FibonacciHeap heap) {
+        ArrayHolder holder = new ArrayHolder(heap);
+        return elemString(holder.getPrevious(currentElement)) + "<-" +
                 currentElemString(currentElement) + "->" +
-                elemString(currentElement.getNext()) + "|" +
-                "c=" + elemString(currentElement.getChild()) + "|" +
-                "p=" + elemString(currentElement.getParent());
+                elemString(holder.getNext(currentElement)) + "|" +
+                "c=" + elemString(holder.getChild(currentElement)) + "|" +
+                "p=" + elemString(holder.getParent(currentElement));
     }
 }

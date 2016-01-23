@@ -31,8 +31,8 @@ public class DijkstraImplFiboTest {
 
     @Test
     public void testMinimumShortestPath() throws Exception {
-        VertexFibo start = graph.getElement(0);
-        VertexFibo end = graph.getElement(7);
+        VertexFibo start = graph.getV(0);
+        VertexFibo end = graph.getV(7);
         List<Integer> actual = dijkstra.shortestPath(graph, start, end);
 
         Truth.assertThat(actual).containsAllOf(0, 1, 5, 7).inOrder();

@@ -1,8 +1,11 @@
 package datastructure.fibo;
 
-import datastructure.Element;
 import datastructure.PrintHelper;
 import util.MathHelper;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.IntStream;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -12,58 +15,75 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public final class FibonacciHeap {
 
-    private VertexFibo min = null;
+    private Integer min = null;
     private Integer size = 0;
+    private List<Integer> nexts;
+    private List<Integer> previous;
+    private List<Integer> childs;
+    private List<Integer> parents;
+    private GraphFibo graph;
+
+    public FibonacciHeap(GraphFibo graph) {
+        this.graph = graph;
+        int size = graph.getAdjacencyGraph().size();
+        nexts = new ArrayList<>(size);
+        previous = new ArrayList<>(size);
+        childs = new ArrayList<>(size);
+        parents = new ArrayList<>(size);
+        IntStream.range(0, size + 1).forEach(x -> {
+            nexts.add(null);
+            previous.add(null);
+            childs.add(null);
+            parents.add(null);
+        });
+    }
 
     public VertexFibo insert(VertexFibo entry) {
         checkNotNull(entry);
-        listConcat(entry);
+        listConcat(entry.getId());
         size++;
         return entry;
     }
 
-    public void listConcat(VertexFibo element) {
+    public void listConcat(Integer element) {
         checkNotNull(element);
         if (min == null) {
-            element.setNext(element);
-            element.setPrevious(element);
+            selfLink(element);
             min = element;
         } else {
-            VertexFibo endHeap = min.getPrevious();
-            min.setPrevious(element);
-            element.setPrevious(endHeap);
-            endHeap.setNext(element);
-            element.setNext(min);
+            Integer endHeap = previous.get(min);
+            previous.set(min, element);
+            previous.set(element, endHeap);
+            nexts.set(endHeap, element);
+            nexts.set(element, min);
 
-            if (min.getKey() > element.getKey()) {
+            if (graph.getV(min).getKey() > graph.getV(element).getKey()) {
                 min = element;
             }
         }
     }
 
     public VertexFibo extractMin() {
-        VertexFibo entry = min;
+        Integer entry = min;
         if (entry != null) {
             moveChildsToRootList(entry);
-
-            entry.getNext().setPrevious(entry.getPrevious());
-            entry.getPrevious().setNext(entry.getNext());
-            if (entry == entry.getNext()) {
+            cutConnection(entry);
+            if (entry.equals(nexts.get(entry))) {
                 min = null;
             } else {
-                min = entry.getNext();
+                min = nexts.get(entry);
                 consolidate();
             }
             size--;
 
-            return entry;
+            return graph.getV(entry);
         }
         return null;
     }
 
     private void consolidate() {
         int degreeSize = MathHelper.log2(size) + 1;
-        VertexFibo[] degree = new VertexFibo[degreeSize];
+        Integer[] degree = new Integer[degreeSize];
         for (int i = 0; i < degreeSize; i++) {
             degree[i] = null;
         }
@@ -73,7 +93,7 @@ public final class FibonacciHeap {
         updateMin(degreeSize, degree);
     }
 
-    private void updateMin(int degreeSize, VertexFibo[] degree) {
+    private void updateMin(int degreeSize, Integer[] degree) {
         min = null;
         for (int i = 0; i < degreeSize; i++) {
             if (degree[i] != null) {
@@ -82,41 +102,38 @@ public final class FibonacciHeap {
         }
     }
 
-    private void cutAndSummarize(VertexFibo[] degree) {
+    private void cutAndSummarize(Integer[] degree) {
         if (min != null) {
-            VertexFibo element = min;
-            VertexFibo next;
+            Integer element = min;
+            Integer next;
             do {
-                if (element == element.getNext()) {
+                if (element.equals(nexts.get(element))) {
                     next = null;
                 } else {
-                    next = element.getNext();
+                    next = nexts.get(element);
                 }
 
-                element.getNext().setPrevious(element.getPrevious());
-                element.getPrevious().setNext(element.getNext());
-                element.setNext(element);
-                element.setPrevious(element);
-                int currentDegree = element.getDeg();
+                cutConnection(element);
+                selfLink(element);
+                int currentDegree = graph.getV(element).getDeg();
                 while (degree[currentDegree] != null) {
-                    if (element.getKey() > degree[currentDegree].getKey()) {
+                    if (graph.getV(element).getKey() > graph.getV(degree[currentDegree]).getKey()) {
                         //swap
-                        VertexFibo tmp = degree[currentDegree];
+                        Integer tmp = degree[currentDegree];
                         degree[currentDegree] = element;
                         element = tmp;
                     }
-                    degree[currentDegree].setMarked(false);
-                    if (element.getChild() == null) {
-                        element.setChild(degree[currentDegree]);
-                        degree[currentDegree].setParent(element);
+                    graph.getV(degree[currentDegree]).setMarked(false);
+                    if (childs.get(element) == null) {
+                        childs.set(element, degree[currentDegree]);
+                        parents.set(degree[currentDegree], element);
                     } else {
-                        degree[currentDegree].setParent(element);
-                        degree[currentDegree].setNext(element.getChild());
-                        degree[currentDegree].setPrevious(element.getChild().getPrevious());
-                        degree[currentDegree].getNext().setPrevious(degree[currentDegree]);
-                        degree[currentDegree].getPrevious().setNext(degree[currentDegree]);
+                        parents.set(degree[currentDegree], element);
+                        nexts.set(degree[currentDegree], childs.get(element));
+                        previous.set(degree[currentDegree], previous.get(childs.get(element)));
+                        neighborLink(degree[currentDegree]);
                     }
-                    element.setDeg(element.getDeg() + 1);
+                    graph.getV(element).incrementDeg();
                     degree[currentDegree] = null;
                     currentDegree++;
                 }
@@ -130,45 +147,44 @@ public final class FibonacciHeap {
     public void decreaseKey(VertexFibo element, Double key) {
         if (element != null && element.getKey() > key) {
             element.setKey(key);
-            VertexFibo parent = element.getParent();
-            if (parent != null && element.getKey() < parent.getKey()) {
-                cut(element, parent);
+            Integer parent = parents.get(element.getId());
+            if (parent != null && element.getKey() < graph.getV(parent).getKey()) {
+                cut(element.getId(), parent);
                 cascadingCut(parent);
-            } else if (element.getKey() < min.getKey()) {
-                min = element;
+            } else if (element.getKey() < graph.getV(min).getKey()) {
+                min = element.getId();
             }
         }
     }
 
-    private static <T extends Element> void removeChildFromChildListOfParent(VertexFibo child
-            , VertexFibo parent) {
+    private void removeChildFromChildListOfParent(Integer child, Integer parent) {
         checkNotNull(child);
         checkNotNull(parent);
-        if (child.getNext() == child) {
-            parent.setChild(null);
+        if (nexts.get(child).equals(child)) {
+            childs.set(parent, null);
         } else {
-            child.getNext().setPrevious(child.getPrevious());
-            child.getPrevious().setNext(child.getNext());
-            if (parent.getChild() == child) {
-                parent.setChild(child.getNext());
+            cutConnection(child);
+            if (childs.get(parent).equals(child)) {
+                childs.set(parent, nexts.get(child));
             }
         }
-        parent.setDeg(parent.getDeg() - 1);
+        graph.getV(parent).decrementDeg();
     }
 
-    private void cut(VertexFibo child, VertexFibo parent) {
+    private void cut(Integer child, Integer parent) {
         removeChildFromChildListOfParent(child, parent);
         listConcat(child);
-        child.setParent(null);
-        child.setMarked(false);
+        parents.set(child, null);
+        graph.getV(child).setMarked(false);
     }
 
-    private void cascadingCut(VertexFibo k) {
+    private void cascadingCut(Integer k) {
         checkNotNull(k);
-        VertexFibo parent = k.getParent();
+        Integer parent = parents.get(k);
         if (parent != null) {
-            if (!k.isMarked()) {
-                k.setMarked(true);
+            VertexFibo vertex = graph.getV(k);
+            if (!vertex.isMarked()) {
+                vertex.setMarked(true);
             } else {
                 cut(k, parent);
                 cascadingCut(parent);
@@ -176,44 +192,79 @@ public final class FibonacciHeap {
         }
     }
 
+    private void moveChildsToRootList(Integer entry) {
+        for (int i = 0; i < graph.getV(entry).getDeg(); i++) {
+            Integer child = childs.get(entry);
+            if (child != null) {
+                if (child.equals(nexts.get(child))) {
+                    childs.set(entry, null);
+                } else {
+                    childs.set(entry, nexts.get(child));
+                    previous.set(nexts.get(child), previous.get(child));
+                    cutConnection(child);
+                }
+                parents.set(child, null);
+                nexts.set(child, entry);
+                previous.set(child, previous.get(entry));
+                nexts.set(previous.get(entry), child);
+                previous.set(entry, child);
+            }
+        }
+        graph.getV(entry).setDeg(0);
+    }
+
+    private void cutConnection(Integer entry) {
+        previous.set(nexts.get(entry), previous.get(entry));
+        nexts.set(previous.get(entry), nexts.get(entry));
+    }
+
+    private void neighborLink(Integer i) {
+        previous.set(nexts.get(i), i);
+        nexts.set(previous.get(i), i);
+    }
+
+    private void selfLink(Integer element) {
+        nexts.set(element, element);
+        previous.set(element, element);
+    }
+
     public boolean isEmpty() {
         return getSize() == 0;
     }
 
-    private static <T extends Element> void moveChildsToRootList(VertexFibo entry) {
-        for (int i = 0; i < entry.getDeg(); i++) {
-            VertexFibo child = entry.getChild();
-            if (child != null) {
-                if (child == child.getNext()) {
-                    entry.setChild(null);
-                } else {
-                    entry.setChild(child.getNext());
-                    child.getNext().setPrevious(child.getPrevious());
-                    child.getPrevious().setNext(child.getNext());
-                }
-                child.setParent(null);
-                child.setNext(entry);
-                child.setPrevious(entry.getPrevious());
-                entry.getPrevious().setNext(child);
-                entry.setPrevious(child);
-            }
-        }
-        entry.setDeg(0);
-    }
-
     public VertexFibo getMin() {
-        return min;
+        return graph.getV(min);
     }
 
     public Integer getSize() {
         return size;
     }
 
+    public List<Integer> getNexts() {
+        return nexts;
+    }
+
+    public List<Integer> getPrevious() {
+        return previous;
+    }
+
+    public List<Integer> getChilds() {
+        return childs;
+    }
+
+    public List<Integer> getParents() {
+        return parents;
+    }
+
+    public GraphFibo getGraph() {
+        return graph;
+    }
+
     @Override
     public String toString() {
         return "FibonacciHeap{" +
                 "\nmin=\n" + min +
-                "\n, size=" + size +
-                "\n, elem=\n" + PrintHelper.printFibonacciHeap(this, min) + '}';
+                "\n, edgeSize=" + size +
+                "\n, elem=\n" + PrintHelper.printFibonacciHeap(this, getMin()) + '}';
     }
 }

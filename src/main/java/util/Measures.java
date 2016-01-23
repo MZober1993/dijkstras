@@ -67,7 +67,7 @@ public enum Measures {
     private static <G extends Graph<T, ? extends Edge<T>>, T extends Element>
     List<Integer> calcShortestPathAndPrintTime(G graph, Dijkstra<T> algo, int id) {
         Stopwatch stopwatch = Stopwatch.createStarted();
-        List<Integer> path = algo.shortestPath(graph, graph.getElement(GraphHelper.FIRST), graph.getElement(id));
+        List<Integer> path = algo.shortestPath(graph, graph.getV(GraphHelper.FIRST), graph.getV(id));
         stopwatch.stop();
 
         System.out.println(stopwatch.elapsed(TimeUnit.NANOSECONDS));

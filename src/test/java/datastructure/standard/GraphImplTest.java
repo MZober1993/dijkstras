@@ -24,7 +24,7 @@ public class GraphImplTest {
         graph.addConnection(1, 7, 3.0);
         graph.addConnection(1, 7, 3.0);
 
-        Set<EdgeImpl> halfEdges = graph.getConnectedElements(graph.getElement(1));
+        Set<EdgeImpl> halfEdges = graph.getConnectedElements(graph.getV(1));
         Truth.assertThat(halfEdges.stream().map(x -> x.getConnected().getId()).collect(Collectors.toSet()))
                 .containsExactlyElementsIn(Stream.of(2, 3, 4, 5, 6, 7).collect(Collectors.toSet()));
     }

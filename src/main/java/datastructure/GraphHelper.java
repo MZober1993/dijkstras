@@ -4,6 +4,7 @@ import algorithm.Dijkstra;
 import com.google.common.base.Stopwatch;
 import datastructure.binary.GraphBinary;
 import datastructure.fibo.GraphFibo;
+import datastructure.fibo.VertexFibo;
 import datastructure.standard.EdgeImpl;
 
 import java.util.ArrayList;
@@ -21,6 +22,10 @@ import java.util.stream.IntStream;
 public class GraphHelper {
 
     public static final int FIRST = 1;
+
+    public static <G extends Graph<VertexFibo, ? extends Edge<VertexFibo>>> GraphFibo box(G graph) {
+        return (GraphFibo) graph;
+    }
 
     public static <G extends Graph<T, H>, H extends Edge<T>, T extends Element>
     G buildSampleGraph(G graph) {
@@ -40,7 +45,7 @@ public class GraphHelper {
 
     public static <G extends Graph<T, ? extends Edge<T>>, T extends Element> long calculateTimeWithLastRandom(G graph,
                                                                                                               Dijkstra<T> algorithm) {
-        T start = graph.getElement(FIRST);
+        T start = graph.getV(FIRST);
         T end = graph.getLastRandomElement();
 
         return calculateTime(graph, algorithm, start, end);
@@ -54,7 +59,7 @@ public class GraphHelper {
 
     public static <G extends Graph<T, ? extends Edge<T>>, T extends Element> Pair<Long, List<Integer>>
     calculateTimeAndPath(G graph, Dijkstra<T> algo, T end) {
-        T start = graph.getElement(FIRST);
+        T start = graph.getV(FIRST);
         Stopwatch stopwatch = Stopwatch.createStarted();
         List<Integer> path = algo.shortestPath(graph, start, end);
         stopwatch.stop();
@@ -109,7 +114,7 @@ public class GraphHelper {
     }
 
     private static <T extends Element> List<Integer> elementsToIdList(Graph<T, ? extends Edge<T>> entryGraph) {
-        return entryGraph.getElements().values()
+        return entryGraph.getVs().values()
                 .stream().map(T::getId).collect(Collectors.toList());
     }
 }

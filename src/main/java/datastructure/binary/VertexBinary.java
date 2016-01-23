@@ -10,12 +10,11 @@ import datastructure.ElementContainer;
  */
 public class VertexBinary extends ElementContainer {
 
-    private Double key;
     private Integer position;
 
     public VertexBinary(Element value, Double key) {
         super(value);
-        this.key = key;
+        value.setKey(key);
     }
 
     public Integer getPosition() {
@@ -24,13 +23,5 @@ public class VertexBinary extends ElementContainer {
 
     public void setPosition(Integer position) {
         this.position = position;
-    }
-
-    public Double getKey() {
-        return key;
-    }
-
-    public void setKey(Double key) {
-        this.key = key;
     }
 }

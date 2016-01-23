@@ -28,11 +28,11 @@ public class ShowDijkstra {
 
     private static <G extends Graph<T, ? extends Edge>, T extends Element> void testDijkstras(Dijkstra<T> dijkstra,
                                                                                               G graph, Long limit) {
-        int size = graph.getElements().size();
+        int size = graph.getVs().size();
         for (int i = 0; i < 100; i++) {
             int id = size * (1 + i) / (800 + i);
             graph.refreshGraph();
-            Pair<Long, List<Integer>> pair = GraphHelper.calculateTimeAndPath(graph, dijkstra, graph.getElement(id));
+            Pair<Long, List<Integer>> pair = GraphHelper.calculateTimeAndPath(graph, dijkstra, graph.getV(id));
             System.out.println("id: " + id + ",T(" + limit + "):" + pair.getFirst() / A_MILLION + " ms\n" +
                     ",Path:" + pair.getSecond());
         }

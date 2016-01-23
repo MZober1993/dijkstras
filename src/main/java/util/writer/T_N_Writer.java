@@ -36,7 +36,7 @@ public class T_N_Writer extends FileWriter {
                     break;
                 }
                 GraphImpl graph = graphImporter.importElementGraph(limit);
-                int n = graph.getElements().size();
+                int n = graph.getVs().size();
                 int m = graph.getEdgeSize();
                 if (n < limit) {
                     limitReached = true;

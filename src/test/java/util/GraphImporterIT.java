@@ -45,8 +45,8 @@ public class GraphImporterIT {
     @Test
     public void testImportStdGraphAndUseDijkstra() {
         GraphImpl graph = IMPORTER.importElementGraph(SMALL_LIMIT_NUMBER);
-        Element start = graph.getElement(1);
-        Element end = graph.getElement(15);
+        Element start = graph.getV(1);
+        Element end = graph.getV(15);
         List<Integer> shortestPath = STD_DIJKSTRA.shortestPath(graph, start, end);
 
         checkShortestPath(start.getId(), end.getId(), shortestPath);
@@ -57,7 +57,6 @@ public class GraphImporterIT {
         GraphFibo graph = IMPORTER.importEntryGraph(SMALL_LIMIT_NUMBER);
         VertexFibo element = graph.getOne();
         Set<EdgeImplFibo> edgesFromNode = graph.getConnectedElements(element);
-        System.out.println(edgesFromNode);
 
         checkGraphContainsVerticesAndEdges(graph, edgesFromNode);
         checkEdgeContainsDistanceAndAVertex(edgesFromNode.stream().findFirst().get());
@@ -66,8 +65,8 @@ public class GraphImporterIT {
     @Test
     public void testImportFiboGraphAndUseDijkstra() {
         GraphFibo graph = IMPORTER.importEntryGraph(SMALL_LIMIT_NUMBER);
-        VertexFibo start = graph.getElement(1);
-        VertexFibo end = graph.getElement(15);
+        VertexFibo start = graph.getV(1);
+        VertexFibo end = graph.getV(15);
         List<Integer> shortestPath = FIBO_DIJKSTRA.shortestPath(graph, start, end);
 
         checkShortestPath(start.getId(), end.getId(), shortestPath);
@@ -82,8 +81,8 @@ public class GraphImporterIT {
         for (int i = 2; i < limit; i++) {
             try {
                 GraphFibo graph = IMPORTER.importEntryGraph(SMALL_LIMIT_NUMBER);
-                VertexFibo start = graph.getElement(1);
-                VertexFibo end = graph.getElement(i);
+                VertexFibo start = graph.getV(1);
+                VertexFibo end = graph.getV(i);
                 checkNotNull(start);
                 checkNotNull(end);
                 List<Integer> shortestPath = FIBO_DIJKSTRA.shortestPath(graph, start, end);
@@ -117,7 +116,7 @@ public class GraphImporterIT {
 
     private <T extends Element> void checkGraphContainsVerticesAndEdges(Graph<T, ? extends Edge<T>> graph
             , Set<? extends Edge<T>> edgesFromNode) {
-        Truth.assertThat(graph.getElements().size() > MINIMUM_COUNT);
+        Truth.assertThat(graph.getVs().size() > MINIMUM_COUNT);
         Truth.assertThat(edgesFromNode.size() > EMPTY);
     }
 

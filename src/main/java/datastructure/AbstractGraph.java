@@ -11,7 +11,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public abstract class AbstractGraph<T extends Element, H extends Edge<T>> implements Graph<T, H> {
 
-    protected int size = 0;
+    protected int edgeSize = 0;
     protected ArrayList<Set<H>> adjacencyGraph;
     protected Map<Integer, T> vertices;
 
@@ -45,13 +45,13 @@ public abstract class AbstractGraph<T extends Element, H extends Edge<T>> implem
     }
 
     @Override
-    public Map<Integer, T> getElements() {
+    public Map<Integer, T> getVs() {
         return vertices;
     }
 
     @Override
     public int getEdgeSize() {
-        return size;
+        return edgeSize;
     }
 
     @Override

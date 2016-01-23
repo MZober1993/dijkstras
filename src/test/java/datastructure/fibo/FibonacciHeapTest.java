@@ -26,6 +26,8 @@ public class FibonacciHeapTest {
     private VertexFibo eight;
     private VertexFibo nine;
     private FibonacciHeap heap;
+    private GraphFibo graphFibo;
+    private ArrayHolder holder;
     private Consumer<? super VertexFibo> insert = x -> heap.insert(x);
 
     @Before
@@ -33,13 +35,15 @@ public class FibonacciHeapTest {
         one = new VertexFibo(new Vertex(1), 1.0);
         two = new VertexFibo(new Vertex(2), 2.0);
         three = new VertexFibo(new Vertex(3), 3.0);
-        six = new VertexFibo(new Vertex(6), 6.0);
-        seven = new VertexFibo(new Vertex(7), 7.0);
         four = new VertexFibo(new Vertex(4), 4.0);
         five = new VertexFibo(new Vertex(5), 5.0);
+        six = new VertexFibo(new Vertex(6), 6.0);
+        seven = new VertexFibo(new Vertex(7), 7.0);
         eight = new VertexFibo(new Vertex(8), 8.0);
         nine = new VertexFibo(new Vertex(9), 9.0);
-        heap = new FibonacciHeap();
+        graphFibo = new GraphFibo(Stream.of(one, two, three, four, five, six, seven, eight, nine));
+        heap = new FibonacciHeap(graphFibo);
+        holder = new ArrayHolder(heap);
     }
 
     @Test
@@ -53,10 +57,10 @@ public class FibonacciHeapTest {
     public void testNextPointer() {
         miniSample();
         Stream.Builder<VertexFibo> builder = Stream.builder();
-        VertexFibo tmp = heap.getMin();
+        Integer tmp = heap.getMin().getId();
         for (int i = 0; i < 4; i++) {
-            tmp = tmp.getNext();
-            builder.add(tmp);
+            tmp = holder.getNext(tmp);
+            builder.add(graphFibo.getV(tmp));
         }
         Truth.assertThat(builder.build().map(VertexFibo::getKey).collect(Collectors.toList()))
                 .containsExactly(2.0, 3.0, 1.0, 2.0);
@@ -66,27 +70,13 @@ public class FibonacciHeapTest {
     public void testPreviousPointer() {
         miniSample();
         Stream.Builder<VertexFibo> builder = Stream.builder();
-        VertexFibo tmp = heap.getMin();
+        Integer tmp = heap.getMin().getId();
         for (int i = 0; i < 4; i++) {
-            tmp = tmp.getPrevious();
-            builder.add(tmp);
+            tmp = holder.getPrevious(tmp);
+            builder.add(graphFibo.getV(tmp));
         }
         Truth.assertThat(builder.build().map(VertexFibo::getKey).collect(Collectors.toList()))
                 .containsExactly(3.0, 2.0, 1.0, 3.0);
-    }
-
-    @Test
-    public void testCutConnection() {
-        miniSample();
-        Set<VertexFibo> nextMemberSet = buildNextMemberSet(4);
-        Set<VertexFibo> previousMemberSet = buildPreviousMemberSet(4);
-        VertexFibo tmpNext = one.getNext();
-        tmpNext.getNext().setPrevious(tmpNext.getPrevious());
-        tmpNext.getPrevious().setNext(tmpNext.getNext());
-
-        Truth.assertThat(buildNextMemberSet(4)).isNotEqualTo(nextMemberSet);
-        Truth.assertThat(buildPreviousMemberSet(4)).isNotEqualTo(previousMemberSet);
-        Truth.assertThat(one.getNext()).isNotEqualTo(tmpNext);
     }
 
     @Test
@@ -253,13 +243,13 @@ public class FibonacciHeapTest {
         Truth.assertThat(heap.getMin()).isEqualTo(two);
         childAssert(two, three);
         parentAssert(Stream.of(three), two);
-        Truth.assertThat(three.getNext()).isEqualTo(three);
-        Truth.assertThat(four.getPrevious()).isEqualTo(two);
+        Truth.assertThat(holder.getNext(three)).isEqualTo(three);
+        Truth.assertThat(holder.getPrevious(four)).isEqualTo(two);
 
         heap.decreaseKey(four, 1.0);
         Truth.assertThat(heap.getMin()).isEqualTo(four);
-        Truth.assertThat(four.getNext()).isEqualTo(two);
-        Truth.assertThat(two.getPrevious()).isEqualTo(four);
+        Truth.assertThat(holder.getNext(four)).isEqualTo(two);
+        Truth.assertThat(holder.getPrevious(two)).isEqualTo(four);
         childAssert(two, three);
         parentAssert(Stream.of(three), two);
         Truth.assertThat(four).isEqualTo(heap.extractMin());
@@ -280,19 +270,19 @@ public class FibonacciHeapTest {
     }
 
     private void parentAssert(Stream<VertexFibo> childs, VertexFibo parent) {
-        childs.forEach(x -> Truth.assertThat(x.getParent()).isEqualTo(parent));
+        childs.forEach(x -> Truth.assertThat(holder.getParent(x)).isEqualTo(parent));
     }
 
     private void childAssert(VertexFibo parent, VertexFibo child) {
-        Truth.assertThat(parent.getChild()).isEqualTo(child);
+        Truth.assertThat(holder.getChild(parent)).isEqualTo(child);
     }
 
     private void notAParentAssert(Stream<VertexFibo> childs, VertexFibo parent) {
-        childs.forEach(x -> Truth.assertThat(x.getParent()).isNotEqualTo(parent));
+        childs.forEach(x -> Truth.assertThat(holder.getParent(x)).isNotEqualTo(parent));
     }
 
     private void notAChildAssert(VertexFibo parent, VertexFibo child) {
-        Truth.assertThat(parent.getChild()).isNotEqualTo(child);
+        Truth.assertThat(holder.getChild(parent)).isNotEqualTo(child);
     }
 
     private Set<VertexFibo> buildNextMemberSet(Integer lengthsOfNext) {
@@ -300,7 +290,7 @@ public class FibonacciHeapTest {
         VertexFibo tmp = heap.getMin();
         for (int i = 0; i < lengthsOfNext; i++) {
             builder.add(tmp);
-            tmp = tmp.getNext();
+            tmp = holder.getNext(tmp);
         }
         return builder.build().collect(Collectors.toSet());
     }
@@ -310,7 +300,7 @@ public class FibonacciHeapTest {
         VertexFibo tmp = heap.getMin();
         for (int i = 0; i < lengthsOfPrevious; i++) {
             builder.add(tmp);
-            tmp = tmp.getPrevious();
+            tmp = holder.getPrevious(tmp);
         }
         return builder.build().collect(Collectors.toSet());
     }
@@ -340,18 +330,18 @@ public class FibonacciHeapTest {
         stream.forEach(System.out::println);
     }
 
-    private static void checkRootList(VertexFibo begin) {
+    private void checkRootList(VertexFibo begin) {
         if (begin != null) {
             VertexFibo element = begin;
             VertexFibo next;
             do {
-                if (element == element.getNext()) {
+                if (element == holder.getNext(element)) {
                     throw new RuntimeException("No rootList for checkRootList!");
                 } else {
-                    next = element.getNext();
+                    next = holder.getNext(element);
                 }
-                Truth.assertThat(element.getNext()).isEqualTo(next);
-                Truth.assertThat(next.getPrevious()).isEqualTo(element);
+                Truth.assertThat(holder.getNext(element)).isEqualTo(next);
+                Truth.assertThat(holder.getPrevious(next)).isEqualTo(element);
                 element = next;
             } while (next != begin);
         }

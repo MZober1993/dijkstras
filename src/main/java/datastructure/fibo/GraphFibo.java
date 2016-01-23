@@ -5,6 +5,8 @@ import datastructure.Graph;
 import datastructure.standard.Vertex;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
@@ -32,6 +34,12 @@ public class GraphFibo extends AbstractGraph<VertexFibo, EdgeImplFibo> {
         }
     }
 
+    public GraphFibo(Stream<VertexFibo> elements) {
+        List<VertexFibo> tmp = elements.collect(Collectors.toList());
+        init(tmp.size());
+        tmp.stream().forEach(elem -> this.vertices.put(elem.getId(), elem));
+    }
+
     @Override
     public void addConnection(Integer signOne, Integer signTwo, Double distance) {
         VertexFibo one = getElementOrCreateOne(signOne);
@@ -42,7 +50,7 @@ public class GraphFibo extends AbstractGraph<VertexFibo, EdgeImplFibo> {
             adjacencyGraph.get(signTwo).add(new EdgeImplFibo(one, distance));
             one.isConnectionTo(signTwo);
             two.isConnectionTo(signOne);
-            size++;
+            edgeSize++;
         }
     }
 
@@ -51,25 +59,21 @@ public class GraphFibo extends AbstractGraph<VertexFibo, EdgeImplFibo> {
         vertices.forEach((Integer id, VertexFibo entry) -> {
             entry.setClosed(false);
             entry.setDeg(0);
-            entry.setParent(null);
-            entry.setChild(null);
-            entry.setNext(entry);
-            entry.setPrevious(entry);
             entry.setMarked(false);
             entry.setKey(Double.MAX_VALUE);
             entry.setAnchor(null);
-            entry.setG(Double.MAX_VALUE);
+            entry.setKey(Double.MAX_VALUE);
         });
         return this;
     }
 
     @Override
     public VertexFibo getElementOrCreateOne(int id) {
-        if (getElements().containsKey(id)) {
-            return getElements().get(id);
+        if (getVs().containsKey(id)) {
+            return getVs().get(id);
         } else {
             VertexFibo value = new VertexFibo(new Vertex(id), Double.MAX_VALUE);
-            getElements().put(id, value);
+            getVs().put(id, value);
             return value;
         }
     }

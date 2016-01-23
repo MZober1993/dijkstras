@@ -38,7 +38,7 @@ public class GraphBinary extends AbstractGraph<VertexBinary, EdgeImplBinary> {
             adjacencyGraph.get(signTwo).add(new EdgeImplBinary(one, distance));
             one.isConnectionTo(signTwo);
             two.isConnectionTo(signOne);
-            size++;
+            edgeSize++;
         }
     }
 
@@ -48,7 +48,7 @@ public class GraphBinary extends AbstractGraph<VertexBinary, EdgeImplBinary> {
             entry.setClosed(false);
             entry.setKey(Double.MAX_VALUE);
             entry.setAnchor(null);
-            entry.setG(Double.MAX_VALUE);
+            entry.setKey(Double.MAX_VALUE);
             entry.setPosition(null);
         });
         return this;
@@ -56,11 +56,11 @@ public class GraphBinary extends AbstractGraph<VertexBinary, EdgeImplBinary> {
 
     @Override
     public VertexBinary getElementOrCreateOne(int id) {
-        if (getElements().containsKey(id)) {
-            return getElements().get(id);
+        if (getVs().containsKey(id)) {
+            return getVs().get(id);
         } else {
             VertexBinary value = new VertexBinary(new Vertex(id), Double.MAX_VALUE);
-            getElements().put(id, value);
+            getVs().put(id, value);
             return value;
         }
     }

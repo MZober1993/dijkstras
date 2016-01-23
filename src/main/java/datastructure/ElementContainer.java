@@ -40,13 +40,13 @@ public class ElementContainer implements Element {
     }
 
     @Override
-    public void setG(Double g) {
-        value.setG(g);
+    public void setKey(Double g) {
+        value.setKey(g);
     }
 
     @Override
-    public Double getG() {
-        return value.getG();
+    public Double getKey() {
+        return value.getKey();
     }
 
     @Override

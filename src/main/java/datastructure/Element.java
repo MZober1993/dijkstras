@@ -1,5 +1,7 @@
 package datastructure;
 
+import java.util.Objects;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -14,9 +16,9 @@ public interface Element extends Comparable<Element> {
 
     Integer getId();
 
-    void setG(Double g);
+    void setKey(Double g);
 
-    Double getG();
+    Double getKey();
 
     Element getAnchor();
 
@@ -29,8 +31,8 @@ public interface Element extends Comparable<Element> {
     @Override
     default int compareTo(Element element) {
         checkNotNull(element);
-        return this.getG() < element.getG()
-                ? -1 : this.getG() == element.getG()
+        return this.getKey() < element.getKey()
+                ? -1 : Objects.equals(this.getKey(), element.getKey())
                 ? 0 : 1;
     }
 }

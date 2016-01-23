@@ -21,11 +21,11 @@ public class DijkstraImpl implements Dijkstra<Element> {
     shortestPath(G graph, Element start, Element finish) {
         PriorityQueue<Element> nodes = new PriorityQueue<>();
 
-        for (Element vertex : graph.getElements().values()) {
+        for (Element vertex : graph.getVs().values()) {
             if (vertex.equals(start)) {
-                vertex.setG(0.0);
+                vertex.setKey(0.0);
             } else {
-                vertex.setG(Double.MAX_VALUE);
+                vertex.setKey(Double.MAX_VALUE);
             }
             nodes.add(vertex);
         }
@@ -38,17 +38,17 @@ public class DijkstraImpl implements Dijkstra<Element> {
                 return GraphHelper.reconstructPath(smallest);
             }
 
-            if (smallest.getG() == Double.MAX_VALUE) {
+            if (smallest.getKey() == Double.MAX_VALUE) {
                 continue;
             }
 
             for (Edge<Element> edge : graph.getConnectedElements(smallest)) {
                 final Element connected = edge.getConnected();
                 if (!connected.isClosed()) {
-                    final Double alt = smallest.getG() + edge.getDistance();
+                    final Double alt = smallest.getKey() + edge.getDistance();
 
-                    if (alt < connected.getG()) {
-                        connected.setG(alt);
+                    if (alt < connected.getKey()) {
+                        connected.setKey(alt);
                         connected.setAnchor(smallest);
                         nodes.remove(connected);
                         nodes.add(connected);

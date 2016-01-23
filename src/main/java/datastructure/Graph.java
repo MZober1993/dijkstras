@@ -14,8 +14,8 @@ public interface Graph<T extends Element, H extends Edge<T>> {
 
     T getElementOrCreateOne(int id);
 
-    default T getElement(int id) {
-        T entry = getElements().get(id);
+    default T getV(int id) {
+        T entry = getVs().get(id);
         if (entry == null) {
             throw new RuntimeException("Element with id: " + id + " does not exist.");
         }
@@ -23,13 +23,13 @@ public interface Graph<T extends Element, H extends Edge<T>> {
     }
 
     default T getRandomElement() {
-        return getElement(MathHelper.calculateRandomNodeId(1, getElements().size()));
+        return getV(MathHelper.calculateRandomNodeId(1, getVs().size()));
     }
 
-    Map<Integer, T> getElements();
+    Map<Integer, T> getVs();
 
     default T getOne() {
-        return getElements().entrySet().stream().findAny().get().getValue();
+        return getVs().entrySet().stream().findAny().get().getValue();
     }
 
     Set<? extends Edge<T>> getConnectedElements(T vertex);
@@ -39,14 +39,14 @@ public interface Graph<T extends Element, H extends Edge<T>> {
     void addConnection(Integer signOne, Integer signTwo, Double distance);
 
     default T getLastRandomElement() {
-        int size = getElements().size();
-        return getElement(MathHelper.calculateRandomNodeId((size * 3) / 4, size));
+        int size = getVs().size();
+        return getV(MathHelper.calculateRandomNodeId((size * 3) / 4, size));
     }
 
     int getEdgeSize();
 
     default boolean isEmpty() {
-        return getElements().size() == 0;
+        return getVs().size() == 0;
     }
 
     Graph<T, H> refreshGraph();

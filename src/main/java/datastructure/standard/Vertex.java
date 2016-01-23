@@ -15,7 +15,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class Vertex implements Element {
 
     private Integer id;
-    private Double g;
+    private Double key;
     private Element anchor;
     private boolean closed;
     private Map<Integer, Boolean> connectionTo;
@@ -24,7 +24,7 @@ public class Vertex implements Element {
         super();
         checkNotNull(id);
         this.id = id;
-        this.g = 0.0;
+        this.key = 0.0;
         anchor = null;
         closed = false;
         connectionTo = new HashMap<>();
@@ -46,13 +46,13 @@ public class Vertex implements Element {
     }
 
     @Override
-    public void setG(Double g) {
-        this.g = g;
+    public void setKey(Double key) {
+        this.key = key;
     }
 
     @Override
-    public Double getG() {
-        return g;
+    public Double getKey() {
+        return key;
     }
 
     @Override
@@ -92,9 +92,9 @@ public class Vertex implements Element {
 
     @Override
     public String toString() {
-        return "Element{" +
+        return "[" +
                 "id=" + id +
-                ",g=" + PrintHelper.transformDouble(g) +
-                '}';
+                ",key=" + PrintHelper.transformDouble(key) +
+                "]";
     }
 }

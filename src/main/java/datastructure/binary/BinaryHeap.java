@@ -110,7 +110,7 @@ public class BinaryHeap {
             builder.append("[realId:").append(i).append("]").append(elements.get(i).toString()).append("\n");
         }
         return "BinaryHeap{" +
-                "size=" + size +
+                "edgeSize=" + size +
                 ", elements=" + builder.toString() +
                 '}';
     }

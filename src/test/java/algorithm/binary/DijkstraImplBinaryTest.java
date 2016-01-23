@@ -31,8 +31,8 @@ public class DijkstraImplBinaryTest {
 
     @Test
     public void testMinimumShortestPath() throws Exception {
-        VertexBinary start = graph.getElement(0);
-        VertexBinary end = graph.getElement(7);
+        VertexBinary start = graph.getV(0);
+        VertexBinary end = graph.getV(7);
         List<Integer> actual = dijkstra.shortestPath(graph, start, end);
 
         Truth.assertThat(actual).containsAllOf(0, 1, 5, 7).inOrder();
