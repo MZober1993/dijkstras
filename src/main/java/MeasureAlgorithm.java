@@ -43,12 +43,19 @@ public class MeasureAlgorithm {
         t_n_writer.writeRoutine(config, REPUTATIONS, importer, false);
     }
 
-    public void tNRecordOneMeasureInOneFile(GraphImporter<Element> importer, AlgoFlag flag, String sign, List<Long> config) {
-        One_T_N_Writer t_n_writer = new One_T_N_Writer(calcPath(One_T_N_Writer.PLAIN_ONE_FILE_NAME, sign));
+    public void tNRecordOneMeasureInOneFile(GraphImporter<Element> importer, AlgoFlag flag, String sign
+            , List<Long> config) {
+        Path path = calcPath(One_T_N_Writer.PLAIN_ONE_FILE_NAME, flag, sign);
+        One_T_N_Writer t_n_writer = new One_T_N_Writer(path);
         t_n_writer.writeRoutine(config, flag, REPUTATIONS, importer, false);
+        System.out.println("measure-file created under:" + path.toString());
     }
 
     private static Path calcPath(String plain, String mode) {
-        return Paths.get(plain + "_" + mode + "_all.csv");
+        return Paths.get(plain + "_" + mode + ".csv");
+    }
+
+    private static Path calcPath(String plain, AlgoFlag flag, String mode) {
+        return Paths.get(plain + "_" + flag.toString().toLowerCase() + "_" + mode + ".csv");
     }
 }

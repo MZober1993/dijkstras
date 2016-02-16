@@ -24,7 +24,7 @@ import java.util.stream.LongStream;
  *         23.11.15 - 12:44
  */
 public enum Measures {
-    MEMBER, MEASURE, BOXPLOT, THEORETICAL, PLAIN_T_N, PLAIN_ONE_T_N;
+    MEMBER, MEASURE, BOXPLOT, THEORETICAL, PLAIN_T_N, T_N;
 
     public static final List<Integer> SAMPLE_FOR_MEASURE = ImmutableList.of(2, 10, 18, 26, 34, 42, 50, 58, 66, 74, 82,
             90, 98, 106, 114, 122, 130);

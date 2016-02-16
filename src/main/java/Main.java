@@ -3,10 +3,7 @@ import algorithm.binary.DijkstraImplBinary;
 import algorithm.fibo.DijkstraImplFibo;
 import algorithm.standard.DijkstraImpl;
 import datastructure.*;
-import util.GraphFileCreator;
-import util.GraphImporter;
-import util.ImportFile;
-import util.Measures;
+import util.*;
 
 import java.util.List;
 
@@ -77,8 +74,61 @@ public class Main {
         return currentArgument;
     }
 
+    private static int prepareMeasure(String[] args, int currentArgument) {
+        MeasureAlgorithm measure = new MeasureAlgorithm();
+        Pair<Long, Integer> parsedArgs = printPrepareAndParseNumbers(args, currentArgument);
+        switch (args[currentArgument + 1]) {
+            case "c":
+                Measures.prepareStd(measure.COMPLETE_IMPORTER.importElementGraph(parsedArgs.getFirst())
+                        , parsedArgs.getFirst(), parsedArgs.getSecond());
+                break;
+            case "p":
+                Measures.prepareStd(measure.PLANAR_IMPORTER.importElementGraph(parsedArgs.getFirst())
+                        , parsedArgs.getFirst(), parsedArgs.getSecond());
+                break;
+        }
+        return currentArgument + 3;
+    }
+
     private static int measure(String[] args, int currentArgument) {
-        return 0;
+        MeasureAlgorithm measure = new MeasureAlgorithm();
+        switch (args[currentArgument + 1]) {
+            case "c":
+                printMeasureInput(args, currentArgument);
+                chooseAlgoForMeasure(args[currentArgument + 2], measure, measure.COMPLETE_IMPORTER, "complete");
+                break;
+            case "p":
+                printMeasureInput(args, currentArgument);
+                chooseAlgoForMeasure(args[currentArgument + 2], measure, measure.PLANAR_IMPORTER, "planar");
+                break;
+        }
+        return currentArgument + 2;
+    }
+
+    private static void chooseAlgoForMeasure(String arg, MeasureAlgorithm measure
+            , GraphImporter<Element> importer, String sign) {
+        switch (arg) {
+            case "std":
+                measure.tNRecordOneMeasureInOneFile(importer, AlgoFlag.STD
+                        , sign, MeasureAlgorithm.PLANAR_CONFIG);
+                break;
+            case "bin":
+                measure.tNRecordOneMeasureInOneFile(importer, AlgoFlag.BIN
+                        , sign, MeasureAlgorithm.PLANAR_CONFIG);
+                break;
+            case "fib":
+                measure.tNRecordOneMeasureInOneFile(importer, AlgoFlag.FIB
+                        , sign, MeasureAlgorithm.PLANAR_CONFIG);
+                break;
+        }
+    }
+
+    private static void printMeasureInput(String[] args, int currentArgument) {
+        checkNotNull(args[currentArgument]);
+        checkNotNull(args[currentArgument + 1]);
+        checkNotNull(args[currentArgument + 2]);
+        System.out.println("create a measure-file of the shortest-path-measure on the following graph:" + args[currentArgument + 1] +
+                ",\nand the following algo:" + args[currentArgument + 2]);
     }
 
     private static void chooseAlgo(String[] args, int currentArgument, GraphImporter<Element> importer) {
@@ -103,29 +153,13 @@ public class Main {
         }
     }
 
+
     private static <G extends Graph<T, ? extends Edge>, T extends Element> void printDijkstra(Dijkstra<T> dijkstra,
                                                                                               G graph, Long limit, Integer start, Integer target) {
         graph.refreshGraph();
         Pair<Long, List<Integer>> pair = GraphHelper.calculateTimeAndPath(graph, dijkstra, graph.getV(start), graph.getV(target));
         System.out.println("(" + start + ")->(" + target + ")" + ",T(" + limit + "):" + pair.getFirst() / A_MILLION + " ms\n" +
                 ",Path:" + pair.getSecond());
-    }
-
-
-    private static int prepareMeasure(String[] args, int currentArgument) {
-        MeasureAlgorithm measure = new MeasureAlgorithm();
-        Pair<Long, Integer> parsedArgs = printPrepareAndParseNumbers(args, currentArgument);
-        switch (args[currentArgument + 1]) {
-            case "c":
-                Measures.prepareStd(measure.COMPLETE_IMPORTER.importElementGraph(parsedArgs.getFirst())
-                        , parsedArgs.getFirst(), parsedArgs.getSecond());
-                break;
-            case "p":
-                Measures.prepareStd(measure.PLANAR_IMPORTER.importElementGraph(parsedArgs.getFirst())
-                        , parsedArgs.getFirst(), parsedArgs.getSecond());
-                break;
-        }
-        return currentArgument + 3;
     }
 
     private static int printGenerateInputAndParseSize(String[] args, int currentArgument) {

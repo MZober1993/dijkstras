@@ -6,6 +6,7 @@ import datastructure.Element;
 import datastructure.Graph;
 import util.AlgoFlag;
 import util.GraphImporter;
+import util.Measures;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -14,7 +15,6 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static util.GraphImporter.PATH_TO_RESOURCE;
-import static util.Measures.PLAIN_ONE_T_N;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
@@ -23,7 +23,7 @@ import static util.Measures.PLAIN_ONE_T_N;
 public class One_T_N_Writer extends FileWriter {
 
     public static final String DIR = PATH_TO_RESOURCE + "Measures/";
-    public static final String PLAIN_ONE_FILE_NAME = DIR + PLAIN_ONE_T_N.name().toLowerCase();
+    public static final String PLAIN_ONE_FILE_NAME = DIR + Measures.T_N.name().toLowerCase();
     public static final String DEFAULT_FILE_NAME = PLAIN_ONE_FILE_NAME + ".csv";
     public static final Path DEFAULT_FILE_PATH = Paths.get(DEFAULT_FILE_NAME);
 
@@ -69,13 +69,13 @@ public class One_T_N_Writer extends FileWriter {
         String rest = "";
         switch (flag) {
             case STD:
-                rest = ",T(n) std";
+                rest = ",T(n) std\n";
                 break;
             case BIN:
-                rest = ",T(n) binary";
+                rest = ",T(n) binary\n";
                 break;
             case FIB:
-                rest = ",T(n) fibo";
+                rest = ",T(n) fibo\n";
                 break;
         }
         writeScaledGraphHeaderWithRest(scaledN, rest);
