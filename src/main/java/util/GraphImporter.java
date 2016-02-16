@@ -1,7 +1,13 @@
 package util;
 
 
+import algorithm.Dijkstra;
+import algorithm.binary.DijkstraImplBinary;
+import algorithm.fibo.DijkstraImplFibo;
+import algorithm.standard.DijkstraImpl;
+import datastructure.Edge;
 import datastructure.Element;
+import datastructure.Graph;
 import datastructure.GraphHelper;
 import datastructure.binary.GraphBinary;
 import datastructure.fibo.GraphFibo;
@@ -83,6 +89,32 @@ public class GraphImporter<T extends Element> {
 
     public GraphBinary importBinaryGraph(Long n) {
         return GraphHelper.transformGraphToBinaryGraph(importElementGraph(n));
+    }
+
+    public <E extends Element> Graph<E, ? extends Edge<E>> importGraph(AlgoFlag flag, Long n) {
+        switch (flag) {
+            case STD:
+                return (Graph<E, ? extends Edge<E>>) importElementGraph(n);
+            case BIN:
+                return (Graph<E, ? extends Edge<E>>) importBinaryGraph(n);
+            case FIB:
+                return (Graph<E, ? extends Edge<E>>) importEntryGraph(n);
+            default:
+                throw new RuntimeException("Unknown Algoflag in importGraph!");
+        }
+    }
+
+    public <E extends Element> Dijkstra<E> convertAlgo(AlgoFlag flag) {
+        switch (flag) {
+            case STD:
+                return (Dijkstra<E>) new DijkstraImpl();
+            case BIN:
+                return (Dijkstra<E>) new DijkstraImplBinary();
+            case FIB:
+                return (Dijkstra<E>) new DijkstraImplFibo();
+            default:
+                throw new RuntimeException("Unknown Algoflag in convertAlgo!");
+        }
     }
 
     public Long getLimit() {

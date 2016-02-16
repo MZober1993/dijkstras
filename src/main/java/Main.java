@@ -29,7 +29,9 @@ public class Main {
                     break;
                 case "-p":
                     currentArgument = prepareMeasure(args, currentArgument);
-
+                    break;
+                case "-m":
+                    currentArgument = measure(args, currentArgument);
                     break;
                 case "-h":
                     printHelp();
@@ -73,6 +75,10 @@ public class Main {
                 break;
         }
         return currentArgument;
+    }
+
+    private static int measure(String[] args, int currentArgument) {
+        return 0;
     }
 
     private static void chooseAlgo(String[] args, int currentArgument, GraphImporter<Element> importer) {

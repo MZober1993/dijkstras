@@ -1,9 +1,7 @@
 import datastructure.Element;
-import util.GraphFileCreator;
-import util.GraphImporter;
-import util.ImportFile;
-import util.Measures;
+import util.*;
 import util.writer.MeasureFileWriter;
+import util.writer.One_T_N_Writer;
 import util.writer.T_N_Writer;
 
 import java.nio.file.Path;
@@ -43,6 +41,11 @@ public class MeasureAlgorithm {
     public void tNRecordInOneFile(GraphImporter<Element> importer, String sign, List<Long> config) {
         T_N_Writer t_n_writer = new T_N_Writer(calcPath(T_N_Writer.PLAIN_FILE_NAME, sign));
         t_n_writer.writeRoutine(config, REPUTATIONS, importer, false);
+    }
+
+    public void tNRecordOneMeasureInOneFile(GraphImporter<Element> importer, AlgoFlag flag, String sign, List<Long> config) {
+        One_T_N_Writer t_n_writer = new One_T_N_Writer(calcPath(One_T_N_Writer.PLAIN_ONE_FILE_NAME, sign));
+        t_n_writer.writeRoutine(config, flag, REPUTATIONS, importer, false);
     }
 
     private static Path calcPath(String plain, String mode) {
