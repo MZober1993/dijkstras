@@ -68,6 +68,15 @@ public class GraphHelper {
         return new Pair<>(stopwatch.elapsed(TimeUnit.NANOSECONDS), path);
     }
 
+    public static <G extends Graph<T, ? extends Edge<T>>, T extends Element> Pair<Long, List<Integer>>
+    calculateTimeAndPath(G graph, Dijkstra<T> algo, T start, T end) {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        List<Integer> path = algo.shortestPath(graph, start, end);
+        stopwatch.stop();
+
+        return new Pair<>(stopwatch.elapsed(TimeUnit.NANOSECONDS), path);
+    }
+
     private static <G extends Graph<T, ? extends Edge<T>>, T extends Element> long calculateTime(G graph, Dijkstra<T> algorithm, T start,
                                                                                                  T end) {
         Stopwatch stopwatch = Stopwatch.createStarted();

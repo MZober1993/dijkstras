@@ -11,5 +11,6 @@ public class CreateGraph {
         GraphFileCreator graphFileCreator = new GraphFileCreator(GraphFileCreator.DEFAULT_PATH);
         graphFileCreator.createSampleGraphFile(13100);
         graphFileCreator.createCompleteConnectedGraphFile(GraphFileCreator.COMPLETE_LIMIT, 1);
+        graphFileCreator.createPlanarGraphFile(GraphFileCreator.PLANAR_LIMIT, 1);
     }
 }

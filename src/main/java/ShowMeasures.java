@@ -1,6 +1,4 @@
-import datastructure.Element;
 import util.GraphFileCreator;
-import util.GraphImporter;
 import util.Measures;
 
 /**
@@ -13,9 +11,12 @@ public class ShowMeasures {
         long limit = GraphFileCreator.COMPLETE_LIMIT;
         int endBegin = GraphFileCreator.COMPLETE_LIMIT - 10;
         //GraphImporter<Element> importer = measure.CREATED_IMPORTER;
-        GraphImporter<Element> importer = measure.COMPLETE_IMPORTER;
 
-        Measures.prepareStd(importer.importElementGraph(limit), limit, endBegin);
-        measure.tNRecordInOneFile();
+       /* Measures.prepareStd(measure.COMPLETE_IMPORTER.importElementGraph(limit), limit, endBegin);
+        measure.tNRecordInOneFile(measure.COMPLETE_IMPORTER, "complete");
+        */
+        Measures.prepareStd(measure.PLANAR_IMPORTER.importElementGraph(limit), limit, endBegin);
+        measure.tNRecordInOneFile(measure.PLANAR_IMPORTER, "planar", MeasureAlgorithm.PLANAR_CONFIG);
+        measure.tNRecordInOneFile(measure.COMPLETE_IMPORTER, "complete", MeasureAlgorithm.COMPLETE_CONFIG);
     }
 }

@@ -15,7 +15,8 @@ table_planar<-read.csv(file_name_planar)
 png(file="boxplot_complete_std.png")
 boxplot(table_complete$T.n..std~table_complete$E
         ,main=stdlabel, ylab=ylabel, xlab=xlabel
-        ,ylim = c(0, 80), yaxs = "i")
+         ,ylim = c(0, 1000), yaxs = "i"
+        )
 dev.off()
 
 png(file="boxplot_complete_fibo.png")
@@ -23,7 +24,8 @@ boxplot(table_complete$T.n..fibo~table_complete$E
         ,main=fibolabel
         ,ylab=ylabel
         ,xlab=xlabel
-        ,ylim = c(0, 80), yaxs = "i")
+         ,ylim = c(0, 1000), yaxs = "i"
+        )
 dev.off()
 
 png(file="boxplot_complete_binary.png")
@@ -31,7 +33,8 @@ boxplot(table_complete$T.n..binary~table_complete$E
         ,main=binlabel
         ,ylab=ylabel
         ,xlab=xlabel
-        ,ylim = c(0, 80), yaxs = "i")
+         ,ylim = c(0,1000), yaxs = "i"
+        )
 dev.off()
 
 png(file="boxplot_planar_std.png")

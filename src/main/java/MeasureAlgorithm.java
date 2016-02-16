@@ -19,10 +19,12 @@ import static util.writer.MeasureFileWriter.PLAIN_FILE_NAME;
 public class MeasureAlgorithm {
 
     public static final int REPUTATIONS = 40;
-    public static final List<Long> MEASURE_CONFIG = Measures.measureLimits(GraphFileCreator.COMPLETE_LIMIT, 10, 2);
+    public static final List<Long> COMPLETE_CONFIG = Measures.measureLimits(GraphFileCreator.COMPLETE_LIMIT, 100, 100);
+    public static final List<Long> PLANAR_CONFIG = Measures.measureLimits(GraphFileCreator.PLANAR_LIMIT, 200, 50);
     public final GraphImporter<Element> NY_IMPORTER = new GraphImporter<>(ImportFile.NY);
     public final GraphImporter<Element> CREATED_IMPORTER = new GraphImporter<>(ImportFile.CREATED);
     public final GraphImporter<Element> COMPLETE_IMPORTER = new GraphImporter<>(ImportFile.COMPLETE);
+    public final GraphImporter<Element> PLANAR_IMPORTER = new GraphImporter<>(ImportFile.PLANAR);
 
     public MeasureAlgorithm() {
     }
@@ -33,14 +35,14 @@ public class MeasureAlgorithm {
         COMPLETE_IMPORTER.setLimit(limit);
     }
 
-    public void recordInOneFile() {
-        MeasureFileWriter measureFileWriter = new MeasureFileWriter(calcPath(PLAIN_FILE_NAME, "complete"));
-        measureFileWriter.writeRoutine(MEASURE_CONFIG, REPUTATIONS, COMPLETE_IMPORTER, false);
+    public void recordInOneFile(GraphImporter<Element> importer, String sign, List<Long> config) {
+        MeasureFileWriter measureFileWriter = new MeasureFileWriter(calcPath(PLAIN_FILE_NAME, sign));
+        measureFileWriter.writeRoutine(config, REPUTATIONS, importer, false);
     }
 
-    public void tNRecordInOneFile() {
-        T_N_Writer t_n_writer = new T_N_Writer(calcPath(T_N_Writer.PLAIN_FILE_NAME, "complete"));
-        t_n_writer.writeRoutine(MEASURE_CONFIG, REPUTATIONS, COMPLETE_IMPORTER, false);
+    public void tNRecordInOneFile(GraphImporter<Element> importer, String sign, List<Long> config) {
+        T_N_Writer t_n_writer = new T_N_Writer(calcPath(T_N_Writer.PLAIN_FILE_NAME, sign));
+        t_n_writer.writeRoutine(config, REPUTATIONS, importer, false);
     }
 
     private static Path calcPath(String plain, String mode) {

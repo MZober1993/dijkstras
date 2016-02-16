@@ -14,13 +14,17 @@ import java.util.stream.IntStream;
  */
 public class GraphFileCreator extends FileWriter {
 
-    public static final int COMPLETE_LIMIT = 800;
+    public static final int COMPLETE_LIMIT = 2001;
+    public static final int PLANAR_LIMIT = 4001;
 
     public static final Path DEFAULT_PATH = Paths.get(GraphImporter.PATH_TO_IMPORT_FILES +
             ImportFile.CREATED.name().toLowerCase());
 
     public static final Path COMPLETE_PATH = Paths.get(GraphImporter.PATH_TO_IMPORT_FILES +
             ImportFile.COMPLETE.name().toLowerCase());
+
+    public static final Path PLANAR_PATH = Paths.get(GraphImporter.PATH_TO_IMPORT_FILES +
+            ImportFile.PLANAR.name().toLowerCase());
 
 
     public GraphFileCreator(Path path) {
@@ -50,11 +54,27 @@ public class GraphFileCreator extends FileWriter {
         setPath(path);
     }
 
+    public void createPlanarGraphFile(int limit, int begin) {
+        setPath(PLANAR_PATH);
+        try {
+            Files.write(PLANAR_PATH, "".getBytes());
+            IntStream.range(begin, limit).forEach(x -> {
+                try {
+                    writeConnectionInOneDirection(x, x + 1, MathHelper.calculateRandomDistance());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+            writeConnectionInOneDirection(begin, limit, MathHelper.calculateRandomDistance());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void createFile(int n, int countOfSectors, int connectivity) {
         try {
             writeHeader();
             equalDistribution(n, countOfSectors, connectivity);
-            //cumulativeDistribution(countOfVertices);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -117,22 +137,10 @@ public class GraphFileCreator extends FileWriter {
 
     private void writeConnection(int i, int element, int r) throws IOException {
         writeConnectionInOneDirection(i, element, r);
-        //writeConnectionInOneDirection(element, i, r);
     }
 
     private void writeConnectionInOneDirection(int first, int second, int distance) throws IOException {
         writeString("a " + first + " " + second + " " + distance + "\n");
-    }
-
-    private void cumulativeDistribution(Integer countOfVertices, Integer countOfSectors, Integer scale) {
-        double sectorLimit = countOfVertices / countOfSectors;
-        for (int j = 1; j < countOfVertices + 1; j++) {
-            System.out.println(j);
-            if ((j % sectorLimit) == 0) {
-                sectorLimit = Math.ceil(sectorLimit * 1.5);
-                System.out.println();
-            }
-        }
     }
 
     protected void writeHeader() throws Exception {

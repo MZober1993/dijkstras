@@ -5,5 +5,5 @@ package util;
  *         17.11.15 - 09:48
  */
 public enum ImportFile {
-    NY, SAMPLE, CREATED, COMPLETE
+    NY, SAMPLE, CREATED, COMPLETE, PLANAR
 }
