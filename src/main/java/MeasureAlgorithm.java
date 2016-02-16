@@ -17,8 +17,10 @@ import static util.writer.MeasureFileWriter.PLAIN_FILE_NAME;
 public class MeasureAlgorithm {
 
     public static final int REPUTATIONS = 40;
-    public static final List<Long> COMPLETE_CONFIG = Measures.measureLimits(GraphFileCreator.COMPLETE_LIMIT, 100, 100);
-    public static final List<Long> PLANAR_CONFIG = Measures.measureLimits(GraphFileCreator.PLANAR_LIMIT, 200, 50);
+    public static final List<Long> COMPLETE_CONFIG = Measures.measureLimits(GraphFileCreator.COMPLETE_LIMIT,
+            GraphFileCreator.COMPLETE_LIMIT / 20, GraphFileCreator.COMPLETE_LIMIT / 20);
+    public static final List<Long> PLANAR_CONFIG = Measures.measureLimits(GraphFileCreator.PLANAR_LIMIT,
+            GraphFileCreator.PLANAR_LIMIT / 20, GraphFileCreator.PLANAR_LIMIT / 20);
     public final GraphImporter<Element> NY_IMPORTER = new GraphImporter<>(ImportFile.NY);
     public final GraphImporter<Element> CREATED_IMPORTER = new GraphImporter<>(ImportFile.CREATED);
     public final GraphImporter<Element> COMPLETE_IMPORTER = new GraphImporter<>(ImportFile.COMPLETE);

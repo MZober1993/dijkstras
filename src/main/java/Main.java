@@ -15,6 +15,9 @@ import static util.MathHelper.A_MILLION;
  *         On 16.02.16 - 11:41
  */
 public class Main {
+
+    public static final String WITHOUT_OPTIONAL_LIMIT = "without given optional limit";
+
     public static void main(String[] args) {
         for (int currentArgument = 0; currentArgument < args.length; currentArgument++) {
             switch (args[currentArgument]) {
@@ -92,33 +95,55 @@ public class Main {
 
     private static int measure(String[] args, int currentArgument) {
         MeasureAlgorithm measure = new MeasureAlgorithm();
+        int tmpArgumentCount = currentArgument;
         switch (args[currentArgument + 1]) {
             case "c":
                 printMeasureInput(args, currentArgument);
-                chooseAlgoForMeasure(args[currentArgument + 2], measure, measure.COMPLETE_IMPORTER, "complete");
+                tmpArgumentCount = measureWithOptionalLimit(args, currentArgument, measure,
+                        measure.COMPLETE_IMPORTER, "complete", MeasureAlgorithm.COMPLETE_CONFIG);
                 break;
             case "p":
                 printMeasureInput(args, currentArgument);
-                chooseAlgoForMeasure(args[currentArgument + 2], measure, measure.PLANAR_IMPORTER, "planar");
+                tmpArgumentCount = measureWithOptionalLimit(args, currentArgument, measure,
+                        measure.PLANAR_IMPORTER, "planar", MeasureAlgorithm.PLANAR_CONFIG);
                 break;
         }
-        return currentArgument + 2;
+        return tmpArgumentCount;
+    }
+
+    private static int measureWithOptionalLimit(String[] args, int currentArgument, MeasureAlgorithm measure,
+                                                GraphImporter<Element> importer, String sign, List<Long> config) {
+        if (optionalArgIsValid(args, currentArgument + 3)) {
+            if (!args[currentArgument + 3].contains("-")) {
+                int limitOfGraph = Integer.parseInt(args[currentArgument + 3]);
+                chooseAlgoForMeasure(args[currentArgument + 2], measure, importer,
+                        Measures.measureLimits(limitOfGraph,
+                                limitOfGraph / 20, limitOfGraph / 20), sign);
+                return currentArgument + 3;
+            }
+            chooseAlgoForMeasure(args[currentArgument + 2], measure, importer, config, sign);
+            return currentArgument + 2;
+        } else {
+            chooseAlgoForMeasure(args[currentArgument + 2], measure, importer, config, sign);
+            return currentArgument + 2;
+        }
     }
 
     private static void chooseAlgoForMeasure(String arg, MeasureAlgorithm measure
-            , GraphImporter<Element> importer, String sign) {
+            , GraphImporter<Element> importer, List<Long> config, String sign) {
+        System.out.println("following measure-config:" + config);
         switch (arg) {
             case "std":
                 measure.tNRecordOneMeasureInOneFile(importer, AlgoFlag.STD
-                        , sign, MeasureAlgorithm.PLANAR_CONFIG);
+                        , sign, config);
                 break;
             case "bin":
                 measure.tNRecordOneMeasureInOneFile(importer, AlgoFlag.BIN
-                        , sign, MeasureAlgorithm.PLANAR_CONFIG);
+                        , sign, config);
                 break;
             case "fib":
                 measure.tNRecordOneMeasureInOneFile(importer, AlgoFlag.FIB
-                        , sign, MeasureAlgorithm.PLANAR_CONFIG);
+                        , sign, config);
                 break;
         }
     }
@@ -129,6 +154,15 @@ public class Main {
         checkNotNull(args[currentArgument + 2]);
         System.out.println("create a measure-file of the shortest-path-measure on the following graph:" + args[currentArgument + 1] +
                 ",\nand the following algo:" + args[currentArgument + 2]);
+        if (optionalArgIsValid(args, currentArgument + 3)) {
+            if (!args[currentArgument + 3].contains("-")) {
+                System.out.println("with the optional limit:" + args[currentArgument + 3]);
+            } else {
+                System.out.println(WITHOUT_OPTIONAL_LIMIT);
+            }
+        } else {
+            System.out.println(WITHOUT_OPTIONAL_LIMIT);
+        }
     }
 
     private static void chooseAlgo(String[] args, int currentArgument, GraphImporter<Element> importer) {
@@ -218,6 +252,21 @@ public class Main {
                 "\n\t\tthe size is the number of vertices in the graph and must be a number (int)" +
                 "\n\t\tthe algorithm to calculate the shortest-path: 'std','bin' or 'fib'" +
                 "\n\t\tthe vertex with the start-id must be a vertex of the marked graph" +
-                "\n\t\tthe vertex with the target-id must be a vertex of the marked graph");
+                "\n\t\tthe vertex with the target-id must be a vertex of the marked graph" +
+                "\n\t-m graph algo [limit]: " +
+                "\n\t\t[create a measure-file by using the given algo on the given graph with an optional limit]" +
+                "\n\t\tthe graph shows the kind of graph, like 'c' for complete and 'p' for planar" +
+                "\n\t\tthe algorithm to calculate the shortest-path: 'std','bin' or 'fib'" +
+                "\n\t\tthe limit is the number of vertices in the graph and must be a number (int)");
+    }
+
+    private static boolean optionalArgIsValid(String[] args, int position) {
+        if (args.length > position) {
+            if (args[position] != null) {
+                return true;
+            }
+            return false;
+        }
+        return false;
     }
 }
