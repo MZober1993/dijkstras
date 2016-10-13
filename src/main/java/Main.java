@@ -257,7 +257,10 @@ public class Main {
                 "\n\t\t[create a measure-file by using the given algo on the given graph with an optional limit]" +
                 "\n\t\tthe graph shows the kind of graph, like 'c' for complete and 'p' for planar" +
                 "\n\t\tthe algorithm to calculate the shortest-path: 'std','bin' or 'fib'" +
-                "\n\t\tthe limit is the number of vertices in the graph and must be a number (int)");
+                "\n\t\tthe limit is the number of vertices in the graph and must be a number (int)" +
+                "\n\t-s graph count-vertices algo start-id target-id : " +
+                "\n\t\t[show a shortest-path with its runtime]"
+        );
     }
 
     private static boolean optionalArgIsValid(String[] args, int position) {
