@@ -15,5 +15,6 @@ and generic data.
 
 ## Try it!
 
-If you want you can use the Main to try all algorithms.
+If you want you can use the Main to try all algorithms
+(use -h to show the help - and all options).
 Furthermore you can generate graph files and measure some interesting numbers like runtime... .
