@@ -7,3 +7,12 @@
 /src/test/resources/ImportFiles
 .RData
 .Rhistory
+/src/main/resources/Measures/old/
+/src/main/resources/Measures/plain_t_n_planar_all.csv
+/src/main/resources/Measures/box_t_n.R
+/src/main/resources/Measures/generated/
+/src/main/resources/Measures/sdv.R
+/src/main/resources/Measures/t_n_fib_planar.csv
+/src/main/resources/Measures/statistical.R
+/src/main/resources/Measures/testbox_t_n.R
+/src/main/resources/Measures/plain_t_n_complete_all.csv
