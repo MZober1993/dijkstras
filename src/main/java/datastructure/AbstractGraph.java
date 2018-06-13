@@ -1,9 +1,16 @@
 package datastructure;
 
+import datastructure.standard.Vertex;
+
+import java.math.BigInteger;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.LongStream;
+import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.math.BigInteger.*;
 
 /**
  * @author <a href="mailto:mattthias.zober@outlook.de">Matthias Zober</a>
@@ -27,6 +34,14 @@ public abstract class AbstractGraph<T extends Element, H extends Edge<T>> implem
     public AbstractGraph(List<Integer> identifiers) {
         checkNotNull(identifiers);
         init(identifiers.size());
+        int t=2;
+        int x=10;
+
+        Stream.iterate(new long[]{ 1, 1 }, fibo->new long[]{ fibo[1], fibo[0]+fibo[1] })
+                .filter(i-> LongStream.range(0,42).boxed().collect(Collectors.toList())
+                        .contains(i)).forEach(System.out::println);
+
+
     }
 
     public void init(int size) {
